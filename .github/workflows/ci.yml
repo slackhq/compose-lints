@@ -16,7 +16,6 @@ concurrency:
 
 jobs:
   build:
-    name: ${{ matrix.ci_lint_version }} / JDK ${{ matrix.ci_java_version }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,7 +24,7 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
 
-      - name: Install JDK ${{ matrix.ci_java_version }}
+      - name: Install JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
