@@ -55,7 +55,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: error-report
-          path: build-reports.zip
+          path: |
+            **/build/reports/*
 
       - name: Publish snapshot (main branch only)
         if: github.repository == 'slackhq/slack-lint-checks' && github.ref == 'refs/heads/main'
