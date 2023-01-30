@@ -25,7 +25,12 @@ import slack.lint.compose.ComposeUnstableCollectionsDetector
 @AutoService(IssueRegistry::class)
 class ComposeLintsIssueRegistry : IssueRegistry() {
 
-  override val vendor: Vendor = Vendor(vendorName = "slack", identifier = "slack-lint")
+  override val vendor: Vendor =
+    Vendor(
+      vendorName = "slack",
+      identifier = "com.slack.lint.compose:compose-lints",
+      feedbackUrl = "https://github.com/slackhq/compose-lints/issues",
+    )
 
   override val api: Int = CURRENT_API
   override val minApi: Int = 13 // 7.3.0-alpha02
