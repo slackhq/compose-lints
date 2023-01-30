@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  # Only run push on main
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '*.md'
+  # Always run on PRs
+  pull_request:
+
+concurrency:
+  group: '${{ github.head_ref }}-${{ github.workflow }}'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Install JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '19'
+
+      - name: Build
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: check
+
+      - name: (Fail-only) Upload build reports
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: reports
+          path: |
+            **/build/reports/*
+
+      - name: Publish snapshot (main branch only)
+        if: github.repository == 'slackhq/slack-lint-checks' && github.ref == 'refs/heads/main'
+        run: ./gradlew publish -PmavenCentralUsername=${{ secrets.SONATYPEUSERNAME }} -PmavenCentralPassword=${{ secrets.SONATYPEPASSWORD }}
