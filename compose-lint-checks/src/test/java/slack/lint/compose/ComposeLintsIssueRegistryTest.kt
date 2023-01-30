@@ -11,7 +11,9 @@ class ComposeLintsIssueRegistryTest : BaseSlackLintTest() {
   fun ensureUniqueIds() {
     val issues = ComposeLintsIssueRegistry().issues
     if (issues.distinctBy { it.id }.size != issues.size) {
-      fail("Duplicate issue IDs found!\n${issues.groupBy { it.id }.filter { it.value.size > 1 }.entries.joinToString("\n") { (key, value) -> "${key}=${value.map { it.implementation.detectorClass.simpleName }}" } }")
+      fail(
+        "Duplicate issue IDs found!\n${issues.groupBy { it.id }.filter { it.value.size > 1 }.entries.joinToString("\n") { (key, value) -> "${key}=${value.map { it.implementation.detectorClass.simpleName }}" } }"
+      )
     }
   }
 
