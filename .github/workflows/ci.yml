@@ -44,5 +44,5 @@ jobs:
             **/build/reports/*
 
       - name: Publish snapshot (main branch only)
-        if: github.repository == 'slackhq/slack-lint-checks' && github.ref == 'refs/heads/main'
+        if: github.repository == 'slackhq/compose-lints' && github.ref == 'refs/heads/main'
         run: ./gradlew publish -PmavenCentralUsername=${{ secrets.SONATYPEUSERNAME }} -PmavenCentralPassword=${{ secrets.SONATYPEPASSWORD }}
