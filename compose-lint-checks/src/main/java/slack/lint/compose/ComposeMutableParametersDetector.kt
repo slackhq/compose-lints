@@ -17,7 +17,7 @@ class ComposeMutableParametersDetector : ComposableFunctionDetector(), SourceCod
   companion object {
     val ISSUE =
       Issue.create(
-        id = "ComposeModifierMissing",
+        id = "ComposeMutableParameters",
         briefDescription = "Mutable objects in Compose will break state",
         explanation =
           """

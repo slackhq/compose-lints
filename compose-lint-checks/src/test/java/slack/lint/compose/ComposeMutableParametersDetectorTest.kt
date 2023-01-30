@@ -46,22 +46,22 @@ class ComposeMutableParametersDetectorTest : BaseSlackLintTest() {
         """
           src/test.kt:2: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.
           Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.
-          See https://twitter.github.io/compose-rules/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          See https://twitter.github.io/compose-rules/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeMutableParameters]
           fun Something(a: MutableState<String>) {}
               ~~~~~~~~~
           src/test.kt:4: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.
           Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.
-          See https://twitter.github.io/compose-rules/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          See https://twitter.github.io/compose-rules/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeMutableParameters]
           fun Something(a: ArrayList<String>) {}
               ~~~~~~~~~
           src/test.kt:6: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.
           Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.
-          See https://twitter.github.io/compose-rules/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          See https://twitter.github.io/compose-rules/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeMutableParameters]
           fun Something(a: HashSet<String>) {}
               ~~~~~~~~~
           src/test.kt:8: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.
           Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.
-          See https://twitter.github.io/compose-rules/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          See https://twitter.github.io/compose-rules/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeMutableParameters]
           fun Something(a: MutableMap<String, String>) {}
               ~~~~~~~~~
           4 errors, 0 warnings
