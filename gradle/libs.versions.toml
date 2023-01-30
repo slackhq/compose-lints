@@ -2,7 +2,8 @@
 kotlin = "1.8.0"
 ktfmt = "0.42"
 jvmTarget = "11"
-lint = "31.1.0-alpha01"
+lint = "30.4.0"
+lint-latest = "31.1.0-alpha02"
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.21.0" }
@@ -18,11 +19,9 @@ autoService-ksp = "dev.zacsweers.autoservice:auto-service-ksp:1.0.0"
 junit = "junit:junit:4.13.2"
 ktfmt = { module = "com.facebook:ktfmt", version.ref = "ktfmt" }
 lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "lint" }
-lint-checks = { module = "com.android.tools.lint:lint-checks", version.ref = "lint" }
 lint = { module = "com.android.tools.lint:lint", version.ref = "lint" }
 lint-tests = { module = "com.android.tools.lint:lint-tests", version.ref = "lint" }
 lint-testUtils = { module = "com.android.tools:testutils", version.ref = "lint" }
 
 [bundles]
-lintApi = ["lint-api", "lint-checks"]
 lintTest = ["lint", "lint-tests", "lint-testUtils"]

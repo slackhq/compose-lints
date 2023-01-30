@@ -20,7 +20,7 @@ lint {
 }
 
 dependencies {
-  compileOnly(libs.bundles.lintApi)
+  compileOnly(libs.lint.api)
   ksp(libs.autoService.ksp)
   implementation(libs.autoService.annotations)
   testImplementation(libs.bundles.lintTest)
@@ -29,9 +29,8 @@ dependencies {
 
 tasks.withType<KotlinCompile>().configureEach {
   kotlinOptions {
-    // Lint 8.1.0-alpha01 forces Kotlin (regardless of what version the project uses), so this
-    // forces a lower
-    // language level for now. Similar to `targetCompatibility` for Java.
+    // Lint forces Kotlin (regardless of what version the project uses), so this
+    // forces a lower language level for now. Similar to `targetCompatibility` for Java.
     apiVersion = "1.7"
     languageVersion = "1.7"
   }
