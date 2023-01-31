@@ -65,27 +65,27 @@ class ComposeParameterOrderDetectorTest : BaseSlackLintTest() {
         """
           src/test.kt:1: Error: Parameters in a composable function should be ordered following this pattern: params without defaults, modifiers, params with defaults and optionally, a trailing function that might not have a default param.
           Current params are: [modifier: Modifier = Modifier, other: String, other2: String] but should be [other: String, other2: String, modifier: Modifier = Modifier].
-          See https://twitter.github.io/compose-rules/rules/#ordering-composable-parameters-properly for more information. [ComposeModifierWithoutDefault]
+          See https://twitter.github.io/compose-rules/rules/#ordering-composable-parameters-properly for more information. [ComposeParameterOrder]
           @Composable
           ^
           src/test.kt:4: Error: Parameters in a composable function should be ordered following this pattern: params without defaults, modifiers, params with defaults and optionally, a trailing function that might not have a default param.
           Current params are: [text: String = "deffo", modifier: Modifier = Modifier] but should be [modifier: Modifier = Modifier, text: String = "deffo"].
-          See https://twitter.github.io/compose-rules/rules/#ordering-composable-parameters-properly for more information. [ComposeModifierWithoutDefault]
+          See https://twitter.github.io/compose-rules/rules/#ordering-composable-parameters-properly for more information. [ComposeParameterOrder]
           @Composable
           ^
           src/test.kt:7: Error: Parameters in a composable function should be ordered following this pattern: params without defaults, modifiers, params with defaults and optionally, a trailing function that might not have a default param.
           Current params are: [modifier: Modifier = Modifier, text: String = "123", modifier2: Modifier = Modifier] but should be [modifier: Modifier = Modifier, modifier2: Modifier = Modifier, text: String = "123"].
-          See https://twitter.github.io/compose-rules/rules/#ordering-composable-parameters-properly for more information. [ComposeModifierWithoutDefault]
+          See https://twitter.github.io/compose-rules/rules/#ordering-composable-parameters-properly for more information. [ComposeParameterOrder]
           @Composable
           ^
           src/test.kt:10: Error: Parameters in a composable function should be ordered following this pattern: params without defaults, modifiers, params with defaults and optionally, a trailing function that might not have a default param.
           Current params are: [text: String = "123", modifier: Modifier = Modifier, lambda: () -> Unit] but should be [modifier: Modifier = Modifier, text: String = "123", lambda: () -> Unit].
-          See https://twitter.github.io/compose-rules/rules/#ordering-composable-parameters-properly for more information. [ComposeModifierWithoutDefault]
+          See https://twitter.github.io/compose-rules/rules/#ordering-composable-parameters-properly for more information. [ComposeParameterOrder]
           @Composable
           ^
           src/test.kt:13: Error: Parameters in a composable function should be ordered following this pattern: params without defaults, modifiers, params with defaults and optionally, a trailing function that might not have a default param.
           Current params are: [text1: String, m2: Modifier = Modifier, modifier: Modifier = Modifier, trailing: () -> Unit] but should be [text1: String, modifier: Modifier = Modifier, m2: Modifier = Modifier, trailing: () -> Unit].
-          See https://twitter.github.io/compose-rules/rules/#ordering-composable-parameters-properly for more information. [ComposeModifierWithoutDefault]
+          See https://twitter.github.io/compose-rules/rules/#ordering-composable-parameters-properly for more information. [ComposeParameterOrder]
           @Composable
           ^
           5 errors, 0 warnings

@@ -33,7 +33,7 @@ constructor(
 
     private val ISSUE_UPPERCASE =
       Issue.create(
-          id = "ComposeNaming",
+          id = "ComposeNamingUppercase",
           briefDescription = "Unit Composables should be uppercase",
           explanation =
             """
@@ -50,7 +50,7 @@ constructor(
 
     private val ISSUE_LOWERCASE =
       Issue.create(
-          id = "ComposeNaming",
+          id = "ComposeNamingLowercase",
           briefDescription = "Value-returning Composables should be lowercase",
           explanation =
             """

@@ -37,7 +37,7 @@ class ComposeParameterOrderDetector : ComposableFunctionDetector(), SourceCodeSc
 
     val ISSUE =
       Issue.create(
-        id = "ComposeModifierWithoutDefault",
+        id = "ComposeParameterOrder",
         briefDescription = "Composable function parameters should be ordered",
         explanation = "This is replaced when reported",
         category = Category.PRODUCTIVITY,
