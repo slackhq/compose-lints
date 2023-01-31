@@ -33,11 +33,11 @@ class ComposeUnstableCollectionsDetector : ComposableFunctionDetector(), SourceC
     val ISSUE =
       Issue.create(
         id = "ComposeUnstableCollections",
-        briefDescription = "Immutable collections should be used in Composables",
+        briefDescription = "Immutable collections should ideally be used in Composables",
         explanation = "This is replaced when reported",
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
-        severity = Severity.ERROR,
+        severity = Severity.WARNING,
         implementation = sourceImplementation<ComposeUnstableCollectionsDetector>()
       )
   }
