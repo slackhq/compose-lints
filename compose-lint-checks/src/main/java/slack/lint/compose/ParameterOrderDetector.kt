@@ -15,7 +15,7 @@ import slack.lint.compose.util.isModifier
 import slack.lint.compose.util.runIf
 import slack.lint.compose.util.sourceImplementation
 
-class ComposeParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
+class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
   companion object {
     fun createErrorMessage(
@@ -43,7 +43,7 @@ class ComposeParameterOrderDetector : ComposableFunctionDetector(), SourceCodeSc
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<ComposeParameterOrderDetector>()
+        implementation = sourceImplementation<ParameterOrderDetector>()
       )
   }
 

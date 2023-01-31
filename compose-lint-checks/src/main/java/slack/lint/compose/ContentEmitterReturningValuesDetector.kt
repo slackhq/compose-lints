@@ -22,7 +22,7 @@ import slack.lint.compose.util.hasReceiverType
 import slack.lint.compose.util.isComposable
 import slack.lint.compose.util.sourceImplementation
 
-class ComposeContentEmitterReturningValuesDetector
+class ContentEmitterReturningValuesDetector
 @JvmOverloads
 constructor(
   private val contentEmitterOption: ContentEmitterLintOption =
@@ -46,7 +46,7 @@ constructor(
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ComposeContentEmitterReturningValuesDetector>()
+          implementation = sourceImplementation<ContentEmitterReturningValuesDetector>()
         )
         .setOptions(listOf(CONTENT_EMITTER_OPTION))
   }

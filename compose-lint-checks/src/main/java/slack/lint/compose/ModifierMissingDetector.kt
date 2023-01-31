@@ -19,7 +19,7 @@ import slack.lint.compose.util.modifierParameter
 import slack.lint.compose.util.returnsValue
 import slack.lint.compose.util.sourceImplementation
 
-class ComposeModifierMissingDetector
+class ModifierMissingDetector
 @JvmOverloads
 constructor(
   private val contentEmitterOption: ContentEmitterLintOption =
@@ -42,7 +42,7 @@ constructor(
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ComposeModifierMissingDetector>()
+          implementation = sourceImplementation<ModifierMissingDetector>()
         )
         .setOptions(listOf(CONTENT_EMITTER_OPTION))
   }

@@ -24,7 +24,7 @@ import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.modifierParameter
 import slack.lint.compose.util.sourceImplementation
 
-class ComposeModifierReusedDetector
+class ModifierReusedDetector
 @JvmOverloads
 constructor(
   private val contentEmitterOption: ContentEmitterLintOption =
@@ -48,7 +48,7 @@ constructor(
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ComposeModifierReusedDetector>()
+          implementation = sourceImplementation<ModifierReusedDetector>()
         )
         .setOptions(listOf(CONTENT_EMITTER_OPTION))
   }

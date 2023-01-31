@@ -17,7 +17,7 @@ import slack.lint.compose.util.isPreview
 import slack.lint.compose.util.isPreviewAnnotation
 import slack.lint.compose.util.sourceImplementation
 
-class ComposePreviewNamingDetector : Detector(), SourceCodeScanner {
+class PreviewNamingDetector : Detector(), SourceCodeScanner {
 
   companion object {
     fun createMessage(count: Int, suggestedSuffix: String): String =
@@ -35,7 +35,7 @@ class ComposePreviewNamingDetector : Detector(), SourceCodeScanner {
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<ComposePreviewNamingDetector>()
+        implementation = sourceImplementation<PreviewNamingDetector>()
       )
   }
 

@@ -15,7 +15,7 @@ import slack.lint.compose.util.hasReceiverType
 import slack.lint.compose.util.returnsValue
 import slack.lint.compose.util.sourceImplementation
 
-class ComposeNamingDetector
+class ComposableFunctionNamingDetector
 @JvmOverloads
 constructor(
   private val allowedNames: StringSetLintOption =
@@ -44,7 +44,7 @@ constructor(
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ComposeNamingDetector>()
+          implementation = sourceImplementation<ComposableFunctionNamingDetector>()
         )
         .setOptions(listOf(ALLOWED_COMPOSABLE_FUNCTION_NAMES))
 
@@ -61,7 +61,7 @@ constructor(
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ComposeNamingDetector>()
+          implementation = sourceImplementation<ComposableFunctionNamingDetector>()
         )
         .setOptions(listOf(ALLOWED_COMPOSABLE_FUNCTION_NAMES))
 

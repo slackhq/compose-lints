@@ -8,10 +8,10 @@ import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class ComposeModifierReusedDetectorTest : BaseSlackLintTest() {
+class ModifierReusedDetectorTest : BaseSlackLintTest() {
 
-  override fun getDetector(): Detector = ComposeModifierReusedDetector()
-  override fun getIssues(): List<Issue> = listOf(ComposeModifierReusedDetector.ISSUE)
+  override fun getDetector(): Detector = ModifierReusedDetector()
+  override fun getIssues(): List<Issue> = listOf(ModifierReusedDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs
   override val skipTestModes: Array<TestMode> =

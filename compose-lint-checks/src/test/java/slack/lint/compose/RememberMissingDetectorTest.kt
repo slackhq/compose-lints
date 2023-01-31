@@ -8,10 +8,10 @@ import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class ComposeRememberMissingDetectorTest : BaseSlackLintTest() {
+class RememberMissingDetectorTest : BaseSlackLintTest() {
 
-  override fun getDetector(): Detector = ComposeRememberMissingDetector()
-  override fun getIssues(): List<Issue> = listOf(ComposeRememberMissingDetector.ISSUE)
+  override fun getDetector(): Detector = RememberMissingDetector()
+  override fun getIssues(): List<Issue> = listOf(RememberMissingDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs
   override val skipTestModes: Array<TestMode> = arrayOf(TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)

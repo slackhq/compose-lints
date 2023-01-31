@@ -24,18 +24,18 @@ class ComposeLintsIssueRegistry : IssueRegistry() {
   @Suppress("SpreadOperator")
   override val issues: List<Issue> =
     listOf(
-      *ComposeNamingDetector.ISSUES,
-      ComposeCompositionLocalUsageDetector.ISSUE,
-      ComposeContentEmitterReturningValuesDetector.ISSUE,
-      ComposeModifierMissingDetector.ISSUE,
-      ComposeModifierReusedDetector.ISSUE,
-      ComposeModifierWithoutDefaultDetector.ISSUE,
-      ComposeMultipleContentEmittersDetector.ISSUE,
-      ComposeMutableParametersDetector.ISSUE,
-      ComposeParameterOrderDetector.ISSUE,
-      ComposePreviewNamingDetector.ISSUE,
-      ComposePreviewPublicDetector.ISSUE,
-      ComposeRememberMissingDetector.ISSUE,
-      ComposeUnstableCollectionsDetector.ISSUE,
+      *ComposableFunctionNamingDetector.ISSUES,
+      CompositionLocalUsageDetector.ISSUE,
+      ContentEmitterReturningValuesDetector.ISSUE,
+      ModifierMissingDetector.ISSUE,
+      ModifierReusedDetector.ISSUE,
+      ModifierWithoutDefaultDetector.ISSUE,
+      MultipleContentEmittersDetector.ISSUE,
+      MutableParametersDetector.ISSUE,
+      ParameterOrderDetector.ISSUE,
+      PreviewNamingDetector.ISSUE,
+      PreviewPublicDetector.ISSUE,
+      RememberMissingDetector.ISSUE,
+      UnstableCollectionsDetector.ISSUE,
     )
 }

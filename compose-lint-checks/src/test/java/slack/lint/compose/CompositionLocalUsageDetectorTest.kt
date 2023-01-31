@@ -8,14 +8,14 @@ import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.junit.Test
 
-class ComposeCompositionLocalUsageDetectorTest : BaseSlackLintTest() {
+class CompositionLocalUsageDetectorTest : BaseSlackLintTest() {
 
-  override fun getDetector(): Detector = ComposeCompositionLocalUsageDetector()
-  override fun getIssues(): List<Issue> = listOf(ComposeCompositionLocalUsageDetector.ISSUE)
+  override fun getDetector(): Detector = CompositionLocalUsageDetector()
+  override fun getIssues(): List<Issue> = listOf(CompositionLocalUsageDetector.ISSUE)
 
   override fun lint(): TestLintTask {
     return super.lint()
-      .configureOption(ComposeCompositionLocalUsageDetector.ALLOW_LIST, "LocalBanana,LocalPotato")
+      .configureOption(CompositionLocalUsageDetector.ALLOW_LIST, "LocalBanana,LocalPotato")
   }
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs

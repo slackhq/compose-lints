@@ -9,15 +9,15 @@ import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class ComposeMultipleContentEmittersDetectorTest : BaseSlackLintTest() {
+class ContentEmitterReturningValuesDetectorTest : BaseSlackLintTest() {
 
-  override fun getDetector(): Detector = ComposeMultipleContentEmittersDetector()
-  override fun getIssues(): List<Issue> = listOf(ComposeMultipleContentEmittersDetector.ISSUE)
+  override fun getDetector(): Detector = ContentEmitterReturningValuesDetector()
+  override fun getIssues(): List<Issue> = listOf(ContentEmitterReturningValuesDetector.ISSUE)
 
   override fun lint(): TestLintTask {
     return super.lint()
       .configureOption(
-        ComposeMultipleContentEmittersDetector.CONTENT_EMITTER_OPTION,
+        ContentEmitterReturningValuesDetector.CONTENT_EMITTER_OPTION,
         "Potato,Banana"
       )
   }
@@ -89,12 +89,14 @@ class ComposeMultipleContentEmittersDetectorTest : BaseSlackLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:1: Error: Composable functions should only be emitting content into the composition from one source at their top level.
-          See https://twitter.github.io/compose-rules/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+          src/test.kt:1: Error: Composable functions should either emit content into the composition or return a value, but not both.
+          If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller.
+          See https://twitter.github.io/compose-rules/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
           @Composable
           ^
-          src/test.kt:6: Error: Composable functions should only be emitting content into the composition from one source at their top level.
-          See https://twitter.github.io/compose-rules/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+          src/test.kt:6: Error: Composable functions should either emit content into the composition or return a value, but not both.
+          If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller.
+          See https://twitter.github.io/compose-rules/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
           @Composable
           ^
           2 errors, 0 warnings
@@ -138,12 +140,14 @@ class ComposeMultipleContentEmittersDetectorTest : BaseSlackLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:5: Error: Composable functions should only be emitting content into the composition from one source at their top level.
-          See https://twitter.github.io/compose-rules/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+          src/test.kt:5: Error: Composable functions should either emit content into the composition or return a value, but not both.
+          If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller.
+          See https://twitter.github.io/compose-rules/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
           @Composable
           ^
-          src/test.kt:18: Error: Composable functions should only be emitting content into the composition from one source at their top level.
-          See https://twitter.github.io/compose-rules/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+          src/test.kt:18: Error: Composable functions should either emit content into the composition or return a value, but not both.
+          If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller.
+          See https://twitter.github.io/compose-rules/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
           @Composable
           ^
           2 errors, 0 warnings
@@ -175,8 +179,9 @@ class ComposeMultipleContentEmittersDetectorTest : BaseSlackLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:1: Error: Composable functions should only be emitting content into the composition from one source at their top level.
-          See https://twitter.github.io/compose-rules/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+          src/test.kt:1: Error: Composable functions should either emit content into the composition or return a value, but not both.
+          If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller.
+          See https://twitter.github.io/compose-rules/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
           @Composable
           ^
           1 errors, 0 warnings

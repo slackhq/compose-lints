@@ -13,7 +13,7 @@ import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isTypeMutable
 import slack.lint.compose.util.sourceImplementation
 
-class ComposeMutableParametersDetector : ComposableFunctionDetector(), SourceCodeScanner {
+class MutableParametersDetector : ComposableFunctionDetector(), SourceCodeScanner {
   companion object {
     val ISSUE =
       Issue.create(
@@ -28,7 +28,7 @@ class ComposeMutableParametersDetector : ComposableFunctionDetector(), SourceCod
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<ComposeMutableParametersDetector>()
+        implementation = sourceImplementation<MutableParametersDetector>()
       )
   }
 
