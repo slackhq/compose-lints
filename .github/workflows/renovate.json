@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "branchPrefix": "test-renovate/",
+  "gitAuthor": "OSS-Bot <svc-oss-bot@slack-corp.com>",
+  "repositories": [
+    "slackhq/compose-lints"
+  ],
+  "prHourlyLimit": 20,
+  "packageRules": [
+    {
+      "matchPackageNames": ["renovatebot/github-action"],
+      "extends": ["schedule:monthly"]
+    }
+  ]
+}
