@@ -18,7 +18,7 @@ class ComposeUnstableCollectionsDetectorTest : BaseSlackLintTest() {
     arrayOf(TestMode.PARENTHESIZED, TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS, TestMode.WHITESPACE)
 
   @Test
-  fun `errors when a Composable has a Collection List Set Map parameter`() {
+  fun `warnings when a Composable has a Collection List Set Map parameter`() {
     @Language("kotlin")
     val code =
       """
@@ -39,27 +39,27 @@ class ComposeUnstableCollectionsDetectorTest : BaseSlackLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:2: Error: The Compose Compiler cannot infer the stability of a parameter if a Collection<String> is used in it, even if the item type is stable.
+          src/test.kt:2: Warning: The Compose Compiler cannot infer the stability of a parameter if a Collection<String> is used in it, even if the item type is stable.
           You should use Kotlinx Immutable Collections instead: a: ImmutableCollection<String> or create an @Immutable wrapper for this class: @Immutable data class ACollection(val items: Collection<String>)
           See https://twitter.github.io/compose-rules/rules/#avoid-using-unstable-collections for more information. [ComposeUnstableCollections]
           fun Something(a: Collection<String>) {}
                            ~~~~~~~~~~~~~~~~~~
-          src/test.kt:4: Error: The Compose Compiler cannot infer the stability of a parameter if a List<String> is used in it, even if the item type is stable.
+          src/test.kt:4: Warning: The Compose Compiler cannot infer the stability of a parameter if a List<String> is used in it, even if the item type is stable.
           You should use Kotlinx Immutable Collections instead: a: ImmutableList<String> or create an @Immutable wrapper for this class: @Immutable data class AList(val items: List<String>)
           See https://twitter.github.io/compose-rules/rules/#avoid-using-unstable-collections for more information. [ComposeUnstableCollections]
           fun Something(a: List<String>) {}
                            ~~~~~~~~~~~~
-          src/test.kt:6: Error: The Compose Compiler cannot infer the stability of a parameter if a Set<String> is used in it, even if the item type is stable.
+          src/test.kt:6: Warning: The Compose Compiler cannot infer the stability of a parameter if a Set<String> is used in it, even if the item type is stable.
           You should use Kotlinx Immutable Collections instead: a: ImmutableSet<String> or create an @Immutable wrapper for this class: @Immutable data class ASet(val items: Set<String>)
           See https://twitter.github.io/compose-rules/rules/#avoid-using-unstable-collections for more information. [ComposeUnstableCollections]
           fun Something(a: Set<String>) {}
                            ~~~~~~~~~~~
-          src/test.kt:8: Error: The Compose Compiler cannot infer the stability of a parameter if a Map<String, Int> is used in it, even if the item type is stable.
+          src/test.kt:8: Warning: The Compose Compiler cannot infer the stability of a parameter if a Map<String, Int> is used in it, even if the item type is stable.
           You should use Kotlinx Immutable Collections instead: a: ImmutableMap<String, Int> or create an @Immutable wrapper for this class: @Immutable data class AMap(val items: Map<String, Int>)
           See https://twitter.github.io/compose-rules/rules/#avoid-using-unstable-collections for more information. [ComposeUnstableCollections]
           fun Something(a: Map<String, Int>) {}
                            ~~~~~~~~~~~~~~~~
-          4 errors, 0 warnings
+          0 errors, 4 warnings
         """
           .trimIndent()
       )
