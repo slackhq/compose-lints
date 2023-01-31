@@ -14,7 +14,7 @@ import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.sourceImplementation
 
-class ComposeRememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner {
+class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
   companion object {
     private fun errorMessage(name: String): String =
@@ -37,7 +37,7 @@ class ComposeRememberMissingDetector : ComposableFunctionDetector(), SourceCodeS
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<ComposeRememberMissingDetector>()
+        implementation = sourceImplementation<RememberMissingDetector>()
       )
   }
 

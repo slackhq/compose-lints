@@ -8,10 +8,10 @@ import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class ComposeParameterOrderDetectorTest : BaseSlackLintTest() {
+class ParameterOrderDetectorTest : BaseSlackLintTest() {
 
-  override fun getDetector(): Detector = ComposeParameterOrderDetector()
-  override fun getIssues(): List<Issue> = listOf(ComposeParameterOrderDetector.ISSUE)
+  override fun getDetector(): Detector = ParameterOrderDetector()
+  override fun getIssues(): List<Issue> = listOf(ParameterOrderDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs
   override val skipTestModes: Array<TestMode> = arrayOf(TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)

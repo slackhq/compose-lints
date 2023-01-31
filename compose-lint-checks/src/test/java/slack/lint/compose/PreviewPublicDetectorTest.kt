@@ -8,10 +8,10 @@ import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class ComposePreviewPublicDetectorTest : BaseSlackLintTest() {
+class PreviewPublicDetectorTest : BaseSlackLintTest() {
 
-  override fun getDetector(): Detector = ComposePreviewPublicDetector()
-  override fun getIssues(): List<Issue> = listOf(ComposePreviewPublicDetector.ISSUE)
+  override fun getDetector(): Detector = PreviewPublicDetector()
+  override fun getIssues(): List<Issue> = listOf(PreviewPublicDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs
   override val skipTestModes: Array<TestMode> = arrayOf(TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
@@ -58,7 +58,7 @@ class ComposePreviewPublicDetectorTest : BaseSlackLintTest() {
       """
         .trimIndent()
     lint()
-      .configureOption(ComposePreviewPublicDetector.PREVIEW_PUBLIC_ONLY_IF_PARAMS_OPTION, "false")
+      .configureOption(PreviewPublicDetector.PREVIEW_PUBLIC_ONLY_IF_PARAMS_OPTION, "false")
       .files(kotlin(code))
       .allowCompilationErrors()
       .run()

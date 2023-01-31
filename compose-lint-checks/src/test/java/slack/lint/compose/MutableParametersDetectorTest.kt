@@ -8,10 +8,10 @@ import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class ComposeMutableParametersDetectorTest : BaseSlackLintTest() {
+class MutableParametersDetectorTest : BaseSlackLintTest() {
 
-  override fun getDetector(): Detector = ComposeMutableParametersDetector()
-  override fun getIssues(): List<Issue> = listOf(ComposeMutableParametersDetector.ISSUE)
+  override fun getDetector(): Detector = MutableParametersDetector()
+  override fun getIssues(): List<Issue> = listOf(MutableParametersDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs
   override val skipTestModes: Array<TestMode> =

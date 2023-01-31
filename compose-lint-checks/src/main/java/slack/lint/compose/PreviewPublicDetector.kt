@@ -21,7 +21,7 @@ import slack.lint.compose.util.isPreview
 import slack.lint.compose.util.isPreviewParameter
 import slack.lint.compose.util.sourceImplementation
 
-class ComposePreviewPublicDetector
+class PreviewPublicDetector
 @JvmOverloads
 constructor(
   private val previewPublicOnlyIfParams: BooleanLintOption =
@@ -49,7 +49,7 @@ constructor(
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ComposePreviewPublicDetector>()
+          implementation = sourceImplementation<PreviewPublicDetector>()
         )
         .setOptions(listOf(PREVIEW_PUBLIC_ONLY_IF_PARAMS_OPTION))
   }

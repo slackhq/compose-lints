@@ -19,7 +19,7 @@ import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.declaresCompositionLocal
 import slack.lint.compose.util.sourceImplementation
 
-class ComposeCompositionLocalUsageDetector : Detector(), SourceCodeScanner {
+class CompositionLocalUsageDetector : Detector(), SourceCodeScanner {
 
   companion object {
 
@@ -43,7 +43,7 @@ class ComposeCompositionLocalUsageDetector : Detector(), SourceCodeScanner {
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ComposeCompositionLocalUsageDetector>()
+          implementation = sourceImplementation<CompositionLocalUsageDetector>()
         )
         .setOptions(listOf(ALLOW_LIST))
 

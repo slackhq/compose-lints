@@ -9,17 +9,20 @@ import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class ComposeNamingDetectorTest : BaseSlackLintTest() {
+class ComposableFunctionNamingDetectorTest : BaseSlackLintTest() {
 
-  override fun getDetector(): Detector = ComposeNamingDetector()
-  override fun getIssues(): List<Issue> = ComposeNamingDetector.ISSUES.toList()
+  override fun getDetector(): Detector = ComposableFunctionNamingDetector()
+  override fun getIssues(): List<Issue> = ComposableFunctionNamingDetector.ISSUES.toList()
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs
   override val skipTestModes: Array<TestMode> = arrayOf(TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
 
   override fun lint(): TestLintTask {
     return super.lint()
-      .configureOption(ComposeNamingDetector.ALLOWED_COMPOSABLE_FUNCTION_NAMES, ".*Presenter")
+      .configureOption(
+        ComposableFunctionNamingDetector.ALLOWED_COMPOSABLE_FUNCTION_NAMES,
+        ".*Presenter"
+      )
   }
 
   @Test

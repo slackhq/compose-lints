@@ -19,7 +19,7 @@ import slack.lint.compose.util.isOverride
 import slack.lint.compose.util.lastChildLeafOrSelf
 import slack.lint.compose.util.sourceImplementation
 
-class ComposeModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeScanner {
+class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
   companion object {
     val ISSUE =
@@ -34,7 +34,7 @@ class ComposeModifierWithoutDefaultDetector : ComposableFunctionDetector(), Sour
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<ComposeModifierWithoutDefaultDetector>()
+        implementation = sourceImplementation<ModifierWithoutDefaultDetector>()
       )
   }
 

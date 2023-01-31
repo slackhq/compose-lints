@@ -13,7 +13,7 @@ import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isTypeUnstableCollection
 import slack.lint.compose.util.sourceImplementation
 
-class ComposeUnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScanner {
+class UnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
   companion object {
     private val DiamondRegex by lazy(LazyThreadSafetyMode.NONE) { Regex("<.*>\\??") }
@@ -38,7 +38,7 @@ class ComposeUnstableCollectionsDetector : ComposableFunctionDetector(), SourceC
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.WARNING,
-        implementation = sourceImplementation<ComposeUnstableCollectionsDetector>()
+        implementation = sourceImplementation<UnstableCollectionsDetector>()
       )
   }
 
