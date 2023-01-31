@@ -3,7 +3,7 @@ slack-lints
 
 This repository contains a collection of custom lint checks for Jetpack Compose.
 
-This project is a spiritual successor to the original twitter/compose-rules project, with ports of those rules for Android lint.
+This project is a spiritual successor to the original [twitter/compose-rules](https://github.com/twitter/compose-rules) project, with ports of those rules for Android lint.
 
 License
 --------
