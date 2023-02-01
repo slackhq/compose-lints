@@ -7,7 +7,7 @@ These checks are to ensure that your composables don't fall into common pitfalls
 
 ## Why
 
-_from twitter/compose-rules_
+> _Originally from twitter/compose-rules._
 
 It can be challenging for big teams to start adopting Compose, particularly because not everyone will start at same time or with the same patterns. Twitter tried to ease the pain by creating a set of Compose static checks.
 
