@@ -6,15 +6,15 @@ lint = "30.4.0"
 lint-latest = "31.1.0-alpha02"
 
 [plugins]
-detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.21.0" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.22.0" }
 dokka = { id = "org.jetbrains.dokka", version = "1.7.20" }
 lint = { id = "com.android.lint", version = "7.4.0" }
-ksp = { id = "com.google.devtools.ksp", version = "1.8.0-1.0.8" }
+ksp = { id = "com.google.devtools.ksp", version = "1.8.0-1.0.9" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.24.0" }
 spotless = { id = "com.diffplug.spotless", version = "6.12.0" }
 
 [libraries]
-autoService-annotations = "com.google.auto.service:auto-service-annotations:1.0"
+autoService-annotations = "com.google.auto.service:auto-service-annotations:1.0.1"
 autoService-ksp = "dev.zacsweers.autoservice:auto-service-ksp:1.0.0"
 junit = "junit:junit:4.13.2"
 ktfmt = { module = "com.facebook:ktfmt", version.ref = "ktfmt" }
