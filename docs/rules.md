@@ -13,21 +13,11 @@ Instead, pass down the relevant data to the function, and optional lambdas for c
 
 More information: [State and Jetpack Compose](https://developer.android.com/jetpack/compose/state)
 
-Related rule: [compose-lints:vm-forwarding-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ViewModelForwardingDetector.kt)
-
 ### State should be remembered in composables
 
 Be careful when using `mutableStateOf` (or any of the other state builders) to make sure that you `remember` the instance. If you don't `remember` the state instance, a new state instance will be created when the function is recomposed.
 
-Related rule: [compose-lints:remember-missing-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/RememberMissingDetector.kt)
-
-### Use Immutable annotation whenever possible
-
-The Compose Compiler tries to infer immutability and stability on value classes, but sometimes it gets it wrong, which then means that your UI will be doing more work than it needs. To force the compiler to see a class as 'immutable' you can apply the `@Immutable` annotation to the class.
-
-More info: [Immutable docs](https://developer.android.com/reference/kotlin/androidx/compose/runtime/Immutable) and [Composable metrics blog post](https://chris.banes.dev/composable-metrics/)
-
-Related rule: TBD
+Related rule: [`ComposeRememberMissing`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/RememberMissingDetector.kt)
 
 ### Avoid using unstable collections
 
@@ -58,7 +48,7 @@ val list: StringList = StringList(yourList)
 > **Note**: It is preferred to use Kotlinx Immutable Collections for this. As you can see, the wrapped case only includes the immutability promise with the annotation, but the underlying List is still mutable.
 More info: [Jetpack Compose Stability Explained](https://medium.com/androiddevelopers/jetpack-compose-stability-explained-79c10db270c8), [Kotlinx Immutable Collections](https://github.com/Kotlin/kotlinx.collections.immutable)
 
-Related rule: [compose-lints:unstable-collections](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/UnstableCollectionsDetector.kt)
+Related rule: [`ComposeUnstableCollections`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/UnstableCollectionsDetector.kt)
 
 ## Composables
 
@@ -72,7 +62,7 @@ There are a few reasons for this, but the main one is that it is very easy to us
 
 Passing `ArrayList<T>`, `MutableState<T>`, `ViewModel` are common examples of this (but not limited to those types).
 
-Related rule: [compose-lints:mutable-params-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MutableParametersDetector.kt)
+Related rule: [`ComposeMutableParameters`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MutableParametersDetector.kt)
 
 ### Do not emit content and return a result
 
@@ -82,13 +72,16 @@ If a composable should offer additional control surfaces to its caller, those co
 
 More info: [Compose API guidelines](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#emit-xor-return-a-value)
 
-Related rule: [compose-lints:content-emitter-returning-values-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MultipleContentEmittersDetector.kt)
+Related rule: [`ComposeMultipleContentEmitters`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MultipleContentEmittersDetector.kt)
 
-> **Note**: To add your custom composables so they are used in this rule (things like your design system composables), you can configure a `content-emitters` option in `lint.xml`.
-> ```xml
-> <issue id="ComposeMultipleContentEmitters">
->    <option name="allowed-composition-locals" value="CustomEmitter,AnotherEmitter" />
-> </issue>
+!!! note "Configuration"
+    To add your custom composables so they are used in this rule (things like your design system composables), you can configure a `content-emitters` option in `lint.xml`.
+
+    ```xml
+    <issue id="ComposeMultipleContentEmitters">
+       <option name="allowed-composition-locals" value="CustomEmitter,AnotherEmitter" />
+    </issue>
+    ```
 
 ### Do not emit multiple pieces of content
 
@@ -133,13 +126,16 @@ private fun ColumnScope.InnerContent() {
 ```
 This effectively ties the function to be called from a Column, but is still not recommended (although permitted).
 
-Related rule: [compose-lints:multiple-emitters-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MultipleContentEmittersDetector.kt)
+Related rule: [`ComposeMultipleContentEmitters`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MultipleContentEmittersDetector.kt)
 
-> **Note**: To add your custom composables so they are used in this rule (things like your design system composables), you can configure a `content-emitters` option in `lint.xml`.
-> ```xml
-> <issue id="ComposeMultipleContentEmitters">
->    <option name="allowed-composition-locals" value="CustomEmitter,AnotherEmitter" />
-> </issue>
+!!! note "Configuration"
+    To add your custom composables so they are used in this rule (things like your design system composables), you can configure a `content-emitters` option in `lint.xml`.
+
+    ```xml
+    <issue id="ComposeMultipleContentEmitters">
+       <option name="allowed-composition-locals" value="CustomEmitter,AnotherEmitter" />
+    </issue>
+    ```
 
 ### Naming multipreview annotations properly
 
@@ -147,7 +143,7 @@ Multipreview annotations should be named by using `Previews` as suffix (or `Prev
 
 More information: [Multipreview annotations](https://developer.android.com/jetpack/compose/tooling#preview-multipreview)
 
-Related rule: [compose-lints:preview-naming](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/PreviewNamingDetector.kt)
+Related rule: [`ComposePreviewNaming`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/PreviewNamingDetector.kt)
 
 ### Naming @Composable functions properly
 
@@ -157,13 +153,16 @@ However, Composable functions that return a value should start with a lowercase 
 
 More information: [Naming Unit @Composable functions as entities](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#naming-unit-composable-functions-as-entities) and [Naming @Composable functions that return values](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#naming-composable-functions-that-return-values)
 
-Related rule: [compose-lints:naming-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ComposableFunctionNamingDetector.kt)
+Related rules: [`ComposeNamingUppercase`,`ComposeNamingLowercase`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ComposableFunctionNamingDetector.kt)
 
-> **Note**: To allow certain regex patterns of names, you can configure the `allowed-composable-function-names` option in `lint.xml`.
-> ```xml
-> <issue id="ComposeNamingUppercase,ComposeNamingLowercase">
->    <option name="allowed-composable-function-names" value=".*Presenter" />
-> </issue>
+!!! note "Configuration"
+    To allow certain regex patterns of names, you can configure the `allowed-composable-function-names` option in `lint.xml`.
+     
+    ```xml
+    <issue id="ComposeNamingUppercase,ComposeNamingLowercase">
+       <option name="allowed-composable-function-names" value=".*Presenter" />
+    </issue>
+    ```
 
 ### Ordering @Composable parameters properly
 
@@ -173,7 +172,7 @@ Modifiers occupy the first optional parameter slot to set a consistent expectati
 
 More information: [Kotlin default arguments](https://kotlinlang.org/docs/functions.html#default-arguments), [Modifier docs](https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier) and [Elements accept and respect a Modifier parameter](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#why-8).
 
-Related rule: [compose-lints:param-order-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ParameterOrderDetector.kt)
+Related rule: [`ComposeParameterOrder`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ParameterOrderDetector.kt)
 
 ### Make dependencies explicit
 
@@ -183,19 +182,22 @@ Related rule: [compose-lints:param-order-check](https://github.com/slackhq/compo
 
 Although uncommon, there are [legit use cases](https://developer.android.com/jetpack/compose/compositionlocal#deciding) for them, so this rule provides an allowlist so that you can add your `CompositionLocal` names to it so that they are not flagged by the rule.
 
-Related rule: [compose-lints:compositionlocal-allowlist](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/CompositionLocalUsageDetector.kt
+Related rule: [`ComposeCompositionLocalUsage`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/CompositionLocalUsageDetector.kt
 
-> **Note**: To add your custom `CompositionLocal` to your allowlist, you can configure a `allowed-composition-locals` option in `lint.xml`.
-> ```xml
-> <issue id="ComposeCompositionLocalUsage">
->    <option name="allowed-composition-locals" value="LocalEnabled,LocalThing" />
-> </issue>
+!!! note "Configuration"
+    To add your custom `CompositionLocal` to your allowlist, you can configure a `allowed-composition-locals` option in `lint.xml`.
+
+    ```xml
+    <issue id="ComposeCompositionLocalUsage">
+       <option name="allowed-composition-locals" value="LocalEnabled,LocalThing" />
+    </issue>
+    ```
 
 ### Preview composables should not be public
 
 When a composable function exists solely because it's a `@Preview`, it doesn't need to have public visibility because it won't be used in actual UI. To prevent folks from using it unknowingly, we should restrict its visibility to `private`.
 
-Related rule: [compose-lints:preview-public-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/PreviewPublicDetector.kt)
+Related rule: [`ComposePreviewPublic`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/PreviewPublicDetector.kt)
 
 > **Note**: If you are using Detekt, this may conflict with Detekt's [UnusedPrivateMember rule](https://detekt.dev/docs/rules/style/#unusedprivatemember).
 Be sure to set Detekt's [ignoreAnnotated configuration](https://detekt.dev/docs/introduction/compose/#unusedprivatemember) to ['Preview'] for compatibility with this rule.
@@ -210,7 +212,7 @@ They are especially important for your public components, as they allow callers 
 
 More info: [Always provide a Modifier parameter](https://chris.banes.dev/posts/always-provide-a-modifier/)
 
-Related rule: [compose-lints:modifier-missing-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierMissingDetector.kt)
+Related rule: [`ComposeModifierMissing`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierMissingDetector.kt)
 
 ### Don't re-use modifiers
 
@@ -241,7 +243,7 @@ private fun InnerContent(modifier: Modifier = Modifier) {
 }
 ```
 
-Related rule: [compose-lints:modifier-reused-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierReusedDetector.kt)
+Related rule: [`ComposeModifierReused`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierReusedDetector.kt)
 
 ### Modifiers should have default parameters
 
@@ -249,4 +251,4 @@ Composables that accept a Modifier as a parameter to be applied to the whole com
 
 More info: [Modifier documentation](https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier)
 
-Related rule: [compose-lints:modifier-without-default-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierWithoutDefaultDetector.kt)
+Related rule: [`ComposeModifierWithoutDefault`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierWithoutDefaultDetector.kt)
