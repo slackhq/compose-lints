@@ -9,17 +9,17 @@ In practice, there are a few common things to look out for:
 - Do not pass ViewModels (or objects from DI) down.
 - Do not pass `State<Foo>` or `MutableState<Bar>` instances down.
 
-Instead pass down the relevant data to the function, and optional lambdas for callbacks.
+Instead, pass down the relevant data to the function, and optional lambdas for callbacks.
 
 More information: [State and Jetpack Compose](https://developer.android.com/jetpack/compose/state)
 
-Related rule: [twitter-compose:vm-forwarding-check](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposeViewModelForwarding.kt)
+Related rule: [compose-lints:vm-forwarding-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ViewModelForwardingDetector.kt)
 
 ### State should be remembered in composables
 
 Be careful when using `mutableStateOf` (or any of the other state builders) to make sure that you `remember` the instance. If you don't `remember` the state instance, a new state instance will be created when the function is recomposed.
 
-Related rule: [twitter-compose:remember-missing-check](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposeRememberMissing.kt)
+Related rule: [compose-lints:remember-missing-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/RememberMissingDetector.kt)
 
 ### Use Immutable annotation whenever possible
 
@@ -56,10 +56,9 @@ Alternatively, you can wrap your collection in an annotated stable class to mark
     val list: StringList = StringList(yourList)
 ```
 > **Note**: It is preferred to use Kotlinx Immutable Collections for this. As you can see, the wrapped case only includes the immutability promise with the annotation, but the underlying List is still mutable.
-
 More info: [Jetpack Compose Stability Explained](https://medium.com/androiddevelopers/jetpack-compose-stability-explained-79c10db270c8), [Kotlinx Immutable Collections](https://github.com/Kotlin/kotlinx.collections.immutable)
 
-Related rule: [twitter-compose:unstable-collections](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposeUnstableCollections.kt)
+Related rule: [compose-lints:unstable-collections](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/UnstableCollectionsDetector.kt)
 
 ## Composables
 
@@ -73,7 +72,7 @@ There are a few reasons for this, but the main one is that it is very easy to us
 
 Passing `ArrayList<T>`, `MutableState<T>`, `ViewModel` are common examples of this (but not limited to those types).
 
-Related rule: [twitter-compose:mutable-params-check](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposeMutableParameters.kt)
+Related rule: [compose-lints:mutable-params-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MutableParametersDetector.kt)
 
 ### Do not emit content and return a result
 
@@ -83,9 +82,13 @@ If a composable should offer additional control surfaces to its caller, those co
 
 More info: [Compose API guidelines](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#emit-xor-return-a-value)
 
-Related rule: [twitter-compose:content-emitter-returning-values-check](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposeMultipleContentEmitters.kt)
+Related rule: [compose-lints:content-emitter-returning-values-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MultipleContentEmittersDetector.kt)
 
-> **Note**: To add your custom composables so they are used in this rule (things like your design system composables), you can add `composeEmitters` to this rule config in Detekt, or `compose_emitters` to your .editorconfig in ktlint.
+> **Note**: To add your custom composables so they are used in this rule (things like your design system composables), you can configure a `content-emitters` option in `lint.xml`.
+> ```xml
+> <issue id="ComposeMultipleContentEmitters">
+>    <option name="allowed-composition-locals" value="CustomEmitter,AnotherEmitter" />
+> </issue>
 
 ### Do not emit multiple pieces of content
 
@@ -97,7 +100,6 @@ You can see an example of what not to do below. `InnerContent()` emits a number 
 Column {
     InnerContent()
 }
-
 @Composable
 private fun InnerContent() {
     Text(...)
@@ -131,17 +133,13 @@ private fun ColumnScope.InnerContent() {
 ```
 This effectively ties the function to be called from a Column, but is still not recommended (although permitted).
 
-Related rule: [twitter-compose:multiple-emitters-check](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposeMultipleContentEmitters.kt)
+Related rule: [compose-lints:multiple-emitters-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MultipleContentEmittersDetector.kt)
 
-> **Note**: To add your custom composables so they are used in this rule (things like your design system composables), you can add `composeEmitters` to this rule config in Detekt, or `compose_emitters` to your .editorconfig in ktlint.
-
-### Naming CompositionLocals properly
-
-`CompositionLocal`s should be named by using the adjective `Local` as prefix, followed by a descriptive noun that describes the value they hold. This makes it easier to know when a value comes from a `CompositionLocal`. Given that these are implicit dependencies, we should make them obvious.
-
-More information: [Naming CompositionLocals](https://android.googlesource.com/platform/frameworks/support/+/androidx-main/compose/docs/compose-api-guidelines.md#naming-compositionlocals)
-
-Related rule: [twitter-compose:compositionlocal-naming](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposeCompositionLocalNaming.kt)
+> **Note**: To add your custom composables so they are used in this rule (things like your design system composables), you can configure a `content-emitters` option in `lint.xml`.
+> ```xml
+> <issue id="ComposeMultipleContentEmitters">
+>    <option name="allowed-composition-locals" value="CustomEmitter,AnotherEmitter" />
+> </issue>
 
 ### Naming multipreview annotations properly
 
@@ -149,8 +147,7 @@ Multipreview annotations should be named by using `Previews` as suffix (or `Prev
 
 More information: [Multipreview annotations](https://developer.android.com/jetpack/compose/tooling#preview-multipreview)
 
-Related rule: [twitter-compose:preview-naming](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposePreviewNaming.kt)
-
+Related rule: [compose-lints:preview-naming](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/PreviewNamingDetector.kt)
 
 ### Naming @Composable functions properly
 
@@ -160,7 +157,13 @@ However, Composable functions that return a value should start with a lowercase 
 
 More information: [Naming Unit @Composable functions as entities](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#naming-unit-composable-functions-as-entities) and [Naming @Composable functions that return values](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#naming-composable-functions-that-return-values)
 
-Related rule: [twitter-compose:naming-check](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposeNaming.kt)
+Related rule: [compose-lints:naming-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ComposableFunctionNamingDetector.kt)
+
+> **Note**: To allow certain regex patterns of names, you can configure the `allowed-composable-function-names` option in `lint.xml`.
+> ```xml
+> <issue id="ComposeNamingUppercase,ComposeNamingLowercase">
+>    <option name="allowed-composable-function-names" value=".*Presenter" />
+> </issue>
 
 ### Ordering @Composable parameters properly
 
@@ -170,56 +173,29 @@ Modifiers occupy the first optional parameter slot to set a consistent expectati
 
 More information: [Kotlin default arguments](https://kotlinlang.org/docs/functions.html#default-arguments), [Modifier docs](https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier) and [Elements accept and respect a Modifier parameter](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#why-8).
 
-Related rule: [twitter-compose:param-order-check](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposeParameterOrder.kt)
+Related rule: [compose-lints:param-order-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ParameterOrderDetector.kt)
 
 ### Make dependencies explicit
-
-#### ViewModels
-
-When designing our composables, we should always try to be explicit about the dependencies they take in. If you acquire a ViewModel or an instance from DI in the body of the composable, you are making this dependency implicit, which has the downsides of making it hard to test and harder to reuse.
-
-To solve this problem, you should inject these dependencies as default values in the composable function.
-
-Let's see it with an example.
-
-```kotlin
-@Composable
-private fun MyComposable() {
-    val viewModel = viewModel<MyViewModel>()
-    // ...
-}
-```
-In this composable, the dependencies are implicit. When testing it you would need to fake the internals of viewModel somehow to be able to acquire your intended ViewModel.
-
-But, if you change it to pass these instances via the composable function parameters, you could provide the instance you want directly in your tests without any extra effort. It would also have the upside of the function being explicit about its external dependencies in its signature.
-
-```kotlin
-@Composable
-private fun MyComposable(
-    viewModel: MyViewModel = viewModel(),
-) {
-    // ...
-}
-
-```
-
-Related rule: [twitter-compose:vm-injection-check](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposeViewModelInjection.kt)
 
 #### `CompositionLocal`s
 
 `CompositionLocal` makes a composable's behavior harder to reason about. As they create implicit dependencies, callers of composables that use them need to make sure that a value for every CompositionLocal is satisfied.
 
-Although uncommon, there are [legit usecases](https://developer.android.com/jetpack/compose/compositionlocal#deciding) for them, so this rule provides an allowlist so that you can add your `CompositionLocal` names to it so that they are not flagged by the rule.
+Although uncommon, there are [legit use cases](https://developer.android.com/jetpack/compose/compositionlocal#deciding) for them, so this rule provides an allowlist so that you can add your `CompositionLocal` names to it so that they are not flagged by the rule.
 
-Related rule: [twitter-compose:compositionlocal-allowlist](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/CompositionLocalAllowlist.kt)
+Related rule: [compose-lints:compositionlocal-allowlist](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/CompositionLocalUsageDetector.kt
 
-> **Note**: To add your custom `CompositionLocal` to your allowlist, you can add `allowedCompositionLocals` to this rule config in Detekt, or `allowed_composition_locals` to your .editorconfig in ktlint.
+> **Note**: To add your custom `CompositionLocal` to your allowlist, you can configure a `allowed-composition-locals` option in `lint.xml`.
+> ```xml
+> <issue id="ComposeCompositionLocalUsage">
+>    <option name="allowed-composition-locals" value="LocalEnabled,LocalThing" />
+> </issue>
 
 ### Preview composables should not be public
 
 When a composable function exists solely because it's a `@Preview`, it doesn't need to have public visibility because it won't be used in actual UI. To prevent folks from using it unknowingly, we should restrict its visibility to `private`.
 
-Related rule: [twitter-compose:preview-public-check](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposePreviewPublic.kt)
+Related rule: [compose-lints:preview-public-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/PreviewPublicDetector.kt)
 
 > **Note**: If you are using Detekt, this may conflict with Detekt's [UnusedPrivateMember rule](https://detekt.dev/docs/rules/style/#unusedprivatemember).
 Be sure to set Detekt's [ignoreAnnotated configuration](https://detekt.dev/docs/introduction/compose/#unusedprivatemember) to ['Preview'] for compatibility with this rule.
@@ -234,7 +210,7 @@ They are especially important for your public components, as they allow callers 
 
 More info: [Always provide a Modifier parameter](https://chris.banes.dev/posts/always-provide-a-modifier/)
 
-Related rule: [twitter-compose:modifier-missing-check](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposeModifierMissing.kt)
+Related rule: [compose-lints:modifier-missing-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierMissingDetector.kt)
 
 ### Don't re-use modifiers
 
@@ -265,7 +241,7 @@ private fun InnerContent(modifier: Modifier = Modifier) {
 }
 ```
 
-Related rule: [twitter-compose:modifier-reused-check](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposeModifierReused.kt)
+Related rule: [compose-lints:modifier-reused-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierReusedDetector.kt)
 
 ### Modifiers should have default parameters
 
@@ -273,14 +249,4 @@ Composables that accept a Modifier as a parameter to be applied to the whole com
 
 More info: [Modifier documentation](https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier)
 
-Related rule: [twitter-compose:modifier-without-default-check](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposeModifierWithoutDefault.kt)
-
-### Avoid Modifier extension factory functions
-
-Using `@Composable` builder functions for modifiers is not recommended, as they cause unnecessary recompositions. To avoid this, you should use `Modifier.composed` instead, as it limits recomposition to just the modifier instance, rather than the whole function tree.
-
-Composed modifiers may be created outside of composition, shared across elements, and declared as top-level constants, making them more flexible than modifiers that can only be created via a `@Composable` function call, and easier to avoid accidentally sharing state across elements.
-
-More info: [Modifier extensions](https://developer.android.com/reference/kotlin/androidx/compose/ui/package-summary#extension-functions), [Composed modifiers in Jetpack Compose by Jorge Castillo](https://jorgecastillo.dev/composed-modifiers-in-jetpack-compose) and [Composed modifiers in API guidelines](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#composed-modifiers)
-
-Related rule: [twitter-compose:modifier-composable-check](https://github.com/twitter/compose-rules/blob/main/rules/common/src/main/kotlin/com/twitter/compose/rules/ComposeModifierComposable.kt)
+Related rule: [compose-lints:modifier-without-default-check](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierWithoutDefaultDetector.kt)
