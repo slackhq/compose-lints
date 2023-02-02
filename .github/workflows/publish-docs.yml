@@ -1,0 +1,56 @@
+name: Publish docs
+
+on:
+  # Run on new version tags...
+  push:
+    tags:
+      - v*
+  # or manually from workflow dispatch (from GitHub UI)
+  workflow_dispatch:
+
+jobs:
+  deploy_docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Install JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '19'
+
+      - name: Build Dokka API docs
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: dokkaHtml --no-configuration-cache
+
+      - name: Copy docs files
+        run: |
+          # Copy in special files that GitHub wants in the project root
+          cp CHANGELOG.md docs/changelog.md
+          cp .github/CONTRIBUTING.md docs/contributing.md
+          cp .github/CODE_OF_CONDUCT.md docs/code-of-conduct.md
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install python dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r .github/workflows/mkdocs-requirements.txt
+
+      - name: Build site
+        run: mkdocs build -d site
+
+      - name: Deploy site
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
