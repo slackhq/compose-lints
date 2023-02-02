@@ -74,57 +74,57 @@ class ModifierReusedDetectorTest : BaseSlackLintTest() {
         """
           src/test.kt:3: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
               Row(modifier) {
               ^
           src/test.kt:4: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
                   SomethingElse(modifier)
                   ~~~~~~~~~~~~~~~~~~~~~~~
           src/test.kt:9: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
               Column(modifier = modifier) {
               ^
           src/test.kt:11: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
                   SomethingDifferent(modifier = modifier)
                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           src/test.kt:16: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
               Column(modifier = modifier) {
               ^
           src/test.kt:19: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
               SomethingElse(modifier = modifier)
               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           src/test.kt:20: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
               SomethingElse(modifier = modifier.padding12())
               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           src/test.kt:25: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
                   SomethingElse(myMod)
                   ~~~~~~~~~~~~~~~~~~~~
           src/test.kt:26: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
                   SomethingElse(myMod)
                   ~~~~~~~~~~~~~~~~~~~~
           src/test.kt:31: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
               Box(
               ^
           src/test.kt:37: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
                   Box(
                   ^
           11 errors, 0 warnings
@@ -169,32 +169,32 @@ class ModifierReusedDetectorTest : BaseSlackLintTest() {
         """
           src/test.kt:3: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
               Column(modifier = modifier) {
               ^
           src/test.kt:4: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
                   ChildThatReusesModifier(modifier = modifier.fillMaxWidth())
                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           src/test.kt:9: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
               Column(modifier = modifier) {
               ^
           src/test.kt:11: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
                   ChildThatReusesModifier(modifier = newModifier)
                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           src/test.kt:17: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
               Column(modifier = modifier) {
               ^
           src/test.kt:18: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
                   ChildThatReusesModifier(modifier = newModifier)
                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           6 errors, 0 warnings
@@ -242,37 +242,37 @@ class ModifierReusedDetectorTest : BaseSlackLintTest() {
         """
           src/test.kt:6: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
               Column(modifier = modifier) {
               ^
           src/test.kt:8: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
                   ComposableThaReusesModifier(modifier = tweakedModifier)
                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           src/test.kt:9: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
                   ComposableThaReusesModifier(modifier = reassignedModifier)
                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           src/test.kt:12: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
               InnerComposable(modifier = tweakedModifier)
               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           src/test.kt:16: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
               Column(modifier = modifier) {
               ^
           src/test.kt:20: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
                   ComposableThaReusesModifier(modifier = tweakedModifier)
                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           src/test.kt:21: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth().
           Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
-          See https://twitter.github.io/compose-rules/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+          See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
                   ComposableThaReusesModifier(modifier = reassignedModifier)
                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           7 errors, 0 warnings

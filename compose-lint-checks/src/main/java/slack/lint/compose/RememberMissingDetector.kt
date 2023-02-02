@@ -21,7 +21,7 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
       """
         Using `$name` in a @Composable function without it being inside of a remember function.
         If you don't remember the state instance, a new state instance will be created when the function is recomposed.
-        See https://twitter.github.io/compose-rules/rules/#state-should-be-remembered-in-composables for more information.
+        See https://slackhq.github.io/compose-lints/rules/#state-should-be-remembered-in-composables for more information.
       """
         .trimIndent()
 

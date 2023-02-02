@@ -1,0 +1,65 @@
+# pip install mkdocs mkdocs-material
+# mkdocs serve
+# mkdocs gh-deploy
+
+site_name: compose-lints
+repo_name: compose-lints
+repo_url: https://github.com/slackhq/compose-lints
+site_description: "Lint checks to aid with a healthy adoption of Compose"
+site_author: Slack
+remote_branch: gh-pages
+
+copyright: 'Copyright &copy; 2023 Slack Technologies, LLC'
+
+theme:
+  name: 'material'
+  favicon: images/slack_logo_small.png
+  logo: images/slack_logo.png
+  palette:
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: 'white'
+      accent: 'green'
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: 'black'
+      accent: 'green'
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: 'Lato'
+    code: 'Fira Code'
+
+extra_css:
+  - 'css/app.css'
+
+markdown_extensions:
+  - smarty
+  - codehilite:
+      guess_lang: false
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.emoji
+  - tables
+  - admonition
+
+nav:
+  - 'Overview': index.md
+  - 'Rules': rules.md
+  - 'Discussions ⏏': https://github.com/slackhq/compose-lints/discussions
+  - 'Change Log': changelog.md
+  - 'Contributing': contributing.md
+  - 'CoC': code-of-conduct.md

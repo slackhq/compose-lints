@@ -21,3 +21,11 @@ out/
 
 # We have one gitignore but project generation often generates extra ones. Ignore those
 */**/.gitignore
+
+# Docs-related hings
+docs/code-of-conduct.md
+docs/contributing.md
+docs/changelog.md
+docs/api/
+site/
+temp-clone/

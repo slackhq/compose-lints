@@ -31,7 +31,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
       """
         Parameters in a composable function should be ordered following this pattern: params without defaults, modifiers, params with defaults and optionally, a trailing function that might not have a default param.
         Current params are: [$currentOrder] but should be [$properOrder].
-        See https://twitter.github.io/compose-rules/rules/#ordering-composable-parameters-properly for more information.
+        See https://slackhq.github.io/compose-lints/rules/#ordering-composable-parameters-properly for more information.
       """
         .trimIndent()
 

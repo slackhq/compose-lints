@@ -29,7 +29,7 @@ class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeS
         explanation =
           """
               This @Composable function has a modifier parameter but it doesn't have a default value.
-              See https://twitter.github.io/compose-rules/rules/#modifiers-should-have-default-parameters for more information.
+              See https://slackhq.github.io/compose-lints/rules/#modifiers-should-have-default-parameters for more information.
             """,
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,

@@ -44,7 +44,7 @@ constructor(
           explanation =
             """
               Composables annotated with `@Preview` that are used only for previewing the UI should not be public.
-              See https://twitter.github.io/compose-rules/rules/#preview-composables-should-not-be-public for more information.
+              See https://slackhq.github.io/compose-lints/rules/#preview-composables-should-not-be-public for more information.
             """,
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,

@@ -36,11 +36,11 @@ class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
       .expect(
         """
           src/test.kt:2: Error: This @Composable function has a modifier parameter but it doesn't have a default value.
-          See https://twitter.github.io/compose-rules/rules/#modifiers-should-have-default-parameters for more information. [ComposeModifierWithoutDefault]
+          See https://slackhq.github.io/compose-lints/rules/#modifiers-should-have-default-parameters for more information. [ComposeModifierWithoutDefault]
           fun Something(modifier: Modifier) { }
                         ~~~~~~~~~~~~~~~~~~
           src/test.kt:4: Error: This @Composable function has a modifier parameter but it doesn't have a default value.
-          See https://twitter.github.io/compose-rules/rules/#modifiers-should-have-default-parameters for more information. [ComposeModifierWithoutDefault]
+          See https://slackhq.github.io/compose-lints/rules/#modifiers-should-have-default-parameters for more information. [ComposeModifierWithoutDefault]
           fun Something(modifier: Modifier = Modifier, modifier2: Modifier) { }
                                                        ~~~~~~~~~~~~~~~~~~~
           2 errors, 0 warnings
