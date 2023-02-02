@@ -61,5 +61,6 @@ nav:
   - 'Rules': rules.md
   - 'Discussions ⏏': https://github.com/slackhq/compose-lints/discussions
   - 'Change Log': changelog.md
+  - 'API': api/0.x/
   - 'Contributing': contributing.md
   - 'CoC': code-of-conduct.md

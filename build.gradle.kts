@@ -77,7 +77,7 @@ subprojects {
     apply(plugin = "org.jetbrains.dokka")
 
     tasks.withType<DokkaTask>().configureEach {
-      outputDirectory.set(rootDir.resolve("../docs/0.x"))
+      outputDirectory.set(rootDir.resolve("docs/api/0.x"))
       dokkaSourceSets.configureEach { skipDeprecated.set(true) }
     }
 
