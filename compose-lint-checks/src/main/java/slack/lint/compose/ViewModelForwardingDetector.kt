@@ -2,11 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
-import com.android.tools.lint.detector.api.*
+import com.android.tools.lint.detector.api.Category
+import com.android.tools.lint.detector.api.Issue
+import com.android.tools.lint.detector.api.JavaContext
+import com.android.tools.lint.detector.api.Severity
+import com.android.tools.lint.detector.api.SourceCodeScanner
+import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtReferenceExpression
-import slack.lint.compose.util.*
+import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.definedInInterface
+import slack.lint.compose.util.findDirectChildrenByClass
+import slack.lint.compose.util.isActual
+import slack.lint.compose.util.isOverride
+import slack.lint.compose.util.isRestartableEffect
 import slack.lint.compose.util.sourceImplementation
 
 class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScanner {
