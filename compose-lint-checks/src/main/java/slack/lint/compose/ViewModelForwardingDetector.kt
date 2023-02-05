@@ -24,7 +24,7 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
   companion object {
     val ISSUE =
       Issue.create(
-        id = "ViewModelForwarding",
+        id = "ComposeViewModelForwarding",
         briefDescription =
           "Forwarding a ViewModel through multiple @Composable functions should be avoided",
         explanation =
