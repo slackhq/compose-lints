@@ -178,6 +178,36 @@ Related rule: [`ComposeParameterOrder`](https://github.com/slackhq/compose-lints
 
 ### Make dependencies explicit
 
+#### ViewModels
+
+When designing composables, try to be explicit about the dependencies they take in. If you acquire a `ViewModel` or an instance from DI in the body of the composable, you are making this dependency implicit, which has the downsides of making it hard to test and harder to reuse.
+
+To solve this problem, you should inject these dependencies as default values in the composable function.
+
+Let's see it with an example.
+
+```kotlin
+@Composable
+private fun MyComposable() {
+    val viewModel = viewModel<MyViewModel>()
+    // ...
+}
+```
+In this composable, the dependencies are implicit. When testing it you would need to fake the internals of viewModel somehow to be able to acquire your intended ViewModel.
+
+But, if you change it to pass these instances via the composable function parameters, you could provide the instance you want directly in your tests without any extra effort. It would also have the upside of the function being explicit about its external dependencies in its signature.
+
+```kotlin
+@Composable
+private fun MyComposable(
+    viewModel: MyViewModel = viewModel(),
+) {
+    // ...
+}
+```
+
+Related rule: [`ComposeViewModelInjection`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ViewModelInjectionDetector.kt)
+
 #### `CompositionLocal`s
 
 `CompositionLocal` makes a composable's behavior harder to reason about. As they create implicit dependencies, callers of composables that use them need to make sure that a value for every CompositionLocal is satisfied.
@@ -254,3 +284,13 @@ Composables that accept a Modifier as a parameter to be applied to the whole com
 More info: [Modifier documentation](https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier)
 
 Related rule: [`ComposeModifierWithoutDefault`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierWithoutDefaultDetector.kt)
+
+### Avoid Modifier extension factory functions
+
+Using `@Composable` builder functions for modifiers is not recommended, as they cause unnecessary recompositions. To avoid this, you should use `Modifier.composed` instead, as it limits recomposition to just the modifier instance, rather than the whole function tree.
+
+Composed modifiers may be created outside of composition, shared across elements, and declared as top-level constants, making them more flexible than modifiers that can only be created via a `@Composable` function call, and easier to avoid accidentally sharing state across elements.
+
+More info: [Modifier extensions](https://developer.android.com/reference/kotlin/androidx/compose/ui/package-summary#extension-functions), [Composed modifiers in Jetpack Compose by Jorge Castillo](https://jorgecastillo.dev/composed-modifiers-in-jetpack-compose) and [Composed modifiers in API guidelines](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#composed-modifiers)
+
+Related rule: [`ComposeComposableModifier`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierComposableDetector.kt)

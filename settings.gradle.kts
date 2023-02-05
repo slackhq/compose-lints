@@ -28,6 +28,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "slack-lints"
+rootProject.name = "compose-lints"
 
 include(":compose-lint-checks")
