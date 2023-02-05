@@ -37,5 +37,7 @@ class ComposeLintsIssueRegistry : IssueRegistry() {
       PreviewPublicDetector.ISSUE,
       RememberMissingDetector.ISSUE,
       UnstableCollectionsDetector.ISSUE,
+      ViewModelForwardingDetector.ISSUE,
+      ViewModelInjectionDetector.ISSUE,
     )
 }
