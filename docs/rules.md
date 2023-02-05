@@ -13,6 +13,8 @@ Instead, pass down the relevant data to the function, and optional lambdas for c
 
 More information: [State and Jetpack Compose](https://developer.android.com/jetpack/compose/state)
 
+Related rule: [`ComposeViewModelForwarding`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ViewModelForwardingDetector.kt)
+
 ### State should be remembered in composables
 
 Be careful when using `mutableStateOf` (or any of the other state builders) to make sure that you `remember` the instance. If you don't `remember` the state instance, a new state instance will be created when the function is recomposed.
