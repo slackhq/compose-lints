@@ -66,7 +66,7 @@ class ViewModelInjectionDetector : ComposableFunctionDetector(), SourceCodeScann
           context.getLocation(property),
           errorMessage(viewModelFactoryName),
           // TODO would be cool if we could auto-apply a fix like the detekt/ktlint version, but
-          // requires a rewrite.
+          //  requires a rewrite.
         )
       }
   }
