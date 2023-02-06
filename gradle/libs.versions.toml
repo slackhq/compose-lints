@@ -11,7 +11,7 @@ dokka = { id = "org.jetbrains.dokka", version = "1.7.20" }
 lint = { id = "com.android.lint", version = "7.4.1" }
 ksp = { id = "com.google.devtools.ksp", version = "1.8.10-1.0.9" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.24.0" }
-spotless = { id = "com.diffplug.spotless", version = "6.14.0" }
+spotless = { id = "com.diffplug.spotless", version = "6.14.1" }
 
 [libraries]
 autoService-annotations = "com.google.auto.service:auto-service-annotations:1.0.1"
