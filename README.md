@@ -1,4 +1,4 @@
-slack-lints
+compose-lints
 ===========
 
 ### [slackhq.github.io/compose-lints](https://slackhq.github.io/compose-lints)
