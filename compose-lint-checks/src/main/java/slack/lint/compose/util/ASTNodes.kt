@@ -1,5 +1,4 @@
-// Copyright (C) 2023 Slack Technologies, LLC
-// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2023 Salesforce, Inc.
 // Copyright 2022 Twitter, Inc.
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose.util

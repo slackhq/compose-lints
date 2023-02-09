@@ -6,7 +6,8 @@ slack-lints
 License
 --------
 
-    Copyright 2023 Slack Technologies, LLC
+    Copyright 2023 Salesforce, Inc.
+    Copyright 2022 Twitter, Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

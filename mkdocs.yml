@@ -9,7 +9,7 @@ site_description: "Lint checks to aid with a healthy adoption of Compose"
 site_author: Slack
 remote_branch: gh-pages
 
-copyright: 'Copyright &copy; 2023 Slack Technologies, LLC'
+copyright: 'Copyright &copy; 2023 Salesforce, Inc.'
 
 theme:
   name: 'material'
