@@ -97,6 +97,11 @@ $dokka.location:slack.lint.compose/ContentEmitterReturningValuesDetector///Point
 $dokka.location:slack.lint.compose/ContentEmitterReturningValuesDetector/ContentEmitterReturningValuesDetector/#slack.lint.compose.ContentEmitterLintOption/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-content-emitter-returning-values-detector/-content-emitter-returning-values-detector.html
 $dokka.location:slack.lint.compose/ContentEmitterReturningValuesDetector/createUastHandler/#com.android.tools.lint.detector.api.JavaContext/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-content-emitter-returning-values-detector/create-uast-handler.html
 $dokka.location:slack.lint.compose/ContentEmitterReturningValuesDetector/getApplicableUastTypes/#/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-content-emitter-returning-values-detector/get-applicable-uast-types.html
+$dokka.location:slack.lint.compose/ModifierComposableDetector.Companion///PointingToDeclaration/compose-lint-checks/slack.lint.compose/-modifier-composable-detector/-companion/index.html
+$dokka.location:slack.lint.compose/ModifierComposableDetector.Companion/ISSUE/#/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-modifier-composable-detector/-companion/-i-s-s-u-e.html
+$dokka.location:slack.lint.compose/ModifierComposableDetector///PointingToDeclaration/compose-lint-checks/slack.lint.compose/-modifier-composable-detector/index.html
+$dokka.location:slack.lint.compose/ModifierComposableDetector/ModifierComposableDetector/#/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-modifier-composable-detector/-modifier-composable-detector.html
+$dokka.location:slack.lint.compose/ModifierComposableDetector/visitComposable/#com.android.tools.lint.detector.api.JavaContext#org.jetbrains.kotlin.psi.KtFunction/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-modifier-composable-detector/visit-composable.html
 $dokka.location:slack.lint.compose/ModifierMissingDetector.Companion///PointingToDeclaration/compose-lint-checks/slack.lint.compose/-modifier-missing-detector/-companion/index.html
 $dokka.location:slack.lint.compose/ModifierMissingDetector.Companion/CONTENT_EMITTER_OPTION/#/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-modifier-missing-detector/-companion/-c-o-n-t-e-n-t_-e-m-i-t-t-e-r_-o-p-t-i-o-n.html
 $dokka.location:slack.lint.compose/ModifierMissingDetector.Companion/ISSUE/#/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-modifier-missing-detector/-companion/-i-s-s-u-e.html
@@ -159,6 +164,16 @@ $dokka.location:slack.lint.compose/UnstableCollectionsDetector.Companion/createE
 $dokka.location:slack.lint.compose/UnstableCollectionsDetector///PointingToDeclaration/compose-lint-checks/slack.lint.compose/-unstable-collections-detector/index.html
 $dokka.location:slack.lint.compose/UnstableCollectionsDetector/UnstableCollectionsDetector/#/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-unstable-collections-detector/-unstable-collections-detector.html
 $dokka.location:slack.lint.compose/UnstableCollectionsDetector/visitComposable/#com.android.tools.lint.detector.api.JavaContext#org.jetbrains.kotlin.psi.KtFunction/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-unstable-collections-detector/visit-composable.html
+$dokka.location:slack.lint.compose/ViewModelForwardingDetector.Companion///PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-forwarding-detector/-companion/index.html
+$dokka.location:slack.lint.compose/ViewModelForwardingDetector.Companion/ISSUE/#/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-forwarding-detector/-companion/-i-s-s-u-e.html
+$dokka.location:slack.lint.compose/ViewModelForwardingDetector///PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-forwarding-detector/index.html
+$dokka.location:slack.lint.compose/ViewModelForwardingDetector/ViewModelForwardingDetector/#/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-forwarding-detector/-view-model-forwarding-detector.html
+$dokka.location:slack.lint.compose/ViewModelForwardingDetector/visitComposable/#com.android.tools.lint.detector.api.JavaContext#org.jetbrains.kotlin.psi.KtFunction/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-forwarding-detector/visit-composable.html
+$dokka.location:slack.lint.compose/ViewModelInjectionDetector.Companion///PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-injection-detector/-companion/index.html
+$dokka.location:slack.lint.compose/ViewModelInjectionDetector.Companion/ISSUE/#/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-injection-detector/-companion/-i-s-s-u-e.html
+$dokka.location:slack.lint.compose/ViewModelInjectionDetector///PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-injection-detector/index.html
+$dokka.location:slack.lint.compose/ViewModelInjectionDetector/ViewModelInjectionDetector/#/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-injection-detector/-view-model-injection-detector.html
+$dokka.location:slack.lint.compose/ViewModelInjectionDetector/visitComposable/#com.android.tools.lint.detector.api.JavaContext#org.jetbrains.kotlin.psi.KtFunction/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-injection-detector/visit-composable.html
 slack.lint.compose
 slack.lint.compose.util
 
