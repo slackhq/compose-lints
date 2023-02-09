@@ -8,7 +8,7 @@
 
 if [[ "$1" = "--local" ]]; then
   local=true
-elif [[ "$1" = "--ci" || ]]; then
+elif [[ "$1" = "--ci" ]]; then
   ci=true
 fi
 
