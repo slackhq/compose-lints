@@ -15,6 +15,18 @@ Compose has lots of superpowers but also has a bunch of footguns to be aware of 
 
 This is where our static checks come in. We want to detect as many potential issues as we can, as quickly as we can. In this case we want an error to show prior to engineers having to review code. Similar to other static check libraries we hope this leads to a "don't shoot the messengers" philosophy which will foster healthy Compose adoption.
 
+## Installation
+
+Just add the dependency to the `lintChecks` configuration. Note for non-android projects, you must apply the `com.android.lint` Gradle plugin to use this.
+
+[![Maven Central](https://img.shields.io/maven-central/v/com.slack.lint.compose/compose-lint-checks.svg)](https://mvnrepository.com/artifact/com.slack.lint.compose/compose-lint-checks)
+
+```kotlin
+dependencies {
+  lintChecks("com.slack.lint.compose:compose-lint-checks:<version>")
+}
+```
+
 License
 --------
 
