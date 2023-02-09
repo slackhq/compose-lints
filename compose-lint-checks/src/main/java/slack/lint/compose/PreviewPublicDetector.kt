@@ -1,5 +1,7 @@
 // Copyright (C) 2023 Slack Technologies, LLC
 // SPDX-License-Identifier: Apache-2.0
+// Copyright 2022 Twitter, Inc.
+// SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
 import com.android.tools.lint.detector.api.BooleanOption
