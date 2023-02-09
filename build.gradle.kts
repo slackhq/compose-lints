@@ -18,9 +18,9 @@ plugins {
 
 val ktfmtVersion = libs.versions.ktfmt.get()
 
-val pathPrefix = "compose-lint-checks/src/main/java/slack/lint/compose"
+val pathPrefix = "src/main/java/slack/lint/compose"
 val utilPathPrefix = "$pathPrefix/util"
-val testPathPrefix = "compose-lint-checks/src/test/java/slack/lint/compose"
+val testPathPrefix = "src/test/java/slack/lint/compose"
 val externalFiles =
   arrayOf(
     "$utilPathPrefix/ASTNodes.kt",
@@ -77,7 +77,7 @@ allprojects {
       endWithNewline()
     }
     kotlin {
-      target("**/*.kt")
+      target("src/**/*.kt")
       ktfmt(ktfmtVersion).googleStyle()
       trimTrailingWhitespace()
       endWithNewline()
