@@ -23,7 +23,8 @@ class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseSlackL
         arrayOf("weaverViewModel"),
         arrayOf("hiltViewModel"),
         arrayOf("injectedViewModel"),
-        arrayOf("mavericksViewModel")
+        arrayOf("mavericksViewModel"),
+        arrayOf("tangleViewModel"),
       )
     }
   }

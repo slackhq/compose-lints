@@ -43,6 +43,7 @@ class ViewModelInjectionDetector : ComposableFunctionDetector(), SourceCodeScann
         "hiltViewModel", // Hilt
         "injectedViewModel", // Whetstone
         "mavericksViewModel", // Mavericks
+        "tangleViewModel", // Tangle
       )
     }
   }
