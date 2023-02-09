@@ -40,7 +40,7 @@ jobs:
           python3 -m pip install -r .github/workflows/mkdocs-requirements.txt
 
       - name: Build site
-        run: deploy_website.sh --ci
+        run: ./deploy_website.sh --ci
 
       - name: Deploy site
         uses: peaceiris/actions-gh-pages@v3
