@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Slack Technologies, LLC
+// Copyright (C) 2023 Salesforce, Inc.
 // SPDX-License-Identifier: Apache-2.0
 import com.diffplug.gradle.spotless.KotlinExtension
 import com.diffplug.gradle.spotless.SpotlessExtension
