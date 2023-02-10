@@ -24,7 +24,7 @@ class MutableParametersDetector : ComposableFunctionDetector(), SourceCodeScanne
           """
               Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.
               Mutable objects that are not observable, such as `ArrayList<T>` or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.
-              See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information.
+              See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information.
             """,
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
@@ -36,11 +36,11 @@ class MutableParametersDetector : ComposableFunctionDetector(), SourceCodeScanne
   override fun visitComposable(context: JavaContext, function: KtFunction) {
     function.valueParameters
       .filter { it.isTypeMutable }
-      .forEach {
+      .forEach { parameter ->
         context.report(
           ISSUE,
-          function,
-          context.getNameLocation(function),
+          parameter.typeReference,
+          context.getLocation(parameter.typeReference),
           ISSUE.getExplanation(TextFormat.TEXT)
         )
       }

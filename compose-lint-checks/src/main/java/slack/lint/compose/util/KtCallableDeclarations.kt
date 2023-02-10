@@ -29,7 +29,6 @@ val KnownMutableCommonTypesRegex =
       "Hashtable<.*>\\??",
       // Compose
       "MutableState<.*>\\??",
-      "SnapshotStateList<.*>\\??",
       // Flow
       "MutableStateFlow<.*>\\??",
       "MutableSharedFlow<.*>\\??",
