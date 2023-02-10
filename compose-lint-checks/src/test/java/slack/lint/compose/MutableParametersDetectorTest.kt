@@ -16,18 +16,19 @@ class MutableParametersDetectorTest : BaseSlackLintTest() {
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs
   override val skipTestModes: Array<TestMode> =
-      arrayOf(
-          TestMode.PARENTHESIZED,
-          TestMode.SUPPRESSIBLE,
-          TestMode.TYPE_ALIAS,
-          TestMode.FULLY_QUALIFIED,
-          TestMode.WHITESPACE)
+    arrayOf(
+      TestMode.PARENTHESIZED,
+      TestMode.SUPPRESSIBLE,
+      TestMode.TYPE_ALIAS,
+      TestMode.FULLY_QUALIFIED,
+      TestMode.WHITESPACE
+    )
 
   @Test
   fun `errors when a Composable has a mutable parameter`() {
     @Language("kotlin")
     val code =
-        """
+      """
         @Composable
         fun Something(a: MutableState<String>) {}
         @Composable
@@ -37,13 +38,13 @@ class MutableParametersDetectorTest : BaseSlackLintTest() {
         @Composable
         fun Something(a: MutableMap<String, String>) {}
       """
-            .trimIndent()
+        .trimIndent()
     lint()
-        .files(kotlin(code))
-        .allowCompilationErrors()
-        .run()
-        .expect(
-            """
+      .files(kotlin(code))
+      .allowCompilationErrors()
+      .run()
+      .expect(
+        """
           src/test.kt:2: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.
           Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.
           See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
@@ -66,20 +67,21 @@ class MutableParametersDetectorTest : BaseSlackLintTest() {
                            ~~~~~~~~~~~~~~~~~~~~~~~~~~
           4 errors, 0 warnings
         """
-                .trimIndent())
+          .trimIndent()
+      )
   }
 
   @Test
   fun `no errors when a Composable has valid parameters`() {
     @Language("kotlin")
     val code =
-        """
+      """
         @Composable
         fun Something(a: String, b: (Int) -> Unit) {}
         @Composable
         fun Something(a: State<String>) {}
       """
-            .trimIndent()
+        .trimIndent()
     lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
   }
 }
