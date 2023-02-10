@@ -43,7 +43,7 @@ class CompositionLocalUsageDetector : Detector(), SourceCodeScanner {
             """,
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
-          severity = Severity.ERROR,
+          severity = Severity.WARNING,
           implementation = sourceImplementation<CompositionLocalUsageDetector>()
         )
         .setOptions(listOf(ALLOW_LIST))
