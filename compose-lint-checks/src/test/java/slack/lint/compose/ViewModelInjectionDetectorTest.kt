@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
+import com.android.tools.lint.checks.infrastructure.TestLintTask
 import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
@@ -23,7 +24,8 @@ class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseSlackL
         arrayOf("weaverViewModel"),
         arrayOf("hiltViewModel"),
         arrayOf("injectedViewModel"),
-        arrayOf("mavericksViewModel")
+        arrayOf("mavericksViewModel"),
+        arrayOf("tangleViewModel"),
       )
     }
   }
@@ -33,6 +35,10 @@ class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseSlackL
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs
   override val skipTestModes: Array<TestMode> = arrayOf(TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
+
+  override fun lint(): TestLintTask {
+    return super.lint().configureOption(ViewModelInjectionDetector.ALLOW_LIST, "tangleViewModel")
+  }
 
   @Test
   fun `passes when a weaverViewModel is used as a default param`() {
