@@ -36,11 +36,11 @@ class MutableParametersDetector : ComposableFunctionDetector(), SourceCodeScanne
   override fun visitComposable(context: JavaContext, function: KtFunction) {
     function.valueParameters
       .filter { it.isTypeMutable }
-      .forEach {
+      .forEach { parameter ->
         context.report(
           ISSUE,
-          function,
-          context.getNameLocation(function),
+          parameter.typeReference,
+          context.getLocation(parameter.typeReference),
           ISSUE.getExplanation(TextFormat.TEXT)
         )
       }
