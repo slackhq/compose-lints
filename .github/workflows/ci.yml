@@ -9,6 +9,7 @@ on:
       - '*.md'
   # Always run on PRs
   pull_request:
+  merge_group:
 
 concurrency:
   group: '${{ github.head_ref }}-${{ github.workflow }}'
