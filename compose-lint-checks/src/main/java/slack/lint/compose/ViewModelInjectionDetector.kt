@@ -27,7 +27,7 @@ constructor(private val allowedNames: StringSetLintOption = StringSetLintOption(
         "allowed-viewmodel-injection",
         "A comma-separated list of viewModel factories.",
         null,
-        "This property should define comma-separated list of allowed viewModel factory names."
+        "This property should define comma-separated list of allowed viewModel factory function names."
       )
 
     private fun errorMessage(factoryName: String): String =
