@@ -72,8 +72,8 @@ constructor(private val allowedNames: StringSetLintOption = StringSetLintOption(
         property
           .findDirectChildrenByClass<KtCallExpression>()
           .filter {
-            KnownViewModelFactories.contains(it.calleeExpression?.text) ||
-              allowedNames.value.contains(it.calleeExpression?.text)
+            val allFactoryNames = KnownViewModelFactories + allowedNames.value
+            it.calleeExpression?.text in allFactoryNames
           }
           .map { property to it.calleeExpression!!.text }
       }
