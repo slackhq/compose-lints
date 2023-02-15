@@ -65,16 +65,14 @@ constructor(private val allowedNames: StringSetLintOption = StringSetLintOption(
     if (function.isOverride || function.definedInInterface) return
 
     val bodyBlock = function.bodyBlockExpression ?: return
+    val allFactoryNames = KnownViewModelFactories + allowedNames.value
 
     bodyBlock
       .findChildrenByClass<KtProperty>()
       .flatMap { property ->
         property
           .findDirectChildrenByClass<KtCallExpression>()
-          .filter {
-            val allFactoryNames = KnownViewModelFactories + allowedNames.value
-            it.calleeExpression?.text in allFactoryNames
-          }
+          .filter { it.calleeExpression?.text in allFactoryNames }
           .map { property to it.calleeExpression!!.text }
       }
       .forEach { (property, viewModelFactoryName) ->
