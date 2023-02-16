@@ -17,14 +17,14 @@ import slack.lint.compose.util.sourceImplementation
 
 class ViewModelInjectionDetector
 @JvmOverloads
-constructor(private val allowedNames: StringSetLintOption = StringSetLintOption(ALLOW_LIST)) :
-  ComposableFunctionDetector(allowedNames), SourceCodeScanner {
+constructor(private val userFactories: StringSetLintOption = StringSetLintOption(USER_FACTORIES)) :
+  ComposableFunctionDetector(userFactories), SourceCodeScanner {
 
   companion object {
 
-    internal val ALLOW_LIST =
+    internal val USER_FACTORIES =
       StringOption(
-        "allowed-viewmodel-injection",
+        "viewmodel-factories",
         "A comma-separated list of viewModel factories.",
         null,
         "This property should define comma-separated list of allowed viewModel factory function names."
@@ -48,7 +48,7 @@ constructor(private val allowedNames: StringSetLintOption = StringSetLintOption(
           severity = Severity.ERROR,
           implementation = sourceImplementation<ViewModelInjectionDetector>()
         )
-        .setOptions(listOf(ALLOW_LIST))
+        .setOptions(listOf(USER_FACTORIES))
 
     private val KnownViewModelFactories by lazy {
       setOf(
@@ -65,7 +65,7 @@ constructor(private val allowedNames: StringSetLintOption = StringSetLintOption(
     if (function.isOverride || function.definedInInterface) return
 
     val bodyBlock = function.bodyBlockExpression ?: return
-    val allFactoryNames = KnownViewModelFactories + allowedNames.value
+    val allFactoryNames = KnownViewModelFactories + userFactories.value
 
     bodyBlock
       .findChildrenByClass<KtProperty>()

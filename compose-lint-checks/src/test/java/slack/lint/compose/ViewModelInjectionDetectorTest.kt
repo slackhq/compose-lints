@@ -37,7 +37,8 @@ class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseSlackL
   override val skipTestModes: Array<TestMode> = arrayOf(TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
 
   override fun lint(): TestLintTask {
-    return super.lint().configureOption(ViewModelInjectionDetector.ALLOW_LIST, "tangleViewModel")
+    return super.lint()
+      .configureOption(ViewModelInjectionDetector.USER_FACTORIES, "tangleViewModel")
   }
 
   @Test
