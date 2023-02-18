@@ -8,15 +8,28 @@ import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
+import com.android.tools.lint.detector.api.StringOption
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import slack.lint.compose.util.*
 import slack.lint.compose.util.sourceImplementation
 
-class ViewModelInjectionDetector : ComposableFunctionDetector(), SourceCodeScanner {
+class ViewModelInjectionDetector
+@JvmOverloads
+constructor(private val userFactories: StringSetLintOption = StringSetLintOption(USER_FACTORIES)) :
+  ComposableFunctionDetector(userFactories), SourceCodeScanner {
 
   companion object {
+
+    internal val USER_FACTORIES =
+      StringOption(
+        "viewmodel-factories",
+        "A comma-separated list of viewModel factories.",
+        null,
+        "This property should define comma-separated list of allowed viewModel factory function names."
+      )
+
     private fun errorMessage(factoryName: String): String =
       """
         Implicit dependencies of composables should be made explicit.
@@ -27,14 +40,15 @@ class ViewModelInjectionDetector : ComposableFunctionDetector(), SourceCodeScann
 
     val ISSUE =
       Issue.create(
-        id = "ComposeViewModelInjection",
-        briefDescription = "Implicit dependencies of composables should be made explicit",
-        explanation = "Replaced when reporting",
-        category = Category.CORRECTNESS,
-        priority = Priorities.NORMAL,
-        severity = Severity.ERROR,
-        implementation = sourceImplementation<ViewModelInjectionDetector>()
-      )
+          id = "ComposeViewModelInjection",
+          briefDescription = "Implicit dependencies of composables should be made explicit",
+          explanation = "Replaced when reporting",
+          category = Category.CORRECTNESS,
+          priority = Priorities.NORMAL,
+          severity = Severity.ERROR,
+          implementation = sourceImplementation<ViewModelInjectionDetector>()
+        )
+        .setOptions(listOf(USER_FACTORIES))
 
     private val KnownViewModelFactories by lazy {
       setOf(
@@ -51,13 +65,14 @@ class ViewModelInjectionDetector : ComposableFunctionDetector(), SourceCodeScann
     if (function.isOverride || function.definedInInterface) return
 
     val bodyBlock = function.bodyBlockExpression ?: return
+    val allFactoryNames = KnownViewModelFactories + userFactories.value
 
     bodyBlock
       .findChildrenByClass<KtProperty>()
       .flatMap { property ->
         property
           .findDirectChildrenByClass<KtCallExpression>()
-          .filter { KnownViewModelFactories.contains(it.calleeExpression?.text) }
+          .filter { it.calleeExpression?.text in allFactoryNames }
           .map { property to it.calleeExpression!!.text }
       }
       .forEach { (property, viewModelFactoryName) ->
