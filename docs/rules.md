@@ -214,7 +214,7 @@ Related rule: [`ComposeViewModelInjection`](https://github.com/slackhq/compose-l
 
 Although uncommon, there are [legit use cases](https://developer.android.com/jetpack/compose/compositionlocal#deciding) for them, so this rule provides an allowlist so that you can add your `CompositionLocal` names to it so that they are not flagged by the rule.
 
-Related rule: [`ComposeCompositionLocalUsage`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/CompositionLocalUsageDetector.kt
+Related rule: [`ComposeCompositionLocalUsage`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/CompositionLocalUsageDetector.kt)
 
 !!! note "Configuration"
     To add your custom `CompositionLocal` to your allowlist, you can configure a `allowed-composition-locals` option in `lint.xml`.
