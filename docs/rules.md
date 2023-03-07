@@ -301,8 +301,18 @@ Rule: [`ComposeM2Api`](https://github.com/slackhq/compose-lints/blob/main/compos
 
 Material 3 (M3) reached stable in October 2022. In apps that have migrated to M3, there may be `androidx.compose.material` (M2) APIs still remaining on the classpath from libraries or dependencies that can cause confusing imports due to the many similar or colliding Composable names in the two libraries. The `ComposeM2Api` can be enabled + set to `ERROR` to prevent these from being used.
 
-Note that this rule is set to `IGNORE` by default and is opt-in.
+Note that this rule is set to `IGNORE` by default and is opt-in. You can enable and make it an error like so.
 
+```kotlin
+android {
+  lint {
+    enable += "ComposeM2Api"
+    error += "ComposeM2Api"
+  }
+}
+```
+
+More lint configuration docs can be found [here](https://developer.android.com/studio/write/lint#gradle).
 
 **Related docs links**
 
