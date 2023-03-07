@@ -69,19 +69,19 @@ class M2ApiDetectorTest : BaseSlackLintTest() {
             import androidx.compose.runtime.Composable
 
             @Composable
-            fun example() {
+            fun Example() {
               Text("Hello, world!")
             }
 
             @Composable
-            fun allowedExample() {
+            fun AllowedExample() {
               Surface {
 
               }
             }
 
             @Composable
-            fun composite() {
+            fun Composite() {
               Surface {
                 val ripple = rememberRipple()
                 Text("Hello, world!")
