@@ -12,7 +12,6 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UImportStatement
 import org.jetbrains.uast.UQualifiedReferenceExpression
 import org.jetbrains.uast.UResolvable
 import slack.lint.compose.util.Priorities.NORMAL
@@ -23,15 +22,12 @@ internal class M2ApiDetector : Detector(), SourceCodeScanner {
   override fun getApplicableUastTypes() =
     listOf<Class<out UElement>>(
       UCallExpression::class.java,
-      UImportStatement::class.java,
       UQualifiedReferenceExpression::class.java,
     )
 
   override fun createUastHandler(context: JavaContext) =
     object : UElementHandler() {
       override fun visitCallExpression(node: UCallExpression) = checkNode(node)
-
-      override fun visitImportStatement(node: UImportStatement) = checkNode(node)
 
       override fun visitQualifiedReferenceExpression(node: UQualifiedReferenceExpression) =
         checkNode(node)
