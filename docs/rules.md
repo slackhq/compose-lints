@@ -295,20 +295,28 @@ More info: [Modifier extensions](https://developer.android.com/reference/kotlin/
 
 Related rule: [`ComposeComposableModifier`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierComposableDetector.kt)
 
-### Use Material 3
+## Use Material 3
 
 Rule: [`ComposeM2Api`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/M2ApiDetector.kt)
 
 Material 3 (M3) reached stable in October 2022. In apps that have migrated to M3, there may be `androidx.compose.material` (M2) APIs still remaining on the classpath from libraries or dependencies that can cause confusing imports due to the many similar or colliding Composable names in the two libraries. The `ComposeM2Api` rule can prevent these from being used.
 
 !!! warning "Lint Configuration"
-    This rule is set to `IGNORE` by default and is **opt-in**. You can make it an error via `lint` in Gradle.
+    This rule is set to `IGNORE` by default and is **opt-in**.
+    
+    You can make it an error via the `lint` DSL in Gradle:
     ```kotlin
     android {
       lint {
         error += "ComposeM2Api"
       }
     }
+    ```
+    Or in `lint.xml`:
+    ```xml
+    <lint>
+      <issue id="ComposeM2Api" severity="error" />
+    </lint>
     ```
     More lint configuration docs can be found [here](https://developer.android.com/studio/write/lint#gradle).
 
