@@ -172,7 +172,7 @@ $dokka.location:slack.lint.compose/ViewModelForwardingDetector/visitComposable/#
 $dokka.location:slack.lint.compose/ViewModelInjectionDetector.Companion///PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-injection-detector/-companion/index.html
 $dokka.location:slack.lint.compose/ViewModelInjectionDetector.Companion/ISSUE/#/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-injection-detector/-companion/-i-s-s-u-e.html
 $dokka.location:slack.lint.compose/ViewModelInjectionDetector///PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-injection-detector/index.html
-$dokka.location:slack.lint.compose/ViewModelInjectionDetector/ViewModelInjectionDetector/#/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-injection-detector/-view-model-injection-detector.html
+$dokka.location:slack.lint.compose/ViewModelInjectionDetector/ViewModelInjectionDetector/#slack.lint.compose.util.StringSetLintOption/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-injection-detector/-view-model-injection-detector.html
 $dokka.location:slack.lint.compose/ViewModelInjectionDetector/visitComposable/#com.android.tools.lint.detector.api.JavaContext#org.jetbrains.kotlin.psi.KtFunction/PointingToDeclaration/compose-lint-checks/slack.lint.compose/-view-model-injection-detector/visit-composable.html
 slack.lint.compose
 slack.lint.compose.util
