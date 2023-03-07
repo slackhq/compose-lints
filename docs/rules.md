@@ -294,3 +294,39 @@ Composed modifiers may be created outside of composition, shared across elements
 More info: [Modifier extensions](https://developer.android.com/reference/kotlin/androidx/compose/ui/package-summary#extension-functions), [Composed modifiers in Jetpack Compose by Jorge Castillo](https://jorgecastillo.dev/composed-modifiers-in-jetpack-compose) and [Composed modifiers in API guidelines](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#composed-modifiers)
 
 Related rule: [`ComposeComposableModifier`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierComposableDetector.kt)
+
+### Use Material 3
+
+Rule: [`ComposeM2Api`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/M2ApiDetector.kt)
+
+Material 3 (M3) reached stable in October 2022. In apps that have migrated to M3, there may be `androidx.compose.material` (M2) APIs still remaining on the classpath from libraries or dependencies that can cause confusing imports due to the many similar or colliding Composable names in the two libraries. The `ComposeM2Api` rule can prevent these from being used.
+
+!!! warning "Lint Configuration"
+    This rule is set to `IGNORE` by default and is **opt-in**. You can enable and make it an error via `lint` in Gradle.
+    ```kotlin
+    android {
+      lint {
+        enable += "ComposeM2Api"
+        error += "ComposeM2Api"
+      }
+    }
+    ```
+    More lint configuration docs can be found [here](https://developer.android.com/studio/write/lint#gradle).
+
+!!! note "Allow-list Configuration"
+    To allow certain APIs (i.e. for incremental migration), you can configure a `allowed-m2-apis` option in `lint.xml`.
+    ```xml
+    <issue id="ComposeM2Api">
+       <option name="allowed-m2-apis" value="Text,Surface" />
+    </issue>
+    ```
+
+**Related docs links**
+
+- Announcement post: https://material.io/blog/material-3-compose-stable
+- Docs: https://m3.material.io/develop/android/jetpack-compose
+- Migration guide: https://developer.android.com/jetpack/compose/themes/material2-material3
+- Guidance: https://developer.android.com/jetpack/compose/themes/material3
+- Reply (primary sample app): https://github.com/android/compose-samples/tree/main/Reply
+- More samples: https://github.com/android/compose-samples
+
