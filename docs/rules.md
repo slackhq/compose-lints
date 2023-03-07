@@ -314,6 +314,15 @@ android {
 
 More lint configuration docs can be found [here](https://developer.android.com/studio/write/lint#gradle).
 
+!!! note "Allow-list Configuration"
+To allow certain APIs (i.e. for incremental migration), you can configure a `allowed-m2-apis` option in `lint.xml`.
+
+    ```xml
+    <issue id="ComposeM2Api">
+       <option name="allowed-m2-apis" value="Text,Surface" />
+    </issue>
+    ```
+
 **Related docs links**
 
 - Announcement post: https://material.io/blog/material-3-compose-stable
