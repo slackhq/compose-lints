@@ -6,7 +6,7 @@ Changelog
 
 _2023-03-07_
 
-* **New**: Add `M2ApiDetector` rule. This rule can be used to lint against using "Material 2" (`androidx.compose.material`) APIs in codebases that have migrated to Material 3 (M3). This rule is disabled by default, see the docs for more information: https://slackhq.github.io/compose-lints/rules/#use-material-3.
+* **New**: Add `ComposeM2Api` rule. This rule can be used to lint against using "Material 2" (`androidx.compose.material`) APIs in codebases that have migrated to Material 3 (M3). This rule is disabled by default, see the docs for more information: https://slackhq.github.io/compose-lints/rules/#use-material-3.
 * **Enhancement**: Add `viewmodel-factories` lint option to `ComposeViewModelInjection`. This allows you to define your own known ViewModel factories. Thanks to [@WhosNickDoglio](https://github.com/WhosNickDoglio) for contributing this!
 * Build against lint-api to `30.4.2`.
 * Test against lint `31.1.0-alpha08`.
