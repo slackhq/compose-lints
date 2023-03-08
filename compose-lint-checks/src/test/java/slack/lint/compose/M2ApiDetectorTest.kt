@@ -97,23 +97,23 @@ class M2ApiDetectorTest : BaseSlackLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:9: Warning: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.
+          src/test.kt:9: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.
           See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
             Text("Hello, world!")
             ~~~~~~~~~~~~~~~~~~~~~
-          src/test.kt:23: Warning: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.
+          src/test.kt:23: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.
           See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
               Text("Hello, world!")
               ~~~~~~~~~~~~~~~~~~~~~
-          src/test.kt:24: Warning: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.
+          src/test.kt:24: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.
           See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
               val elevation = BottomNavigationDefaults.Elevation
                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          src/test.kt:25: Warning: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.
+          src/test.kt:25: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.
           See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
               val drawerValue = BottomDrawerValue.Closed
                                 ~~~~~~~~~~~~~~~~~~~~~~~~
-          0 errors, 4 warnings
+          4 errors, 0 warnings
         """
           .trimIndent()
       )

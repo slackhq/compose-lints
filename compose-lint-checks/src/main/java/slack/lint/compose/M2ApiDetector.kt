@@ -6,7 +6,7 @@ import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.Category.Companion.CORRECTNESS
 import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
-import com.android.tools.lint.detector.api.Severity.IGNORE
+import com.android.tools.lint.detector.api.Severity.ERROR
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.StringOption
 import com.android.tools.lint.detector.api.TextFormat
@@ -47,10 +47,11 @@ constructor(private val allowList: StringSetLintOption = StringSetLintOption(ALL
             """,
           category = CORRECTNESS,
           priority = NORMAL,
-          severity = IGNORE,
+          severity = ERROR,
           implementation = sourceImplementation<M2ApiDetector>()
         )
         .setOptions(listOf(ALLOW_LIST))
+        .setEnabledByDefault(false)
   }
 
   override fun getApplicableUastTypes() =
