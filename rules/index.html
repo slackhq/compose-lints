@@ -954,17 +954,18 @@ This is not recommended. Instead, the provided modifier should only be used on t
 <p>Material 3 (M3) reached stable in October 2022. In apps that have migrated to M3, there may be <code>androidx.compose.material</code> (M2) APIs still remaining on the classpath from libraries or dependencies that can cause confusing imports due to the many similar or colliding Composable names in the two libraries. The <code>ComposeM2Api</code> rule can prevent these from being used.</p>
 <div class="admonition warning">
 <p class="admonition-title">Lint Configuration</p>
-<p>This rule is set to <code>IGNORE</code> by default and is <strong>opt-in</strong>.</p>
-<p>You can make it an error via the <code>lint</code> DSL in Gradle:
+<p>This rule is disabled default and is <strong>opt-in</strong>.</p>
+<p>You can enable it via the <code>lint</code> DSL in Gradle:
 <div class="highlight"><pre><span></span><code><span class="n">android</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="n">lint</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">enable</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;ComposeM2Api&quot;</span>
 <span class="w">    </span><span class="n">error</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;ComposeM2Api&quot;</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
 Or in <code>lint.xml</code>:
 <div class="highlight"><pre><span></span><code><span class="nt">&lt;lint&gt;</span>
-<span class="w">  </span><span class="nt">&lt;issue</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;ComposeM2Api&quot;</span><span class="w"> </span><span class="na">severity=</span><span class="s">&quot;error&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;issue</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;ComposeM2Api&quot;</span><span class="w"> </span><span class="na">severity=</span><span class="s">&quot;error&quot;</span><span class="nt">/&gt;</span>
 <span class="nt">&lt;/lint&gt;</span>
 </code></pre></div>
 More lint configuration docs can be found <a href="https://developer.android.com/studio/write/lint#gradle">here</a>.</p>
@@ -972,7 +973,7 @@ More lint configuration docs can be found <a href="https://developer.android.com
 <div class="admonition note">
 <p class="admonition-title">Allow-list Configuration</p>
 <p>To allow certain APIs (i.e. for incremental migration), you can configure a <code>allowed-m2-apis</code> option in <code>lint.xml</code>.
-<div class="highlight"><pre><span></span><code><span class="nt">&lt;issue</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;ComposeM2Api&quot;</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;issue</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;ComposeM2Api&quot;</span><span class="w">  </span><span class="na">severity=</span><span class="s">&quot;error&quot;</span><span class="nt">&gt;</span>
 <span class="w">   </span><span class="nt">&lt;option</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;allowed-m2-apis&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;Text,Surface&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
 <span class="nt">&lt;/issue&gt;</span>
 </code></pre></div></p>

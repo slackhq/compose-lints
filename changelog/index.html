@@ -319,6 +319,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#111" class="md-nav__link">
+    1.1.1
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#110" class="md-nav__link">
     1.1.0
   </a>
@@ -439,6 +446,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#111" class="md-nav__link">
+    1.1.1
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#110" class="md-nav__link">
     1.1.0
   </a>
@@ -498,6 +512,11 @@
 
 
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<h2 id="111">1.1.1<a class="headerlink" href="#111" title="Permanent link">&para;</a></h2>
+<p><em>2023-03-08</em></p>
+<ul>
+<li><strong>Fix</strong>: Use <code>setEnabledByDefault(false)</code> instead of <code>IGNORE</code> in <code>ComposeM2Api</code>. This is what we intended before, too, but didn&rsquo;t realize there was a dedicated API for it. Note that this changes configuration slightly as you must now explicitly enable the rule too and not just the severity. See the docs: <a href="https://slackhq.github.io/compose-lints/rules/#use-material-3">https://slackhq.github.io/compose-lints/rules/#use-material-3</a>.</li>
+</ul>
 <h2 id="110">1.1.0<a class="headerlink" href="#110" title="Permanent link">&para;</a></h2>
 <p><em>2023-03-07</em></p>
 <ul>
