@@ -443,15 +443,15 @@
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#use-material-3" class="md-nav__link">
     Use Material 3
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -721,15 +721,15 @@
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#use-material-3" class="md-nav__link">
     Use Material 3
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -949,17 +949,23 @@ This is not recommended. Instead, the provided modifier should only be used on t
 <p>Composed modifiers may be created outside of composition, shared across elements, and declared as top-level constants, making them more flexible than modifiers that can only be created via a <code>@Composable</code> function call, and easier to avoid accidentally sharing state across elements.</p>
 <p>More info: <a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/package-summary#extension-functions">Modifier extensions</a>, <a href="https://jorgecastillo.dev/composed-modifiers-in-jetpack-compose">Composed modifiers in Jetpack Compose by Jorge Castillo</a> and <a href="https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#composed-modifiers">Composed modifiers in API guidelines</a></p>
 <p>Related rule: <a href="https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierComposableDetector.kt"><code>ComposeComposableModifier</code></a></p>
-<h3 id="use-material-3">Use Material 3<a class="headerlink" href="#use-material-3" title="Permanent link">&para;</a></h3>
+<h2 id="use-material-3">Use Material 3<a class="headerlink" href="#use-material-3" title="Permanent link">&para;</a></h2>
 <p>Rule: <a href="https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/M2ApiDetector.kt"><code>ComposeM2Api</code></a></p>
 <p>Material 3 (M3) reached stable in October 2022. In apps that have migrated to M3, there may be <code>androidx.compose.material</code> (M2) APIs still remaining on the classpath from libraries or dependencies that can cause confusing imports due to the many similar or colliding Composable names in the two libraries. The <code>ComposeM2Api</code> rule can prevent these from being used.</p>
 <div class="admonition warning">
 <p class="admonition-title">Lint Configuration</p>
-<p>This rule is set to <code>IGNORE</code> by default and is <strong>opt-in</strong>. You can make it an error via <code>lint</code> in Gradle.
+<p>This rule is set to <code>IGNORE</code> by default and is <strong>opt-in</strong>.</p>
+<p>You can make it an error via the <code>lint</code> DSL in Gradle:
 <div class="highlight"><pre><span></span><code><span class="n">android</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="n">lint</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">error</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;ComposeM2Api&quot;</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
+</code></pre></div>
+Or in <code>lint.xml</code>:
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;lint&gt;</span>
+<span class="w">  </span><span class="nt">&lt;issue</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;ComposeM2Api&quot;</span><span class="w"> </span><span class="na">severity=</span><span class="s">&quot;error&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/lint&gt;</span>
 </code></pre></div>
 More lint configuration docs can be found <a href="https://developer.android.com/studio/write/lint#gradle">here</a>.</p>
 </div>
