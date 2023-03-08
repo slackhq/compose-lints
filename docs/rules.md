@@ -309,6 +309,7 @@ Material 3 (M3) reached stable in October 2022. In apps that have migrated to M3
     android {
       lint {
         enable += "ComposeM2Api"
+        error += "ComposeM2Api"
       }
     }
     ```
