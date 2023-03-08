@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.1.1
+-----
+
+_2023-03-08_
+
+* **Fix**: Use `setEnabledByDefault(false)` instead of `IGNORE` in `ComposeM2Api`. This is what we intended before, too, but didn't realize there was a dedicated API for it. Note that this changes configuration slightly as you must now explicitly enable the rule too and not just the severity. See the docs: https://slackhq.github.io/compose-lints/rules/#use-material-3.
+
 1.1.0
 -----
 
