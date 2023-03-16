@@ -8,12 +8,14 @@ import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
+import com.android.tools.lint.detector.api.StringOption
 import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.definedInInterface
 import slack.lint.compose.util.emitsContent
+import slack.lint.compose.util.isInternal
 import slack.lint.compose.util.isOverride
 import slack.lint.compose.util.isPreview
 import slack.lint.compose.util.modifierParameter
@@ -30,6 +32,14 @@ constructor(
   companion object {
 
     val CONTENT_EMITTER_OPTION = ContentEmitterLintOption.newOption()
+    internal val VISIBILITY_THRESHOLD =
+      StringOption(
+        name = "visibility-threshold",
+        description = "Visibility threshold to check for Modifiers",
+        defaultValue = "only_public",
+        explanation =
+          "You can control the visibility of which composables to check for Modifiers. Possible values are: `only_public` (default), `public_and_internal` and `all`"
+      )
 
     val ISSUE =
       Issue.create(
@@ -45,24 +55,36 @@ constructor(
           severity = Severity.ERROR,
           implementation = sourceImplementation<ModifierMissingDetector>()
         )
-        .setOptions(listOf(CONTENT_EMITTER_OPTION))
+        .setOptions(listOf(CONTENT_EMITTER_OPTION, VISIBILITY_THRESHOLD))
   }
 
   override fun visitComposable(context: JavaContext, function: KtFunction) {
     // We want to find all composable functions that:
-    //  - are public
     //  - emit content
     //  - are not overridden or part of an interface
     //  - are not a @Preview composable
     if (
-      !function.isPublic ||
-        function.returnsValue ||
+      function.returnsValue ||
         function.isOverride ||
         function.definedInInterface ||
         function.isPreview
     ) {
       return
     }
+
+    // We want to check now the visibility to see whether it's allowed by the configuration
+    // Possible values:
+    // - only_public: will check for modifiers only on public composables
+    // - public_and_internal: will check for public and internal composables
+    // - all: will check all composables (public, internal, protected, private
+    val shouldCheck =
+      when (VISIBILITY_THRESHOLD.getValue(context.configuration)) {
+        "only_public" -> function.isPublic
+        "public_and_internal" -> function.isPublic || function.isInternal
+        "all" -> true
+        else -> function.isPublic
+      }
+    if (!shouldCheck) return
 
     // If there is a modifier param, we bail
     if (function.modifierParameter != null) return
