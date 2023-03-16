@@ -246,6 +246,20 @@ More info: [Always provide a Modifier parameter](https://chris.banes.dev/posts/a
 
 Related rule: [`ComposeModifierMissing`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierMissingDetector.kt)
 
+!!! note "Configuration"
+By default, this rule will only check for modifiers in public methods. However, you can configure the threshold via using `visibility-threshold` option in `lint.xml`.
+
+    ```xml
+    <issue id="ComposeModifierMissing">
+       <option name="visibility-threshold" value="only_public" />
+    </issue>
+    ```
+
+Possible values are:
+* `only_public`: (default) Will check for missing modifiers only for public composables.
+* `public_and_internal`: Will check for missing modifiers in both public and internal composables.
+* `all`: Will check for missing modifiers in all composables.
+
 ### Don't re-use modifiers
 
 Modifiers which are passed in are designed so that they should be used by a single layout node in the composable function. If the provided modifier is used by multiple composables at different levels, unwanted behaviour can happen.
