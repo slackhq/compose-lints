@@ -12,7 +12,7 @@ on:
   merge_group:
 
 concurrency:
-  group: '${{ github.head_ref }}-${{ github.workflow }}'
+  group: '${{ github.head_ref }}-${{ github.workflow }}-${{ github.event_name }}'
   cancel-in-progress: true
 
 jobs:
