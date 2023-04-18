@@ -10,6 +10,7 @@ import com.android.tools.lint.detector.api.Severity.ERROR
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.StringOption
 import com.android.tools.lint.detector.api.TextFormat
+import com.android.tools.lint.detector.api.isKotlin
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UElement
@@ -60,8 +61,10 @@ constructor(private val allowList: StringSetLintOption = StringSetLintOption(ALL
       UQualifiedReferenceExpression::class.java,
     )
 
-  override fun createUastHandler(context: JavaContext) =
-    object : UElementHandler() {
+  override fun createUastHandler(context: JavaContext): UElementHandler? {
+    // Only applicable to Kotlin files
+    if (!isKotlin(context.uastFile?.lang)) return null
+    return object : UElementHandler() {
       override fun visitCallExpression(node: UCallExpression) = checkNode(node)
 
       override fun visitQualifiedReferenceExpression(node: UQualifiedReferenceExpression) =
@@ -81,4 +84,5 @@ constructor(private val allowList: StringSetLintOption = StringSetLintOption(ALL
         }
       }
     }
+  }
 }
