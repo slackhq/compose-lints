@@ -1,6 +1,14 @@
 Changelog
 =========
 
+1.2.0
+-----
+
+_2023-04-19_
+
+- **Fix**: Only run `ComposeM2Api` checks on Kotlin files.
+- Update lint current and min API to 14, aka AGP 8.0.0+.
+
 1.1.1
 -----
 
