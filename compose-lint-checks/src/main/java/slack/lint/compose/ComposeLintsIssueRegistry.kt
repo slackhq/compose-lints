@@ -19,7 +19,7 @@ class ComposeLintsIssueRegistry : IssueRegistry() {
     )
 
   override val api: Int = CURRENT_API
-  override val minApi: Int = 13 // 7.3.0-alpha02
+  override val minApi: Int = 14 // 8.0.0-alpha06
 
   @Suppress("SpreadOperator")
   override val issues: List<Issue> =
