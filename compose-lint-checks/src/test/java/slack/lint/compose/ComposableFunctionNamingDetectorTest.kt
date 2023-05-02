@@ -13,6 +13,7 @@ import org.junit.Test
 class ComposableFunctionNamingDetectorTest : BaseSlackLintTest() {
 
   override fun getDetector(): Detector = ComposableFunctionNamingDetector()
+
   override fun getIssues(): List<Issue> = ComposableFunctionNamingDetector.ISSUES.toList()
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs

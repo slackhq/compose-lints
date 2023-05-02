@@ -12,6 +12,7 @@ import org.junit.Test
 class RememberMissingDetectorTest : BaseSlackLintTest() {
 
   override fun getDetector(): Detector = RememberMissingDetector()
+
   override fun getIssues(): List<Issue> = listOf(RememberMissingDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs

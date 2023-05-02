@@ -12,6 +12,7 @@ import org.junit.Test
 class CompositionLocalUsageDetectorTest : BaseSlackLintTest() {
 
   override fun getDetector(): Detector = CompositionLocalUsageDetector()
+
   override fun getIssues(): List<Issue> = listOf(CompositionLocalUsageDetector.ISSUE)
 
   override fun lint(): TestLintTask {

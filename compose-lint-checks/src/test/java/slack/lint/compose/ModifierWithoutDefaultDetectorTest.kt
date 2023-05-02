@@ -12,6 +12,7 @@ import org.junit.Test
 class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
 
   override fun getDetector(): Detector = ModifierWithoutDefaultDetector()
+
   override fun getIssues(): List<Issue> = listOf(ModifierWithoutDefaultDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs

@@ -12,6 +12,7 @@ import org.junit.Test
 class ParameterOrderDetectorTest : BaseSlackLintTest() {
 
   override fun getDetector(): Detector = ParameterOrderDetector()
+
   override fun getIssues(): List<Issue> = listOf(ParameterOrderDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs

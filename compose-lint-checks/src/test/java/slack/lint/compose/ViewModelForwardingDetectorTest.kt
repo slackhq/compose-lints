@@ -12,6 +12,7 @@ import org.junit.Test
 class ViewModelForwardingDetectorTest : BaseSlackLintTest() {
 
   override fun getDetector(): Detector = ViewModelForwardingDetector()
+
   override fun getIssues(): List<Issue> = listOf(ViewModelForwardingDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs
