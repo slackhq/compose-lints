@@ -31,6 +31,7 @@ class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseSlackL
   }
 
   override fun getDetector(): Detector = ViewModelInjectionDetector()
+
   override fun getIssues(): List<Issue> = listOf(ViewModelInjectionDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs

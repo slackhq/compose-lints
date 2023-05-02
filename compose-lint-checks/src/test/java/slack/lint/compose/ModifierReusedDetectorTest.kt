@@ -12,6 +12,7 @@ import org.junit.Test
 class ModifierReusedDetectorTest : BaseSlackLintTest() {
 
   override fun getDetector(): Detector = ModifierReusedDetector()
+
   override fun getIssues(): List<Issue> = listOf(ModifierReusedDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs

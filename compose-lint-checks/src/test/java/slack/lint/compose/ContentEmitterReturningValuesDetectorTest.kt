@@ -13,6 +13,7 @@ import org.junit.Test
 class ContentEmitterReturningValuesDetectorTest : BaseSlackLintTest() {
 
   override fun getDetector(): Detector = ContentEmitterReturningValuesDetector()
+
   override fun getIssues(): List<Issue> = listOf(ContentEmitterReturningValuesDetector.ISSUE)
 
   override fun lint(): TestLintTask {

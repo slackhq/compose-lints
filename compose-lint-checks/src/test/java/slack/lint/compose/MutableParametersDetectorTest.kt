@@ -12,6 +12,7 @@ import org.junit.Test
 class MutableParametersDetectorTest : BaseSlackLintTest() {
 
   override fun getDetector(): Detector = MutableParametersDetector()
+
   override fun getIssues(): List<Issue> = listOf(MutableParametersDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs

@@ -9,6 +9,7 @@ import org.junit.Test
 class M2ApiDetectorTest : BaseSlackLintTest() {
 
   override fun getDetector(): Detector = M2ApiDetector()
+
   override fun getIssues(): List<Issue> = listOf(M2ApiDetector.ISSUE)
 
   private val Stubs =

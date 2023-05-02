@@ -12,6 +12,7 @@ import org.junit.Test
 class UnstableCollectionsDetectorTest : BaseSlackLintTest() {
 
   override fun getDetector(): Detector = UnstableCollectionsDetector()
+
   override fun getIssues(): List<Issue> = listOf(UnstableCollectionsDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs

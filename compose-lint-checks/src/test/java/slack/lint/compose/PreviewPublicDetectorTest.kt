@@ -12,6 +12,7 @@ import org.junit.Test
 class PreviewPublicDetectorTest : BaseSlackLintTest() {
 
   override fun getDetector(): Detector = PreviewPublicDetector()
+
   override fun getIssues(): List<Issue> = listOf(PreviewPublicDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs
