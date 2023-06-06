@@ -7,7 +7,7 @@ lint-latest = "31.2.0-alpha01"
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.0" }
-dokka = { id = "org.jetbrains.dokka", version = "1.8.10" }
+dokka = { id = "org.jetbrains.dokka", version = "1.8.20" }
 lint = { id = "com.android.lint", version = "8.0.0" }
 ksp = { id = "com.google.devtools.ksp", version = "1.8.21-1.0.11" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.25.2" }
