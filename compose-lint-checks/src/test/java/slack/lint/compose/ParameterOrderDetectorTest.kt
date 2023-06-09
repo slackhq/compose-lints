@@ -33,6 +33,9 @@ class ParameterOrderDetectorTest : BaseSlackLintTest() {
 
         @Composable
         fun MyComposable(text1: String, modifier: Modifier = Modifier, m2: Modifier = Modifier, trailing: () -> Unit) { }
+
+        @Composable
+        fun MyComposable(text1: String, modifier: Modifier = Modifier, m2: Modifier = Modifier, trailing: (() -> Unit)?) { }
       """
         .trimIndent()
     lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
