@@ -10,6 +10,7 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionType
+import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.KtParameter
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isModifier
@@ -97,5 +98,10 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
   }
 
   private val KtFunction.hasTrailingFunction: Boolean
-    get() = valueParameters.lastOrNull()?.typeReference?.typeElement is KtFunctionType
+    get() =
+      when (val outerType = valueParameters.lastOrNull()?.typeReference?.typeElement) {
+        is KtFunctionType -> true
+        is KtNullableType -> outerType.innerType is KtFunctionType
+        else -> false
+      }
 }
