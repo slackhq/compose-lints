@@ -3,7 +3,7 @@ kotlin = "1.8.0"
 ktfmt = "0.44"
 jvmTarget = "11"
 lint = "31.0.2"
-lint-latest = "31.2.0-alpha01"
+lint-latest = "31.2.0-alpha09"
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.0" }
