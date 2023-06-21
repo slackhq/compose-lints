@@ -75,12 +75,13 @@ constructor(
     val functionName = function.name?.takeUnless(String::isEmpty) ?: return
     val firstLetter = functionName.first()
 
+    // If it's allowed, we don't report it
+    val isAllowed = allowedNames.value.any { it.toRegex().matches(functionName) }
+    if (isAllowed) return
+
     if (function.returnsValue) {
       // If it returns value, the composable should start with a lowercase letter
       if (firstLetter.isUpperCase()) {
-        // If it's allowed, we don't report it
-        val isAllowed = allowedNames.value.any { it.toRegex().matches(functionName) }
-        if (isAllowed) return
         context.report(
           ISSUE_LOWERCASE,
           function,

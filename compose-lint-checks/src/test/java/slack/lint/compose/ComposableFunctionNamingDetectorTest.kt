@@ -66,6 +66,20 @@ class ComposableFunctionNamingDetectorTest : BaseSlackLintTest() {
   }
 
   @Test
+  fun `passes when a composable that returns nothing or Unit is lowercase but allowed`() {
+    @Language("kotlin")
+    val code =
+      """
+        @Composable
+        fun myPresenter() { }
+        @Composable
+        fun myPresenter(): Unit { }
+      """
+        .trimIndent()
+    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+  }
+
+  @Test
   fun `passes when a composable doesn't have a body block, is a property or a lambda`() {
     @Language("kotlin")
     val code =
