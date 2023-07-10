@@ -15,7 +15,7 @@ spotless = { id = "com.diffplug.spotless", version = "6.19.0" }
 
 [libraries]
 autoService-annotations = "com.google.auto.service:auto-service-annotations:1.1.1"
-autoService-ksp = "dev.zacsweers.autoservice:auto-service-ksp:1.0.0"
+autoService-ksp = "dev.zacsweers.autoservice:auto-service-ksp:1.1.0"
 junit = "junit:junit:4.13.2"
 ktfmt = { module = "com.facebook:ktfmt", version.ref = "ktfmt" }
 lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "lint" }
