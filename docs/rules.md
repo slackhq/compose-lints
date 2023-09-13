@@ -74,7 +74,7 @@ If a composable should offer additional control surfaces to its caller, those co
 
 More info: [Compose API guidelines](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#emit-xor-return-a-value)
 
-Related rule: [`ComposeMultipleContentEmitters`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MultipleContentEmittersDetector.kt)
+Related rule: [`ComposeContentEmitterReturningValues`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ContentEmitterReturningValuesDetector.kt)
 
 !!! note "Configuration"
     To add your custom composables so they are used in this rule (things like your design system composables), you can configure a `content-emitters` option in `lint.xml`.
