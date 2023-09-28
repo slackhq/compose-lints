@@ -57,8 +57,7 @@ constructor(
         block.statements.filterIsInstance<KtCallExpression>().count {
           it.emitsContent(contentEmitterOption.value)
         }
-      }
-        ?: 0
+      } ?: 0
 
   internal fun KtFunction.indirectUiEmitterCount(mapping: Map<KtFunction, Int>): Int {
     val bodyBlock = bodyBlockExpression ?: return 0
