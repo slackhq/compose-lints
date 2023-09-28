@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
+import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.junit.Test
@@ -11,6 +12,9 @@ class M2ApiDetectorTest : BaseSlackLintTest() {
   override fun getDetector(): Detector = M2ApiDetector()
 
   override fun getIssues(): List<Issue> = listOf(M2ApiDetector.ISSUE)
+
+  // This is impossible to test with this test mode because the expected values change (even while still correct)
+  override val skipTestModes: Array<TestMode> = arrayOf(TestMode.FULLY_QUALIFIED)
 
   private val Stubs =
     arrayOf(
