@@ -8,9 +8,11 @@ import com.google.devtools.ksp.gradle.KspTask
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+  alias(libs.plugins.kotlin.jvm) apply false
   alias(libs.plugins.spotless) apply false
   alias(libs.plugins.mavenPublish) apply false
   alias(libs.plugins.dokka) apply false
@@ -109,15 +111,15 @@ allprojects {
 
 subprojects {
   pluginManager.withPlugin("java") {
-    configure<JavaPluginExtension> { toolchain { languageVersion.set(JavaLanguageVersion.of(19)) } }
+    configure<JavaPluginExtension> { toolchain { languageVersion.set(JavaLanguageVersion.of(20)) } }
 
     tasks.withType<JavaCompile>().configureEach { options.release.set(11) }
   }
 
   pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
     tasks.withType<KotlinCompile>().configureEach {
-      kotlinOptions {
-        jvmTarget = "11"
+      compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
         // TODO re-enable once lint uses Kotlin 1.5
         //  allWarningsAsErrors = true
         //  freeCompilerArgs = freeCompilerArgs + listOf("-progressive")
