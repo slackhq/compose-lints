@@ -3,7 +3,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  kotlin("jvm")
+  alias(libs.plugins.kotlin.jvm)
   // Run lint on the lints! https://groups.google.com/g/lint-dev/c/q_TVEe85dgc
   alias(libs.plugins.lint)
   alias(libs.plugins.ksp)
