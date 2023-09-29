@@ -12,6 +12,7 @@ import com.android.tools.lint.detector.api.StringOption
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.uast.kotlin.unwrapBlockOrParenthesis
 import slack.lint.compose.util.*
 import slack.lint.compose.util.sourceImplementation
 
@@ -72,8 +73,8 @@ constructor(private val userFactories: StringSetLintOption = StringSetLintOption
       .flatMap { property ->
         property
           .findDirectChildrenByClass<KtCallExpression>()
-          .filter { it.calleeExpression?.text in allFactoryNames }
-          .map { property to it.calleeExpression!!.text }
+          .filter { it.calleeExpression?.unwrapBlockOrParenthesis()?.text in allFactoryNames }
+          .map { property to it.calleeExpression!!.unwrapBlockOrParenthesis().text }
       }
       .forEach { (property, viewModelFactoryName) ->
         context.report(

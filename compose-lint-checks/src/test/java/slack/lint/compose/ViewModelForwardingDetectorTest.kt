@@ -15,7 +15,8 @@ class ViewModelForwardingDetectorTest : BaseSlackLintTest() {
 
   override fun getIssues(): List<Issue> = listOf(ViewModelForwardingDetector.ISSUE)
 
-  // This mode is irrelevant to our test and totally untestable with stringy outputs
+  // These modes are irrelevant to our test or totally untestable with stringy outputs
+  // https://issuetracker.google.com/issues/302674274
   override val skipTestModes: Array<TestMode> =
     arrayOf(
       TestMode.SUPPRESSIBLE,
