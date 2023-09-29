@@ -44,7 +44,7 @@ constructor(
           briefDescription = "Preview composables should be private",
           explanation =
             """
-              Composables annotated with `@Preview` that are used only for previewing the UI should not be public.
+              Composables annotated with `@Preview` that are used only for previewing the UI should not be public.\
               See https://slackhq.github.io/compose-lints/rules/#preview-composables-should-not-be-public for more information.
             """,
           category = Category.PRODUCTIVITY,

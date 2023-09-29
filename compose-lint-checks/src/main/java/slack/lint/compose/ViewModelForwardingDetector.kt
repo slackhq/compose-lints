@@ -12,7 +12,6 @@ import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtReferenceExpression
-import org.jetbrains.uast.kotlin.unwrapBlockOrParenthesis
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.definedInInterface
 import slack.lint.compose.util.findDirectChildrenByClass
@@ -20,6 +19,7 @@ import slack.lint.compose.util.isActual
 import slack.lint.compose.util.isOverride
 import slack.lint.compose.util.isRestartableEffect
 import slack.lint.compose.util.sourceImplementation
+import slack.lint.compose.util.unwrapParenthesis
 
 class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
@@ -27,11 +27,10 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
     val ISSUE =
       Issue.create(
         id = "ComposeViewModelForwarding",
-        briefDescription =
-          "Forwarding a ViewModel through multiple @Composable functions should be avoided",
+        briefDescription = "Don't forward ViewModels through multiple @Composable functions",
         explanation =
           """
-          Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting.
+          Forwarding a `ViewModel` through multiple `@Composable` functions should be avoided. Consider using state hoisting.\
           See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information.
         """,
         category = Category.CORRECTNESS,
@@ -65,7 +64,7 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
       bodyBlock
         .findDirectChildrenByClass<KtCallExpression>()
         .filter { callExpression ->
-          callExpression.calleeExpression?.unwrapBlockOrParenthesis()?.text?.first()?.isUpperCase()
+          callExpression.calleeExpression?.unwrapParenthesis()?.text?.first()?.isUpperCase()
             ?: false
         }
         // Avoid LaunchedEffect/DisposableEffect/etc that can use the VM as a key

@@ -29,7 +29,7 @@ class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeS
         briefDescription = "Missing Modifier default value",
         explanation =
           """
-              This @Composable function has a modifier parameter but it doesn't have a default value.
+              This @Composable function has a modifier parameter but it doesn't have a default value.\
               See https://slackhq.github.io/compose-lints/rules/#modifiers-should-have-default-parameters for more information.
             """,
         category = Category.PRODUCTIVITY,

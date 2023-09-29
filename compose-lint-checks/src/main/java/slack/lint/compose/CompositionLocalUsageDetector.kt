@@ -38,7 +38,7 @@ class CompositionLocalUsageDetector : Detector(), SourceCodeScanner {
           briefDescription = "CompositionLocals are discouraged",
           explanation =
             """
-              `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.
+              `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.\
               See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information.
             """,
           category = Category.PRODUCTIVITY,

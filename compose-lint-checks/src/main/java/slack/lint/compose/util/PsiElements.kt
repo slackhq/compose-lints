@@ -25,12 +25,12 @@ inline fun <reified T : PsiElement> PsiElement.findChildrenByClass(): Sequence<T
 inline fun <reified T : PsiElement> PsiElement.findDirectChildrenByClass(): Sequence<T> {
   val expr = unwrapParenthesis() ?: return emptySequence()
   return sequence {
-    var current = expr.firstChild.unwrapParenthesis()
+    var current = expr.firstChild?.unwrapParenthesis()
     while (current != null) {
       if (current is T) {
         yield(current)
       }
-      current = current.nextSibling.unwrapParenthesis()
+      current = current.nextSibling?.unwrapParenthesis()
     }
   }
 }
@@ -39,13 +39,6 @@ inline fun <reified T : PsiElement> PsiElement.findDirectChildrenByClass(): Sequ
 internal fun PsiElement?.unwrapParenthesis(): PsiElement? {
   return when (this) {
     null -> null
-    else -> unwrapParenthesis()
-  }
-}
-
-@PublishedApi
-internal fun PsiElement.unwrapParenthesis(): PsiElement? {
-  return when (this) {
     is KtExpression -> unwrapParenthesis()
     else -> this
   }

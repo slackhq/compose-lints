@@ -88,8 +88,7 @@ class ViewModelForwardingDetectorTest : BaseSlackLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:3: Error: Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting.
-          See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information. [ComposeViewModelForwarding]
+          src/test.kt:3: Error: Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting.See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information. [ComposeViewModelForwarding]
               AnotherComposable(viewModel)
               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           1 errors, 0 warnings
