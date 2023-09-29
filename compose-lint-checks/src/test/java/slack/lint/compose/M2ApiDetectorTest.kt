@@ -13,7 +13,8 @@ class M2ApiDetectorTest : BaseSlackLintTest() {
 
   override fun getIssues(): List<Issue> = listOf(M2ApiDetector.ISSUE)
 
-  // This is impossible to test with this test mode because the expected values change (even while still correct)
+  // This is impossible to test with this test mode because the expected values change (even while
+  // still correct)
   override val skipTestModes: Array<TestMode> = arrayOf(TestMode.FULLY_QUALIFIED)
 
   private val Stubs =

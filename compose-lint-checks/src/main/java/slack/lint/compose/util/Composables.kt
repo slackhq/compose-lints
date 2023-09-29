@@ -174,5 +174,8 @@ val KtCallExpression.isRestartableEffect: Boolean
   get() = RestartableEffects.contains(calleeExpression?.text)
 
 // From https://developer.android.com/jetpack/compose/side-effects#restarting-effects
+// Also includes Circuit's produceRetainedState
 private val RestartableEffects by
-  lazy(LazyThreadSafetyMode.NONE) { setOf("LaunchedEffect", "produceState", "DisposableEffect") }
+  lazy(LazyThreadSafetyMode.NONE) {
+    setOf("LaunchedEffect", "produceState", "produceRetainedState", "DisposableEffect")
+  }

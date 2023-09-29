@@ -16,7 +16,12 @@ class ViewModelForwardingDetectorTest : BaseSlackLintTest() {
   override fun getIssues(): List<Issue> = listOf(ViewModelForwardingDetector.ISSUE)
 
   // This mode is irrelevant to our test and totally untestable with stringy outputs
-  override val skipTestModes: Array<TestMode> = arrayOf(TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
+  override val skipTestModes: Array<TestMode> =
+    arrayOf(
+      TestMode.SUPPRESSIBLE,
+      TestMode.TYPE_ALIAS,
+      TestMode.PARENTHESIZED,
+    )
 
   @Test
   fun `allows the forwarding of ViewModels in overridden Composable functions`() {

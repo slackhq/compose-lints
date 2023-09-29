@@ -7,7 +7,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import java.util.Deque
 import java.util.LinkedList
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.uast.kotlin.unwrapBlockOrParenthesis
 
 inline fun <reified T : PsiElement> PsiElement.findChildrenByClass(): Sequence<T> = sequence {
   val queue: Deque<PsiElement> = LinkedList()
@@ -32,13 +34,26 @@ inline fun <reified T : PsiElement> PsiElement.findDirectFirstChildByClass(): T?
   return null
 }
 
-inline fun <reified T : PsiElement> PsiElement.findDirectChildrenByClass(): Sequence<T> = sequence {
-  var current = firstChild
-  while (current != null) {
-    if (current is T) {
-      yield(current)
+inline fun <reified T : PsiElement> PsiElement.findDirectChildrenByClass(): Sequence<T> {
+  var unwrapped = false
+  val expr =
+    if (this is KtExpression) {
+      unwrapped = true
+      unwrapBlockOrParenthesis()
+    } else {
+      this
     }
-    current = current.nextSibling
+  return sequence {
+    if (unwrapped && expr is T) {
+      yield(expr)
+    }
+    var current = expr.firstChild
+    while (current != null) {
+      if (current is T) {
+        yield(current)
+      }
+      current = current.nextSibling
+    }
   }
 }
 

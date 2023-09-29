@@ -12,6 +12,7 @@ import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.uast.kotlin.unwrapBlockOrParenthesis
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.definedInInterface
 import slack.lint.compose.util.findDirectChildrenByClass
@@ -59,13 +60,13 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
         .toSet()
 
     // We want now to see if these parameter names are used in any other calls to functions that
-    // start with
-    // a capital letter (so, most likely, composables).
+    // start with a capital letter (so, most likely, composables).
     val forwardingCallExpressions =
       bodyBlock
         .findDirectChildrenByClass<KtCallExpression>()
         .filter { callExpression ->
-          callExpression.calleeExpression?.text?.first()?.isUpperCase() ?: false
+          callExpression.calleeExpression?.unwrapBlockOrParenthesis()?.text?.first()?.isUpperCase()
+            ?: false
         }
         // Avoid LaunchedEffect/DisposableEffect/etc that can use the VM as a key
         .filterNot { callExpression -> callExpression.isRestartableEffect }
