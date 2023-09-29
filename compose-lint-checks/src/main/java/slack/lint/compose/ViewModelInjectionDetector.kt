@@ -77,10 +77,11 @@ constructor(private val userFactories: StringSetLintOption = StringSetLintOption
       .findChildrenByClass<KtProperty>()
       .flatMap { property ->
         property.findDirectChildrenByClass<KtCallExpression>().mapNotNull {
-          it.calleeExpression!!.unwrapParenthesis()?.text?.takeIf(allFactoryNames::contains)?.let {
-            text ->
-            property to text
-          }
+          it.calleeExpression!!
+            .unwrapParenthesis()
+            ?.text
+            ?.takeIf(allFactoryNames::contains)
+            ?.let(property::to)
         }
       }
       .forEach { (property, viewModelFactoryName) ->
