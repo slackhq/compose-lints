@@ -27,7 +27,7 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
     val ISSUE =
       Issue.create(
         id = "ComposeViewModelForwarding",
-        briefDescription = "Don't forward ViewModels through multiple @Composable functions",
+        briefDescription = "Don't forward ViewModels through composables",
         explanation =
           """
           Forwarding a `ViewModel` through multiple `@Composable` functions should be avoided. Consider using state hoisting.\
