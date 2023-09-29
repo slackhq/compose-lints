@@ -4,6 +4,7 @@
 package slack.lint.compose.util
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtParenthesizedExpression
 
 inline fun <reified T : PsiElement> PsiElement.findChildrenByClass(): Sequence<T> {
@@ -38,6 +39,21 @@ inline fun <reified T : PsiElement> PsiElement.findDirectChildrenByClass(): Sequ
 internal fun PsiElement?.unwrapParenthesis(): PsiElement? {
   return when (this) {
     null -> null
+    else -> unwrapParenthesis()
+  }
+}
+
+@PublishedApi
+internal fun PsiElement.unwrapParenthesis(): PsiElement? {
+  return when (this) {
+    is KtExpression -> unwrapParenthesis()
+    else -> this
+  }
+}
+
+@PublishedApi
+internal fun KtExpression.unwrapParenthesis(): KtExpression? {
+  return when (this) {
     is KtParenthesizedExpression -> expression
     else -> this
   }

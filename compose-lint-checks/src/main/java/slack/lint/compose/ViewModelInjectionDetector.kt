@@ -12,9 +12,14 @@ import com.android.tools.lint.detector.api.StringOption
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.uast.kotlin.unwrapBlockOrParenthesis
-import slack.lint.compose.util.*
+import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.StringSetLintOption
+import slack.lint.compose.util.definedInInterface
+import slack.lint.compose.util.findChildrenByClass
+import slack.lint.compose.util.findDirectChildrenByClass
+import slack.lint.compose.util.isOverride
 import slack.lint.compose.util.sourceImplementation
+import slack.lint.compose.util.unwrapParenthesis
 
 class ViewModelInjectionDetector
 @JvmOverloads
@@ -71,10 +76,12 @@ constructor(private val userFactories: StringSetLintOption = StringSetLintOption
     bodyBlock
       .findChildrenByClass<KtProperty>()
       .flatMap { property ->
-        property
-          .findDirectChildrenByClass<KtCallExpression>()
-          .filter { it.calleeExpression?.unwrapBlockOrParenthesis()?.text in allFactoryNames }
-          .map { property to it.calleeExpression!!.unwrapBlockOrParenthesis().text }
+        property.findDirectChildrenByClass<KtCallExpression>().mapNotNull {
+          it.calleeExpression!!.unwrapParenthesis()?.text?.takeIf(allFactoryNames::contains)?.let {
+            text ->
+            property to text
+          }
+        }
       }
       .forEach { (property, viewModelFactoryName) ->
         context.report(
