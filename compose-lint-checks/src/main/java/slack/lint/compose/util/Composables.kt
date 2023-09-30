@@ -159,13 +159,14 @@ val KtFunction.modifierParameter: KtParameter?
   }
 
 val KtProperty.declaresCompositionLocal: Boolean
-  get() =
-    !isVar &&
-      hasInitializer() &&
-      initializer is KtCallExpression &&
-      CompositionLocalReferenceExpressions.contains(
-        (initializer as KtCallExpression).referenceExpression()?.text
-      )
+  get() {
+    if (isVar || !hasInitializer()) return false
+
+    val initializer = initializer?.unwrapParenthesis() ?: return false
+
+    return initializer is KtCallExpression &&
+      initializer.referenceExpression()?.text in CompositionLocalReferenceExpressions
+  }
 
 private val CompositionLocalReferenceExpressions by
   lazy(LazyThreadSafetyMode.NONE) { setOf("staticCompositionLocalOf", "compositionLocalOf") }
