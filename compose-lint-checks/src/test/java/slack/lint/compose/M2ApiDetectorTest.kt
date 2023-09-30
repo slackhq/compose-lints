@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
+import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.junit.Test
@@ -11,6 +12,10 @@ class M2ApiDetectorTest : BaseSlackLintTest() {
   override fun getDetector(): Detector = M2ApiDetector()
 
   override fun getIssues(): List<Issue> = listOf(M2ApiDetector.ISSUE)
+
+  // This is impossible to test with this test mode because the expected values change (even while
+  // still correct)
+  override val skipTestModes: Array<TestMode> = arrayOf(TestMode.FULLY_QUALIFIED)
 
   private val Stubs =
     arrayOf(
@@ -98,20 +103,16 @@ class M2ApiDetectorTest : BaseSlackLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:9: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.
-          See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
+          src/test.kt:9: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
             Text("Hello, world!")
             ~~~~~~~~~~~~~~~~~~~~~
-          src/test.kt:23: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.
-          See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
+          src/test.kt:23: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
               Text("Hello, world!")
               ~~~~~~~~~~~~~~~~~~~~~
-          src/test.kt:24: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.
-          See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
+          src/test.kt:24: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
               val elevation = BottomNavigationDefaults.Elevation
                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          src/test.kt:25: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.
-          See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
+          src/test.kt:25: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
               val drawerValue = BottomDrawerValue.Closed
                                 ~~~~~~~~~~~~~~~~~~~~~~~~
           4 errors, 0 warnings

@@ -41,20 +41,16 @@ class CompositionLocalUsageDetectorTest : BaseSlackLintTest() {
       .expectWarningCount(4)
       .expect(
         """
-        src/test.kt:2: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.
-        See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
+        src/test.kt:2: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
                         private val LocalApple = staticCompositionLocalOf<String> { "Apple" }
                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        src/test.kt:3: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.
-        See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
+        src/test.kt:3: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
                         internal val LocalPlum: String = staticCompositionLocalOf { "Plum" }
                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        src/test.kt:4: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.
-        See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
+        src/test.kt:4: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
                         val LocalPrune = compositionLocalOf { "Prune" }
                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        src/test.kt:5: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.
-        See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
+        src/test.kt:5: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
                         private val LocalKiwi: String = compositionLocalOf { "Kiwi" }
                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         0 errors, 4 warnings

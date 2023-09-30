@@ -34,8 +34,10 @@ class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseSlackL
 
   override fun getIssues(): List<Issue> = listOf(ViewModelInjectionDetector.ISSUE)
 
-  // This mode is irrelevant to our test and totally untestable with stringy outputs
-  override val skipTestModes: Array<TestMode> = arrayOf(TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
+  // These modes are irrelevant to our test or totally untestable with stringy outputs
+  // https://issuetracker.google.com/issues/302674274
+  override val skipTestModes: Array<TestMode> =
+    arrayOf(TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS, TestMode.PARENTHESIZED)
 
   override fun lint(): TestLintTask {
     return super.lint()

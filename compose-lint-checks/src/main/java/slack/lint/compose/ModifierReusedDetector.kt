@@ -42,8 +42,8 @@ constructor(
           briefDescription = "Modifiers should only be used once",
           explanation =
             """
-              Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. `modifier.fillMaxWidth()`.
-              Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
+              Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. `modifier.fillMaxWidth()`.\
+              Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.\
               See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information.
             """,
           category = Category.PRODUCTIVITY,

@@ -40,7 +40,7 @@ constructor(
           briefDescription = "Composables should only be emit from one source",
           explanation =
             """
-              Composable functions should only be emitting content into the composition from one source at their top level.
+              Composable functions should only be emitting content into the composition from one source at their top level.\
               See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information.
             """,
           category = Category.PRODUCTIVITY,

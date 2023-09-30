@@ -19,6 +19,7 @@ import slack.lint.compose.util.isActual
 import slack.lint.compose.util.isOverride
 import slack.lint.compose.util.isRestartableEffect
 import slack.lint.compose.util.sourceImplementation
+import slack.lint.compose.util.unwrapParenthesis
 
 class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
@@ -26,11 +27,10 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
     val ISSUE =
       Issue.create(
         id = "ComposeViewModelForwarding",
-        briefDescription =
-          "Forwarding a ViewModel through multiple @Composable functions should be avoided",
+        briefDescription = "Don't forward ViewModels through composables",
         explanation =
           """
-          Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting.
+          Forwarding a `ViewModel` through multiple `@Composable` functions should be avoided. Consider using state hoisting.\
           See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information.
         """,
         category = Category.CORRECTNESS,
@@ -59,13 +59,13 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
         .toSet()
 
     // We want now to see if these parameter names are used in any other calls to functions that
-    // start with
-    // a capital letter (so, most likely, composables).
+    // start with a capital letter (so, most likely, composables).
     val forwardingCallExpressions =
       bodyBlock
         .findDirectChildrenByClass<KtCallExpression>()
         .filter { callExpression ->
-          callExpression.calleeExpression?.text?.first()?.isUpperCase() ?: false
+          callExpression.calleeExpression?.unwrapParenthesis()?.text?.first()?.isUpperCase()
+            ?: false
         }
         // Avoid LaunchedEffect/DisposableEffect/etc that can use the VM as a key
         .filterNot { callExpression -> callExpression.isRestartableEffect }

@@ -4,43 +4,50 @@
 package slack.lint.compose.util
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiNameIdentifierOwner
-import java.util.Deque
-import java.util.LinkedList
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtParenthesizedExpression
 
-inline fun <reified T : PsiElement> PsiElement.findChildrenByClass(): Sequence<T> = sequence {
-  val queue: Deque<PsiElement> = LinkedList()
-  queue.add(this@findChildrenByClass)
-  while (queue.isNotEmpty()) {
-    val current = queue.pop()
-    if (current is T) {
-      yield(current)
+inline fun <reified T : PsiElement> PsiElement.findChildrenByClass(): Sequence<T> {
+  val expr = unwrapParenthesis() ?: return emptySequence()
+  return sequence {
+    val queue = ArrayDeque<PsiElement>()
+    queue.add(expr)
+    while (queue.isNotEmpty()) {
+      val current = queue.removeFirst().unwrapParenthesis() ?: continue
+      if (current is T) {
+        yield(current)
+      }
+      queue.addAll(current.children)
     }
-    queue.addAll(current.children)
   }
 }
 
-inline fun <reified T : PsiElement> PsiElement.findDirectFirstChildByClass(): T? {
-  var current = firstChild
-  while (current != null) {
-    if (current is T) {
-      return current
+inline fun <reified T : PsiElement> PsiElement.findDirectChildrenByClass(): Sequence<T> {
+  val expr = unwrapParenthesis() ?: return emptySequence()
+  return sequence {
+    var current = expr.firstChild?.unwrapParenthesis()
+    while (current != null) {
+      if (current is T) {
+        yield(current)
+      }
+      current = current.nextSibling?.unwrapParenthesis()
     }
-    current = current.nextSibling
-  }
-  return null
-}
-
-inline fun <reified T : PsiElement> PsiElement.findDirectChildrenByClass(): Sequence<T> = sequence {
-  var current = firstChild
-  while (current != null) {
-    if (current is T) {
-      yield(current)
-    }
-    current = current.nextSibling
   }
 }
 
-val PsiNameIdentifierOwner.startOffsetFromName: Int
-  get() = nameIdentifier?.startOffset ?: startOffset
+@PublishedApi
+internal fun PsiElement?.unwrapParenthesis(): PsiElement? {
+  return when (this) {
+    null -> null
+    is KtExpression -> unwrapParenthesis()
+    else -> this
+  }
+}
+
+@PublishedApi
+internal fun KtExpression.unwrapParenthesis(): KtExpression? {
+  return when (this) {
+    is KtParenthesizedExpression -> expression
+    else -> this
+  }
+}
