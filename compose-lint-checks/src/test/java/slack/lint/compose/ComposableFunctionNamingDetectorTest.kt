@@ -16,9 +16,6 @@ class ComposableFunctionNamingDetectorTest : BaseSlackLintTest() {
 
   override fun getIssues(): List<Issue> = ComposableFunctionNamingDetector.ISSUES.toList()
 
-  // This mode is irrelevant to our test and totally untestable with stringy outputs
-  override val skipTestModes: Array<TestMode> = arrayOf(TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
-
   override fun lint(): TestLintTask {
     return super.lint()
       .configureOption(
@@ -139,6 +136,8 @@ class ComposableFunctionNamingDetectorTest : BaseSlackLintTest() {
     lint()
       .files(kotlin(code))
       .allowCompilationErrors()
+      // TODO this is broken in lint at the moment: https://issuetracker.google.com/issues/302674274#comment6
+      .skipTestModes(TestMode.TYPE_ALIAS)
       .run()
       .expect(
         """
@@ -152,6 +151,21 @@ class ComposableFunctionNamingDetectorTest : BaseSlackLintTest() {
         """
           .trimIndent()
       )
+    // TODO see above
+//      .expect(
+//        testMode = TestMode.TYPE_ALIAS,
+//        expectedText =
+//        """
+//          src/test.kt:2: Error: Composable functions that return Unit should start with an uppercase letter.They are considered declarative entities that can be either present or absent in a composition and therefore follow the naming rules for classes.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingUppercase]
+//          fun myComposable() { }
+//              ~~~~~~~~~~~~
+//          src/test.kt:5: Error: Composable functions that return Unit should start with an uppercase letter.They are considered declarative entities that can be either present or absent in a composition and therefore follow the naming rules for classes.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingUppercase]
+//          fun myComposable(): TYPE_ALIAS_1 { }
+//              ~~~~~~~~~~~~
+//          2 errors, 0 warnings
+//        """
+//          .trimIndent()
+//      )
   }
 
   @Test

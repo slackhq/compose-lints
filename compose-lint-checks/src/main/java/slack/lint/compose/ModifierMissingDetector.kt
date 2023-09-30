@@ -12,6 +12,8 @@ import com.android.tools.lint.detector.api.StringOption
 import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.definedInInterface
 import slack.lint.compose.util.emitsContent
@@ -19,7 +21,7 @@ import slack.lint.compose.util.isInternal
 import slack.lint.compose.util.isOverride
 import slack.lint.compose.util.isPreview
 import slack.lint.compose.util.modifierParameter
-import slack.lint.compose.util.returnsValue
+import slack.lint.compose.util.returnsUnitOrVoid
 import slack.lint.compose.util.sourceImplementation
 
 class ModifierMissingDetector
@@ -64,10 +66,10 @@ constructor(
     //  - are not overridden or part of an interface
     //  - are not a @Preview composable
     if (
-      function.returnsValue ||
         function.isOverride ||
         function.definedInInterface ||
-        function.isPreview
+        function.isPreview ||
+        function.toUElementOfType<UMethod>()?.returnsUnitOrVoid(context.evaluator) == false
     ) {
       return
     }

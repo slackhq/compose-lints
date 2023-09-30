@@ -10,10 +10,12 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.StringOption
 import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.StringSetLintOption
 import slack.lint.compose.util.hasReceiverType
-import slack.lint.compose.util.returnsValue
+import slack.lint.compose.util.returnsUnitOrVoid
 import slack.lint.compose.util.sourceImplementation
 
 class ComposableFunctionNamingDetector
@@ -79,17 +81,8 @@ constructor(
     val isAllowed = allowedNames.value.any { it.toRegex().matches(functionName) }
     if (isAllowed) return
 
-    if (function.returnsValue) {
-      // If it returns value, the composable should start with a lowercase letter
-      if (firstLetter.isUpperCase()) {
-        context.report(
-          ISSUE_LOWERCASE,
-          function,
-          context.getNameLocation(function),
-          ISSUE_LOWERCASE.getExplanation(TextFormat.TEXT)
-        )
-      }
-    } else {
+    val method = function.toUElementOfType<UMethod>() ?: return
+    if (method.returnsUnitOrVoid(context.evaluator)) {
       // If it returns Unit or doesn't have a return type, we should start with an uppercase letter
       // If the composable has a receiver, we can ignore this.
       if (firstLetter.isLowerCase() && !function.hasReceiverType) {
@@ -98,6 +91,16 @@ constructor(
           function,
           context.getNameLocation(function),
           ISSUE_UPPERCASE.getExplanation(TextFormat.TEXT)
+        )
+      }
+    } else {
+      // If it returns value, the composable should start with a lowercase letter
+      if (firstLetter.isUpperCase()) {
+        context.report(
+          ISSUE_LOWERCASE,
+          function,
+          context.getNameLocation(function),
+          ISSUE_LOWERCASE.getExplanation(TextFormat.TEXT)
         )
       }
     }
