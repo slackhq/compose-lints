@@ -24,10 +24,6 @@ class ContentEmitterReturningValuesDetectorTest : BaseSlackLintTest() {
       )
   }
 
-  // This mode is irrelevant to our test and totally untestable with stringy outputs
-  override val skipTestModes: Array<TestMode> =
-    arrayOf(TestMode.PARENTHESIZED, TestMode.SUPPRESSIBLE)
-
   @Test
   fun `passes when only one item emits up at the top level`() {
     @Language("kotlin")
