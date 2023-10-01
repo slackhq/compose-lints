@@ -11,19 +11,34 @@ import org.junit.Test
 
 class ModifierMissingDetectorTest : BaseSlackLintTest() {
 
+  private val stubs =
+    arrayOf(
+      kotlin(
+        """
+          package androidx.compose.ui
+
+          import androidx.compose.runtime.Composable
+
+          @Composable
+          interface Modifier {
+            companion object : Modifier
+          }
+      """
+          .trimIndent()
+      )
+    )
+
   override fun getDetector(): Detector = ModifierMissingDetector()
 
   override fun getIssues(): List<Issue> = listOf(ModifierMissingDetector.ISSUE)
-
-  // This mode is irrelevant to our test and totally untestable with stringy outputs
-  override val skipTestModes: Array<TestMode> =
-    arrayOf(TestMode.PARENTHESIZED, TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
 
   @Test
   fun `errors when a Composable has a layout inside and it doesn't have a modifier`() {
     @Language("kotlin")
     val code =
       """
+          import androidx.compose.ui.Modifier
+
           @Composable
           fun Something1() {
               Row {
@@ -51,24 +66,43 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
         .trimIndent()
 
     lint()
-      .files(kotlin(code))
+      .files(*stubs, kotlin(code))
       .allowCompilationErrors()
+      // TODO can't run this due to https://issuetracker.google.com/issues/302674274#comment6
+      .skipTestModes(TestMode.TYPE_ALIAS)
       .run()
       .expect(
         """
-          src/test.kt:2: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:4: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           fun Something1() {
               ~~~~~~~~~~
-          src/test.kt:7: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:9: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           fun Something2() {
               ~~~~~~~~~~
-          src/test.kt:12: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:14: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           fun Something3(): Unit {
               ~~~~~~~~~~
           3 errors, 0 warnings
         """
           .trimIndent()
       )
+//      .expect(
+//        testMode = TestMode.TYPE_ALIAS,
+//        expectedText =
+//          """
+//          src/test.kt:4: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+//          fun Something1() {
+//              ~~~~~~~~~~
+//          src/test.kt:9: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+//          fun Something2() {
+//              ~~~~~~~~~~
+//          src/test.kt:14: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+//          fun Something3(): TYPE_ALIAS_2 {
+//              ~~~~~~~~~~
+//          3 errors, 0 warnings
+//        """
+//            .trimIndent()
+//      )
   }
 
   @Test

@@ -61,15 +61,16 @@ constructor(
   }
 
   override fun visitComposable(context: JavaContext, function: KtFunction) {
+    val uMethod = function.toUElementOfType<UMethod>() ?: return
     // We want to find all composable functions that:
     //  - emit content
     //  - are not overridden or part of an interface
     //  - are not a @Preview composable
     if (
-        function.isOverride ||
-        function.definedInInterface ||
-        function.isPreview ||
-        function.toUElementOfType<UMethod>()?.returnsUnitOrVoid(context.evaluator) == false
+      function.isOverride ||
+      function.definedInInterface ||
+      function.isPreview ||
+      !uMethod.returnsUnitOrVoid(context.evaluator)
     ) {
       return
     }
@@ -89,7 +90,7 @@ constructor(
     if (!shouldCheck) return
 
     // If there is a modifier param, we bail
-    if (function.modifierParameter != null) return
+    if (uMethod.modifierParameter(context.evaluator) != null) return
 
     // In case we didn't find any `modifier` parameters, we check if it emits content and report the
     // error if so.
