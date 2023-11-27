@@ -11,8 +11,10 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
 import com.android.tools.lint.detector.api.isKotlin
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.uast.UFile
 import slack.lint.compose.util.OptionLoadingDetector
@@ -40,7 +42,8 @@ constructor(
           briefDescription = "Composables should only be emit from one source",
           explanation =
             """
-              Composable functions should only be emitting content into the composition from one source at their top level.\
+              Composable functions should only be emitting content into the composition from one source at their top level.
+              
               See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information.
             """,
           category = Category.PRODUCTIVITY,
@@ -52,12 +55,44 @@ constructor(
   }
 
   internal val KtFunction.directUiEmitterCount: Int
-    get() =
-      bodyBlockExpression?.let { block ->
-        block.statements.filterIsInstance<KtCallExpression>().count {
+    get() {
+      return bodyBlockExpression?.let { block ->
+        // If there's content emitted in a for loop, we assume there's at
+        // least two iterations and thus count any emitters in them as multiple
+        val forLoopCount = if (block.forLoopHasUiEmitters) {
+          2
+        } else {
+          0
+        }
+        block.directUiEmitterCount + forLoopCount
+      } ?: 0
+    }
+
+  internal val KtBlockExpression.forLoopHasUiEmitters: Boolean
+    get() {
+      return statements
+        .filterIsInstance<KtForExpression>()
+        .any {
+          when (val body = it.body) {
+            is KtBlockExpression -> {
+              body.directUiEmitterCount > 0
+            }
+            is KtCallExpression -> {
+              body.emitsContent(contentEmitterOption.value)
+            }
+            else -> false
+          }
+        }
+    }
+
+  internal val KtBlockExpression.directUiEmitterCount: Int
+    get() {
+      return statements
+        .filterIsInstance<KtCallExpression>()
+        .count {
           it.emitsContent(contentEmitterOption.value)
         }
-      } ?: 0
+    }
 
   internal fun KtFunction.indirectUiEmitterCount(mapping: Map<KtFunction, Int>): Int {
     val bodyBlock = bodyBlockExpression ?: return 0
