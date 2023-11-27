@@ -43,7 +43,7 @@ constructor(
           explanation =
             """
               Composable functions should only be emitting content into the composition from one source at their top level.
-              
+
               See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information.
             """,
           category = Category.PRODUCTIVITY,
@@ -59,39 +59,36 @@ constructor(
       return bodyBlockExpression?.let { block ->
         // If there's content emitted in a for loop, we assume there's at
         // least two iterations and thus count any emitters in them as multiple
-        val forLoopCount = if (block.forLoopHasUiEmitters) {
-          2
-        } else {
-          0
-        }
+        val forLoopCount =
+          if (block.forLoopHasUiEmitters) {
+            2
+          } else {
+            0
+          }
         block.directUiEmitterCount + forLoopCount
       } ?: 0
     }
 
   internal val KtBlockExpression.forLoopHasUiEmitters: Boolean
     get() {
-      return statements
-        .filterIsInstance<KtForExpression>()
-        .any {
-          when (val body = it.body) {
-            is KtBlockExpression -> {
-              body.directUiEmitterCount > 0
-            }
-            is KtCallExpression -> {
-              body.emitsContent(contentEmitterOption.value)
-            }
-            else -> false
+      return statements.filterIsInstance<KtForExpression>().any {
+        when (val body = it.body) {
+          is KtBlockExpression -> {
+            body.directUiEmitterCount > 0
           }
+          is KtCallExpression -> {
+            body.emitsContent(contentEmitterOption.value)
+          }
+          else -> false
         }
+      }
     }
 
   internal val KtBlockExpression.directUiEmitterCount: Int
     get() {
-      return statements
-        .filterIsInstance<KtCallExpression>()
-        .count {
-          it.emitsContent(contentEmitterOption.value)
-        }
+      return statements.filterIsInstance<KtCallExpression>().count {
+        it.emitsContent(contentEmitterOption.value)
+      }
     }
 
   internal fun KtFunction.indirectUiEmitterCount(mapping: Map<KtFunction, Int>): Int {
