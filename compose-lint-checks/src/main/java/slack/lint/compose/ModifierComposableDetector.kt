@@ -23,7 +23,7 @@ class ModifierComposableDetector : ComposableFunctionDetector(), SourceCodeScann
         explanation =
           """
           Using @Composable builder functions for modifiers is not recommended, as they cause unnecessary recompositions.\
-          You should use Modifier.composed { ... } instead, as it limits recomposition to just the modifier instance, rather than the whole function tree.\
+          You should use the Modifier.Node API instead, as it limits recomposition to just the modifier instance, rather than the whole function tree.\
           See https://slackhq.github.io/compose-lints/rules/#avoid-modifier-extension-factory-functions for more information.
         """,
         category = Category.CORRECTNESS,
