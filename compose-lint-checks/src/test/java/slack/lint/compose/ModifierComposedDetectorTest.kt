@@ -1,5 +1,4 @@
 // Copyright (C) 2023 Salesforce, Inc.
-// Copyright 2022 Twitter, Inc.
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
@@ -11,8 +10,9 @@ import org.junit.Test
 
 class ModifierComposedDetectorTest : BaseSlackLintTest() {
 
-    private val modifierStub = kotlin(
-        """
+  private val modifierStub =
+    kotlin(
+      """
         package androidx.compose.ui
 
         class InspectorInfo {
@@ -24,11 +24,13 @@ class ModifierComposedDetectorTest : BaseSlackLintTest() {
         interface Modifier {
           companion object : Modifier
         }
-        """.trimIndent()
-    )
-    private val composed = kotlin(
-        "test/androidx/compose/ui/ComposedModifier.kt",
         """
+        .trimIndent()
+    )
+  private val composed =
+    kotlin(
+      "test/androidx/compose/ui/ComposedModifier.kt",
+      """
         package androidx.compose.ui
 
         fun Modifier.composed(
@@ -37,7 +39,8 @@ class ModifierComposedDetectorTest : BaseSlackLintTest() {
         ): Modifier {
           TODO()
         }
-        """.trimIndent()
+        """
+        .trimIndent()
     )
 
   override fun getDetector(): Detector = ModifierComposedDetector()
@@ -54,8 +57,8 @@ class ModifierComposedDetectorTest : BaseSlackLintTest() {
       """
           package test
 
-        import androidx.compose.ui.composed          
-        import androidx.compose.ui.Modifier          
+        import androidx.compose.ui.composed
+        import androidx.compose.ui.Modifier
 
         fun Modifier.something1() = Modifier.composed { }
         fun Modifier.something2() = composed { }
