@@ -25,9 +25,11 @@ class ModifierComposedDetector : Detector(), SourceCodeScanner {
         briefDescription = "Don't use Modifier.composed {}",
         explanation =
           """
-          Modifier.composed { ... } is no longer recommended due to performance issues. \
-          You should use the Modifier.Node API instead, as it was designed from the ground up to be far more performant than composed modifiers.\
-          See https://slackhq.github.io/compose-lints/rules/#avoid-modifier-extension-factory-functions for more information.
+          Modifier.composed { ... } is no longer recommended due to performance issues.
+
+          You should use the Modifier.Node API instead, as it was designed from the ground up to be far more performant than composed modifiers.
+
+          See https://slackhq.github.io/compose-lints/rules/#migrate-to-modifiernode for more information.
         """,
         category = Category.CORRECTNESS,
         priority = Priorities.NORMAL,

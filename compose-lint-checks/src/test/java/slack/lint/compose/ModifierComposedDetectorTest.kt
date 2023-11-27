@@ -71,10 +71,18 @@ class ModifierComposedDetectorTest : BaseSlackLintTest() {
       .run()
       .expect(
         """
-          src/test/test.kt:6: Error: Modifier.composed { ... } is no longer recommended due to performance issues. You should use the Modifier.Node API instead, as it was designed from the ground up to be far more performant than composed modifiers.See https://slackhq.github.io/compose-lints/rules/#avoid-modifier-extension-factory-functions for more information. [ComposeModifierComposed]
+          src/test/test.kt:6: Error: Modifier.composed { ... } is no longer recommended due to performance issues.
+
+          You should use the Modifier.Node API instead, as it was designed from the ground up to be far more performant than composed modifiers.
+
+          See https://slackhq.github.io/compose-lints/rules/#migrate-to-modifiernode for more information. [ComposeModifierComposed]
           fun Modifier.something1() = Modifier.composed { }
                                       ~~~~~~~~~~~~~~~~~~~~~
-          src/test/test.kt:7: Error: Modifier.composed { ... } is no longer recommended due to performance issues. You should use the Modifier.Node API instead, as it was designed from the ground up to be far more performant than composed modifiers.See https://slackhq.github.io/compose-lints/rules/#avoid-modifier-extension-factory-functions for more information. [ComposeModifierComposed]
+          src/test/test.kt:7: Error: Modifier.composed { ... } is no longer recommended due to performance issues.
+
+          You should use the Modifier.Node API instead, as it was designed from the ground up to be far more performant than composed modifiers.
+
+          See https://slackhq.github.io/compose-lints/rules/#migrate-to-modifiernode for more information. [ComposeModifierComposed]
           fun Modifier.something2() = composed { }
                                       ~~~~~~~~~~~~
           2 errors, 0 warnings
