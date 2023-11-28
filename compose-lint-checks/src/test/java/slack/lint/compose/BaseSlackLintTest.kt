@@ -23,7 +23,6 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 abstract class BaseSlackLintTest : LintDetectorTest() {
   private val rootPath = "resources/test/com/slack/lint/compose/data/"
-  private val stubsPath = "testStubs"
 
   /** Optional override to customize the lint client name when running lint test tasks. */
   open val lintClientName: String? = null
