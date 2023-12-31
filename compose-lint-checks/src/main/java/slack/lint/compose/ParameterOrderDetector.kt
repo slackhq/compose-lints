@@ -88,11 +88,18 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
     // If it's not the same as the current order, we show the rule violation.
     if (currentOrder != properOrder) {
+      val errorLocation = context.getLocation(function.valueParameterList)
       context.report(
         ISSUE,
         function,
-        context.getLocation(function.valueParameterList),
-        createErrorMessage(currentOrder, properOrder)
+        errorLocation,
+        createErrorMessage(currentOrder, properOrder),
+        fix()
+          .replace()
+          .range(errorLocation)
+          .with("(${properOrder.joinToString { it.text }})")
+          .reformat(true)
+          .build()
       )
     }
   }

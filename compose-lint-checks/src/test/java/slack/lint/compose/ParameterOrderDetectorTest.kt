@@ -98,4 +98,56 @@ class ParameterOrderDetectorTest : BaseSlackLintTest() {
           .trimIndent()
       )
   }
+
+  @Test
+  fun `errors fixed when ordering is wrong`() {
+    @Language("kotlin")
+    val code =
+      """
+        @Composable
+        fun MyComposable(modifier: Modifier = Modifier, other: String, other2: String) { }
+
+        @Composable
+        fun MyComposable(text: String = "deffo", modifier: Modifier = Modifier) { }
+
+        @Composable
+        fun MyComposable(modifier: Modifier = Modifier, text: String = "123", modifier2: Modifier = Modifier) { }
+
+        @Composable
+        fun MyComposable(text: String = "123", modifier: Modifier = Modifier, lambda: () -> Unit) { }
+
+        @Composable
+        fun MyComposable(text1: String, m2: Modifier = Modifier, modifier: Modifier = Modifier, trailing: () -> Unit) { }
+      """
+        .trimIndent()
+    lint()
+      .files(kotlin(code))
+      .allowCompilationErrors()
+      .run()
+      .expectFixDiffs(
+        """
+                Fix for src/test.kt line 2: Replace with (other: String, other2: String, modifier: Modifier = Modifier):
+                @@ -2 +2
+                - fun MyComposable(modifier: Modifier = Modifier, other: String, other2: String) { }
+                + fun MyComposable(other: String, other2: String, modifier: Modifier = Modifier) { }
+                Fix for src/test.kt line 5: Replace with (modifier: Modifier = Modifier, text: String = "deffo"):
+                @@ -5 +5
+                - fun MyComposable(text: String = "deffo", modifier: Modifier = Modifier) { }
+                + fun MyComposable(modifier: Modifier = Modifier, text: String = "deffo") { }
+                Fix for src/test.kt line 8: Replace with (modifier: Modifier = Modifier, modifier2: Modifier = Modifier, text: String = "123"):
+                @@ -8 +8
+                - fun MyComposable(modifier: Modifier = Modifier, text: String = "123", modifier2: Modifier = Modifier) { }
+                + fun MyComposable(modifier: Modifier = Modifier, modifier2: Modifier = Modifier, text: String = "123") { }
+                Fix for src/test.kt line 11: Replace with (modifier: Modifier = Modifier, text: String = "123", lambda: () -> Unit):
+                @@ -11 +11
+                - fun MyComposable(text: String = "123", modifier: Modifier = Modifier, lambda: () -> Unit) { }
+                + fun MyComposable(modifier: Modifier = Modifier, text: String = "123", lambda: () -> Unit) { }
+                Fix for src/test.kt line 14: Replace with (text1: String, modifier: Modifier = Modifier, m2: Modifier = Modifier, trailing: () -> Unit):
+                @@ -14 +14
+                - fun MyComposable(text1: String, m2: Modifier = Modifier, modifier: Modifier = Modifier, trailing: () -> Unit) { }
+                + fun MyComposable(text1: String, modifier: Modifier = Modifier, m2: Modifier = Modifier, trailing: () -> Unit) { }
+                """
+          .trimIndent()
+      )
+  }
 }
