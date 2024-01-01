@@ -97,7 +97,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
         fix()
           .replace()
           .range(errorLocation)
-          .with("(${properOrder.joinToString { it.text }})")
+          .with(properOrder.joinToString(prefix = "(", postfix = ")") { it.text })
           .reformat(true)
           .build()
       )
