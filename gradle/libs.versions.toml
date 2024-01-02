@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.9.21"
+kotlin = "1.9.22"
 ktfmt = "0.46"
 jvmTarget = "11"
 lint = "31.2.0"
