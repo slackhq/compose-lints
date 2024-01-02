@@ -29,7 +29,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
         properOrder.joinToString { it.text }
       )
 
-    fun createErrorMessage(currentOrder: String, properOrder: String): String =
+    private fun createErrorMessage(currentOrder: String, properOrder: String): String =
       """
         Parameters in a composable function should be ordered following this pattern: params without defaults, modifiers, params with defaults and optionally, a trailing function that might not have a default param.
         Current params are: [$currentOrder] but should be [$properOrder].
@@ -88,11 +88,18 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
     // If it's not the same as the current order, we show the rule violation.
     if (currentOrder != properOrder) {
+      val errorLocation = context.getLocation(function.valueParameterList)
       context.report(
         ISSUE,
         function,
-        context.getLocation(function),
-        createErrorMessage(currentOrder, properOrder)
+        errorLocation,
+        createErrorMessage(currentOrder, properOrder),
+        fix()
+          .replace()
+          .range(errorLocation)
+          .with(properOrder.joinToString(prefix = "(", postfix = ")") { it.text })
+          .reformat(true)
+          .build()
       )
     }
   }
