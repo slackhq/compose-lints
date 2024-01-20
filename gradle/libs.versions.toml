@@ -12,7 +12,7 @@ lint = { id = "com.android.lint", version = "8.2.1" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version = "1.9.22-1.0.17" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.27.0" }
-spotless = { id = "com.diffplug.spotless", version = "6.23.3" }
+spotless = { id = "com.diffplug.spotless", version = "6.24.0" }
 
 [libraries]
 autoService-annotations = "com.google.auto.service:auto-service-annotations:1.1.1"
