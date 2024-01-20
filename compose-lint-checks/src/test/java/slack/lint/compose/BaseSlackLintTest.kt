@@ -22,8 +22,6 @@ import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 abstract class BaseSlackLintTest : LintDetectorTest() {
-  private val rootPath = "resources/test/com/slack/lint/compose/data/"
-
   /** Optional override to customize the lint client name when running lint test tasks. */
   open val lintClientName: String? = null
 
@@ -41,47 +39,11 @@ abstract class BaseSlackLintTest : LintDetectorTest() {
   abstract override fun getIssues(): List<Issue>
 
   override fun lint(): TestLintTask {
-    val sdkLocation = System.getProperty("android.sdk")
     val lintTask = super.lint()
     lintClientName?.let { lintTask.clientFactory { TestLintClient(it) } }
-    sdkLocation?.let { lintTask.sdkHome(File(it)) }
     lintTask.allowCompilationErrors(false)
 
     skipTestModes?.let { testModesToSkip -> lintTask.skipTestModes(*testModesToSkip) }
     return lintTask
-  }
-
-  /**
-   * The default finder for resources doesn't work with our file structure; this ensures it will.
-   *
-   * https://www.bignerdranch.com/blog/building-custom-lint-checks-in-android/
-   */
-  override fun getTestResource(relativePath: String, expectExists: Boolean): InputStream {
-    val path = (rootPath + relativePath).replace('/', File.separatorChar)
-    val file = File(getTestDataRootDir(), path)
-    if (file.exists()) {
-      try {
-        return BufferedInputStream(FileInputStream(file))
-      } catch (e: FileNotFoundException) {
-        if (expectExists) {
-          TestCase.fail("Could not find file $relativePath")
-        }
-      }
-    }
-    return BufferedInputStream(ByteArrayInputStream("".toByteArray()))
-  }
-
-  private fun getTestDataRootDir(): File? {
-    val source = javaClass.protectionDomain.codeSource
-    if (source != null) {
-      val location = source.location
-      try {
-        val classesDir = SdkUtils.urlToFile(location)
-        return classesDir.parentFile!!.absoluteFile.parentFile!!.parentFile
-      } catch (e: MalformedURLException) {
-        fail(e.localizedMessage)
-      }
-    }
-    return null
   }
 }
