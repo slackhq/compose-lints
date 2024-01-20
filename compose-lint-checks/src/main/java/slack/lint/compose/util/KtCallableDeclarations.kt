@@ -3,44 +3,73 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose.util
 
+import com.android.tools.lint.client.api.JavaEvaluator
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.uast.UClass
+import org.jetbrains.uast.UParameter
+import org.jetbrains.uast.toUElementOfType
 
-val KtCallableDeclaration.isTypeMutable: Boolean
-  get() = typeReference?.text?.matchesAnyOf(KnownMutableCommonTypesRegex) == true
+fun KtParameter.isTypeMutable(evaluator: JavaEvaluator): Boolean {
+  // Trivial check for Kotlin mutable collections. See its doc for details.
+  // Note this doesn't work on typealiases, which unfortunately we can't really
+  // do anything about
+  if (typeReference?.text?.matchesAnyOf(KnownMutableKotlinCollections) == true) {
+    return true
+  }
 
-val KnownMutableCommonTypesRegex =
+  val uParamClass = toUElementOfType<UParameter>()?.type
+    ?.let(evaluator::getTypeClass)
+    ?.toUElementOfType<UClass>() ?: return false
+
+  if (uParamClass.hasAnnotation("androidx.compose.runtime.Immutable")) {
+    return false
+  }
+
+  return uParamClass.name in KnownMutableCommonTypesSimpleNames
+}
+
+/** Lint can't read "Mutable*" Kotlin collections that are compiler intrinsics. */
+val KnownMutableKotlinCollections =
   sequenceOf(
+    "MutableMap(\\s)?<.*,(\\s)?.*>\\??",
+    "MutableSet(\\s)?<.*>\\??",
+    "MutableList(\\s)?<.*>\\??",
+    "MutableCollection(\\s)?<.*>\\??",
+  ).map(::Regex)
+
+val KnownMutableCommonTypesSimpleNames =
+  setOf(
       // Set
-      "MutableSet<.*>\\??",
-      "ArraySet<.*>\\??",
-      "HashSet<.*>\\??",
+      "MutableSet",
+      "ArraySet",
+      "HashSet",
       // List
-      "MutableList<.*>\\??",
-      "ArrayList<.*>\\??",
+      "MutableList",
+      "ArrayList",
       // Array
-      "SparseArray<.*>\\??",
-      "SparseArrayCompat<.*>\\??",
-      "LongSparseArray<.*>\\??",
-      "SparseBooleanArray\\??",
-      "SparseIntArray\\??",
+      "SparseArray",
+      "SparseArrayCompat",
+      "LongSparseArray",
+      "SparseBooleanArray",
+      "SparseIntArray",
       // Map
-      "MutableMap<.*>\\??",
-      "HashMap<.*>\\??",
-      "Hashtable<.*>\\??",
+      "MutableMap",
+      "HashMap",
+      "Hashtable",
       // Compose
-      "MutableState<.*>\\??",
+      "MutableState",
       // Flow
-      "MutableStateFlow<.*>\\??",
-      "MutableSharedFlow<.*>\\??",
+      "MutableStateFlow",
+      "MutableSharedFlow",
       // RxJava & RxRelay
-      "PublishSubject<.*>\\??",
-      "BehaviorSubject<.*>\\??",
-      "ReplaySubject<.*>\\??",
-      "PublishRelay<.*>\\??",
-      "BehaviorRelay<.*>\\??",
-      "ReplayRelay<.*>\\??"
+      "PublishSubject",
+      "BehaviorSubject",
+      "ReplaySubject",
+      "PublishRelay",
+      "BehaviorRelay",
+      "ReplayRelay"
     )
-    .map { Regex(it) }
 
 val KtCallableDeclaration.isTypeUnstableCollection: Boolean
   get() = typeReference?.text?.matchesAnyOf(KnownUnstableCollectionTypesRegex) == true
