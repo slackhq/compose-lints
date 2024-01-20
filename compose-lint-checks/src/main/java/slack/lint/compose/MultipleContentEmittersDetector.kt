@@ -24,6 +24,7 @@ import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.hasReceiverType
 import slack.lint.compose.util.isComposable
 import slack.lint.compose.util.sourceImplementation
+import slack.lint.compose.util.unwrapParenthesis
 
 class MultipleContentEmittersDetector
 @JvmOverloads
@@ -86,14 +87,18 @@ constructor(
 
   internal val KtBlockExpression.directUiEmitterCount: Int
     get() {
-      return statements.filterIsInstance<KtCallExpression>().count {
+      return statements
+        .mapNotNull { it.unwrapParenthesis() }
+        .filterIsInstance<KtCallExpression>().count {
         it.emitsContent(contentEmitterOption.value)
       }
     }
 
   internal fun KtFunction.indirectUiEmitterCount(mapping: Map<KtFunction, Int>): Int {
     val bodyBlock = bodyBlockExpression ?: return 0
-    return bodyBlock.statements.filterIsInstance<KtCallExpression>().count { callExpression ->
+    return bodyBlock.statements
+      .mapNotNull { it.unwrapParenthesis() }
+      .filterIsInstance<KtCallExpression>().count { callExpression ->
       // If it's a direct hit on our list, it should count directly
       if (callExpression.emitsContent(contentEmitterOption.value)) return@count true
 
