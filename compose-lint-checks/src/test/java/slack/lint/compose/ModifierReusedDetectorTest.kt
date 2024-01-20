@@ -15,9 +15,9 @@ class ModifierReusedDetectorTest : BaseSlackLintTest() {
 
   override fun getIssues(): List<Issue> = listOf(ModifierReusedDetector.ISSUE)
 
-  // This mode is irrelevant to our test and totally untestable with stringy outputs
+  // TYPE_ALIAS and PARENTHESIZED needs more work
   override val skipTestModes: Array<TestMode> =
-    arrayOf(TestMode.PARENTHESIZED, TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
+    arrayOf(TestMode.PARENTHESIZED, TestMode.TYPE_ALIAS)
 
   @Test
   fun `errors when the modifier parameter of a Composable is used more than once by siblings or parent-children`() {
