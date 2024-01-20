@@ -111,7 +111,7 @@ allprojects {
 
 subprojects {
   pluginManager.withPlugin("java") {
-    configure<JavaPluginExtension> { toolchain { languageVersion.set(JavaLanguageVersion.of(20)) } }
+    configure<JavaPluginExtension> { toolchain { languageVersion.set(libs.versions.jdk.map(JavaLanguageVersion::of)) } }
 
     tasks.withType<JavaCompile>().configureEach { options.release.set(libs.versions.jvmTarget.map(String::toInt)) }
   }
@@ -127,7 +127,7 @@ subprojects {
     }
   }
 
-  tasks.withType<Detekt>().configureEach { jvmTarget = "11" }
+  tasks.withType<Detekt>().configureEach { jvmTarget = libs.versions.jvmTarget.get() }
 
   pluginManager.withPlugin("com.vanniktech.maven.publish") {
     apply(plugin = "org.jetbrains.dokka")
