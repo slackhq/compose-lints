@@ -19,11 +19,14 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.KtValueArgumentName
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.emitsContent
 import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.modifierParameter
 import slack.lint.compose.util.sourceImplementation
+import slack.lint.compose.util.unwrapParenthesis
 
 class ModifierReusedDetector
 @JvmOverloads
@@ -57,8 +60,9 @@ constructor(
   override fun visitComposable(context: JavaContext, function: KtFunction) {
     if (!function.emitsContent(contentEmitterOption.value)) return
     val composableBlockExpression = function.bodyBlockExpression ?: return
-    val modifier = function.modifierParameter ?: return
-    val initialName = modifier.name ?: return
+    val uMethod = function.toUElementOfType<UMethod>() ?: return
+    val modifier = uMethod.modifierParameter(context.evaluator) ?: return
+    val initialName = modifier.name
 
     // Try to get all possible names by iterating on possible name reassignments until it's stable
     val modifierNames = composableBlockExpression.obtainAllModifierNames(initialName)
@@ -82,7 +86,9 @@ constructor(
             // If any of the siblings also use any of these, we also log them.
             // This is for the special case where only sibling composables reuse modifiers
             addAll(
-              current.siblings().filterIsInstance<KtCallExpression>().filter {
+              current.siblings()
+                .mapNotNull { it.unwrapParenthesis() }
+                .filterIsInstance<KtCallExpression>().filter {
                 it.isUsingModifiers(modifierNames)
               }
             )
