@@ -69,7 +69,7 @@ constructor(
     if (
       function.isOverride ||
       function.definedInInterface ||
-      function.isPreview ||
+      uMethod.isPreview ||
       !uMethod.returnsUnitOrVoid(context.evaluator)
     ) {
       return

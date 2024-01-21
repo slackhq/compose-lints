@@ -11,23 +11,35 @@ import org.junit.Test
 
 class PreviewPublicDetectorTest : BaseSlackLintTest() {
 
+  private val stubs = kotlin(
+    """
+        import androidx.compose.ui.tooling.preview.Preview
+        import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+
+        @Preview
+        annotation class CombinedPreviews
+
+        class User
+        class UserProvider : PreviewParameterProvider<User>
+    """
+  ).indented()
+
   override fun getDetector(): Detector = PreviewPublicDetector()
 
   override fun getIssues(): List<Issue> = listOf(PreviewPublicDetector.ISSUE)
-
-  // This mode is irrelevant to our test and totally untestable with stringy outputs
-  override val skipTestModes: Array<TestMode> = arrayOf(TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
 
   @Test
   fun `passes for non-preview public composables`() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+
         @Composable
         fun MyComposable() { }
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(stubs, *commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -35,6 +47,9 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.tooling.preview.Preview
+
         @Preview
         @Composable
         fun MyComposable() { }
@@ -43,7 +58,7 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
         fun MyComposable() { }
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(stubs, *commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -55,9 +70,6 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
         import androidx.compose.ui.tooling.preview.Preview
 
         @Preview
-        annotation class CombinedPreviews
-
-        @Preview
         @Composable
         fun MyComposable() { }
         @CombinedPreviews
@@ -67,14 +79,14 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
         .trimIndent()
     lint()
       .configureOption(PreviewPublicDetector.PREVIEW_PUBLIC_ONLY_IF_PARAMS_OPTION, "false")
-      .files(*commonStubs, kotlin(code))
+      .files(stubs, *commonStubs, kotlin(code))
       .run()
       .expect(
         """
-          src/test.kt:1: Error: Composables annotated with @Preview that are used only for previewing the UI should not be public.See https://slackhq.github.io/compose-lints/rules/#preview-composables-should-not-be-public for more information. [ComposePreviewPublic]
+          src/test.kt:4: Error: Composables annotated with @Preview that are used only for previewing the UI should not be public.See https://slackhq.github.io/compose-lints/rules/#preview-composables-should-not-be-public for more information. [ComposePreviewPublic]
           @Preview
           ^
-          src/test.kt:4: Error: Composables annotated with @Preview that are used only for previewing the UI should not be public.See https://slackhq.github.io/compose-lints/rules/#preview-composables-should-not-be-public for more information. [ComposePreviewPublic]
+          src/test.kt:7: Error: Composables annotated with @Preview that are used only for previewing the UI should not be public.See https://slackhq.github.io/compose-lints/rules/#preview-composables-should-not-be-public for more information. [ComposePreviewPublic]
           @CombinedPreviews
           ^
           2 errors, 0 warnings
@@ -83,14 +95,13 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
       )
       .expectFixDiffs(
         """
-          Autofix for src/test.kt line 1: Make 'private':
-          @@ -3 +3
-          - fun MyComposable() { }
-          + private fun MyComposable() { }
           Autofix for src/test.kt line 4: Make 'private':
           @@ -6 +6
           - fun MyComposable() { }
-          @@ -7 +6
+          + private fun MyComposable() { }
+          Autofix for src/test.kt line 7: Make 'private':
+          @@ -9 +9
+          - fun MyComposable() { }
           + private fun MyComposable() { }
         """
           .trimIndent()
@@ -105,13 +116,6 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
         import androidx.compose.runtime.Composable
         import androidx.compose.ui.tooling.preview.Preview
         import androidx.compose.ui.tooling.preview.PreviewParameter
-        import androidx.compose.ui.tooling.preview.PreviewParameter
-
-        @Preview
-        annotation class CombinedPreviews
-
-        class User
-        class UserProvider : PreviewParameterProvider<User>
 
         @Preview
         @Composable
@@ -124,14 +128,14 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
       """
         .trimIndent()
     lint()
-      .files(*commonStubs, kotlin(code))
+      .files(stubs, *commonStubs, kotlin(code))
       .run()
       .expect(
         """
-          src/test.kt:1: Error: Composables annotated with @Preview that are used only for previewing the UI should not be public.See https://slackhq.github.io/compose-lints/rules/#preview-composables-should-not-be-public for more information. [ComposePreviewPublic]
+          src/test.kt:5: Error: Composables annotated with @Preview that are used only for previewing the UI should not be public.See https://slackhq.github.io/compose-lints/rules/#preview-composables-should-not-be-public for more information. [ComposePreviewPublic]
           @Preview
           ^
-          src/test.kt:5: Error: Composables annotated with @Preview that are used only for previewing the UI should not be public.See https://slackhq.github.io/compose-lints/rules/#preview-composables-should-not-be-public for more information. [ComposePreviewPublic]
+          src/test.kt:9: Error: Composables annotated with @Preview that are used only for previewing the UI should not be public.See https://slackhq.github.io/compose-lints/rules/#preview-composables-should-not-be-public for more information. [ComposePreviewPublic]
           @CombinedPreviews
           ^
           2 errors, 0 warnings
@@ -140,12 +144,12 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
       )
       .expectFixDiffs(
         """
-          Autofix for src/test.kt line 1: Make 'private':
-          @@ -3 +3
-          - fun MyComposable(@PreviewParameter(User::class) user: User) {
-          + private fun MyComposable(@PreviewParameter(User::class) user: User) {
           Autofix for src/test.kt line 5: Make 'private':
           @@ -7 +7
+          - fun MyComposable(@PreviewParameter(User::class) user: User) {
+          + private fun MyComposable(@PreviewParameter(User::class) user: User) {
+          Autofix for src/test.kt line 9: Make 'private':
+          @@ -11 +11
           - fun MyComposable(@PreviewParameter(User::class) user: User) {
           + private fun MyComposable(@PreviewParameter(User::class) user: User) {
         """
@@ -158,6 +162,10 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.tooling.preview.Preview
+        import androidx.compose.ui.tooling.preview.PreviewParameter
+
         @Preview
         @Composable
         private fun MyComposable(@PreviewParameter(User::class) user: User) {
@@ -168,7 +176,7 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
         }
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(stubs, *commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -176,12 +184,20 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
-        @Preview         @Composable         private fun MyComposable(@PreviewParameter(User::class) user: User) {}
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.tooling.preview.Preview
+        import androidx.compose.ui.tooling.preview.PreviewParameter
 
-        @CombinedPreviews         @Composable         private fun MyComposable(@PreviewParameter(User::class) user: User) {}
+        @Preview
+        @Composable
+        private fun MyComposable(@PreviewParameter(User::class) user: User) {}
+
+        @CombinedPreviews
+        @Composable
+        private fun MyComposable(@PreviewParameter(User::class) user: User) {}
 
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(stubs, *commonStubs, kotlin(code)).run().expectClean()
   }
 }

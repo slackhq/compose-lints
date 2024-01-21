@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierTypeOrDefault
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.UParameter
+import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.BooleanLintOption
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isPreview
@@ -56,15 +59,16 @@ constructor(
   }
 
   override fun visitComposable(context: JavaContext, function: KtFunction) {
+    val method = function.toUElementOfType<UMethod>() ?: return
     // We only want previews
-    if (!function.isPreview) return
+    if (!method.isPreview) return
     // We only care about public methods
     if (!function.isPublic) return
 
     // If the method is public, none of it's params should be tagged as preview
     // This is configurable by the `previewPublicOnlyIfParams` config value
     if (previewPublicOnlyIfParams.value) {
-      if (function.valueParameters.none { it.isPreviewParameter }) return
+      if (function.valueParameters.none { it.toUElementOfType<UParameter>()?.isPreviewParameter == true }) return
     }
 
     // If we got here, it's a public method in a @Preview composable with a @PreviewParameter

@@ -48,7 +48,7 @@ class PreviewNamingDetector : Detector(), SourceCodeScanner {
       override fun visitClass(node: UClass) {
         val clazz = node.sourcePsi as? KtClass ?: return
         if (!clazz.isAnnotation()) return
-        if (!clazz.isPreview) return
+        if (!node.isPreview) return
 
         // We know here that we are in an annotation that either has a @Preview or other preview
         // annotations
