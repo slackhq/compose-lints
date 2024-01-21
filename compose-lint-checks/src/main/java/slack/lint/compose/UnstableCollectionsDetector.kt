@@ -41,7 +41,7 @@ class UnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScan
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.WARNING,
-        implementation = sourceImplementation<UnstableCollectionsDetector>()
+        implementation = sourceImplementation<UnstableCollectionsDetector>(),
       )
   }
 
@@ -53,15 +53,10 @@ class UnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScan
         createErrorMessage(
           type = type,
           rawType = type.replace(DiamondRegex, ""),
-          variable = variableName
+          variable = variableName,
         )
       val targetToReport = param.typeReference ?: param
-      context.report(
-        ISSUE,
-        targetToReport,
-        context.getLocation(targetToReport),
-        message,
-      )
+      context.report(ISSUE, targetToReport, context.getLocation(targetToReport), message)
     }
   }
 }

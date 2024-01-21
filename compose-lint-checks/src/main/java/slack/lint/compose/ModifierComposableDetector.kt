@@ -30,7 +30,7 @@ class ModifierComposableDetector : ComposableFunctionDetector(), SourceCodeScann
         category = Category.CORRECTNESS,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<ModifierComposableDetector>()
+        implementation = sourceImplementation<ModifierComposableDetector>(),
       )
   }
 

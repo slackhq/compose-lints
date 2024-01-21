@@ -135,7 +135,7 @@ private val ComposableEmittersList by lazy {
     "TopAppBarSurface",
     "VerticalPager",
     "VerticalPagerIndicator",
-    "WebView"
+    "WebView",
   )
 }
 

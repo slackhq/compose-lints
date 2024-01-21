@@ -37,7 +37,7 @@ class PreviewNamingDetector : Detector(), SourceCodeScanner {
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<PreviewNamingDetector>()
+        implementation = sourceImplementation<PreviewNamingDetector>(),
       )
   }
 
@@ -69,14 +69,7 @@ class PreviewNamingDetector : Detector(), SourceCodeScanner {
           } else {
             null
           }
-        message?.let {
-          context.report(
-            ISSUE,
-            clazz,
-            context.getLocation(clazz),
-            it,
-          )
-        }
+        message?.let { context.report(ISSUE, clazz, context.getLocation(clazz), it) }
       }
     }
   }

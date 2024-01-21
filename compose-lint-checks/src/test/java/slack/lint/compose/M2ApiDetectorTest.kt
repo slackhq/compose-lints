@@ -93,7 +93,7 @@ class M2ApiDetectorTest : BaseComposeLintTest() {
             }
           """
           )
-          .indented()
+          .indented(),
       )
       .allowCompilationErrors()
       .run()
@@ -133,7 +133,7 @@ class M2ApiDetectorTest : BaseComposeLintTest() {
                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           4 errors, 0 warnings
         """
-            .trimIndent()
+            .trimIndent(),
       )
   }
 }

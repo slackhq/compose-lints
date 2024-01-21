@@ -30,7 +30,7 @@ class MutableParametersDetector : ComposableFunctionDetector(), SourceCodeScanne
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<MutableParametersDetector>()
+        implementation = sourceImplementation<MutableParametersDetector>(),
       )
   }
 
@@ -42,7 +42,7 @@ class MutableParametersDetector : ComposableFunctionDetector(), SourceCodeScanne
           ISSUE,
           parameter.typeReference,
           context.getLocation(parameter.typeReference),
-          ISSUE.getExplanation(TextFormat.TEXT)
+          ISSUE.getExplanation(TextFormat.TEXT),
         )
       }
   }

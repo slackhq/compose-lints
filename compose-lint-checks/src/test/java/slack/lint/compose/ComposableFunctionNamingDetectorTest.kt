@@ -19,7 +19,7 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
     return super.lint()
       .configureOption(
         ComposableFunctionNamingDetector.ALLOWED_COMPOSABLE_FUNCTION_NAMES,
-        ".*Presenter"
+        ".*Presenter",
       )
   }
 

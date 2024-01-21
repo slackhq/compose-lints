@@ -19,7 +19,7 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
     return super.lint()
       .configureOption(
         ContentEmitterReturningValuesDetector.CONTENT_EMITTER_OPTION,
-        "Potato,Banana"
+        "Potato,Banana",
       )
   }
 

@@ -54,7 +54,7 @@ class CompositionLocalUsageDetectorTest : BaseComposeLintTest() {
                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           0 errors, 4 warnings
         """
-            .trimIndent()
+            .trimIndent(),
       )
       .expect(
         """
