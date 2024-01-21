@@ -15,9 +15,6 @@ class PreviewNamingDetectorTest : BaseSlackLintTest() {
 
   override fun getIssues(): List<Issue> = listOf(PreviewNamingDetector.ISSUE)
 
-  // This mode is irrelevant to our test and totally untestable with stringy outputs
-  override val skipTestModes: Array<TestMode> = arrayOf(TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
-
   @Test
   fun `passes for non-preview annotations`() {
     @Language("kotlin")
@@ -26,7 +23,7 @@ class PreviewNamingDetectorTest : BaseSlackLintTest() {
         annotation class Banana
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -34,6 +31,8 @@ class PreviewNamingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.ui.tooling.preview.Preview
+
         @Preview
         annotation class BananaPreview
         @BananaPreview
@@ -49,7 +48,7 @@ class PreviewNamingDetectorTest : BaseSlackLintTest() {
         annotation class FruitBasketPreviews
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -57,31 +56,32 @@ class PreviewNamingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.ui.tooling.preview.Preview
+
         @Preview
         annotation class Banana
         @Preview
         annotation class BananaPreviews
-        @BananaPreview
+        @BananaPreviews
         annotation class WithBananaPreviews
       """
         .trimIndent()
     lint()
-      .files(kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       .run()
       .expect(
         """
-          src/Banana.kt:1: Error: Preview annotations with 1 preview annotations should end with the Preview suffix.
-          See https://slackhq.github.io/compose-lints/rules/#naming-multipreview-annotations-properly for more information. [ComposePreviewNaming]
-          @Preview
-          ^
           src/Banana.kt:3: Error: Preview annotations with 1 preview annotations should end with the Preview suffix.
           See https://slackhq.github.io/compose-lints/rules/#naming-multipreview-annotations-properly for more information. [ComposePreviewNaming]
           @Preview
           ^
           src/Banana.kt:5: Error: Preview annotations with 1 preview annotations should end with the Preview suffix.
           See https://slackhq.github.io/compose-lints/rules/#naming-multipreview-annotations-properly for more information. [ComposePreviewNaming]
-          @BananaPreview
+          @Preview
+          ^
+          src/Banana.kt:7: Error: Preview annotations with 1 preview annotations should end with the Preview suffix.
+          See https://slackhq.github.io/compose-lints/rules/#naming-multipreview-annotations-properly for more information. [ComposePreviewNaming]
+          @BananaPreviews
           ^
           3 errors, 0 warnings
         """
@@ -94,6 +94,8 @@ class PreviewNamingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.ui.tooling.preview.Preview
+
         @Preview
         @Preview
         annotation class BananaPreview
@@ -103,16 +105,15 @@ class PreviewNamingDetectorTest : BaseSlackLintTest() {
       """
         .trimIndent()
     lint()
-      .files(kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       .run()
       .expect(
         """
-          src/BananaPreview.kt:1: Error: Preview annotations with 2 preview annotations should end with the Previews suffix.
+          src/BananaPreview.kt:3: Error: Preview annotations with 2 preview annotations should end with the Previews suffix.
           See https://slackhq.github.io/compose-lints/rules/#naming-multipreview-annotations-properly for more information. [ComposePreviewNaming]
           @Preview
           ^
-          src/BananaPreview.kt:4: Error: Preview annotations with 2 preview annotations should end with the Previews suffix.
+          src/BananaPreview.kt:6: Error: Preview annotations with 2 preview annotations should end with the Previews suffix.
           See https://slackhq.github.io/compose-lints/rules/#naming-multipreview-annotations-properly for more information. [ComposePreviewNaming]
           @BananaPreview
           ^

@@ -13,9 +13,10 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.isKotlin
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.uast.UClass
+import org.jetbrains.uast.toUElementOfType
+import slack.lint.compose.util.PREVIEW_ANNOTATIONS
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isPreview
-import slack.lint.compose.util.isPreviewAnnotation
 import slack.lint.compose.util.sourceImplementation
 
 class PreviewNamingDetector : Detector(), SourceCodeScanner {
@@ -52,7 +53,12 @@ class PreviewNamingDetector : Detector(), SourceCodeScanner {
 
         // We know here that we are in an annotation that either has a @Preview or other preview
         // annotations
-        val count = clazz.annotationEntries.count { it.isPreviewAnnotation }
+        val count = node.uAnnotations.count {
+          it.resolve().toUElementOfType<UClass>()?.let { annotation ->
+            annotation.qualifiedName in PREVIEW_ANNOTATIONS ||
+              annotation.uAnnotations.any { it.resolve()?.qualifiedName in PREVIEW_ANNOTATIONS }
+          } ?: false
+        }
         val name = clazz.nameAsSafeName.asString()
         val message =
           if (count == 1 && !name.endsWith("Preview")) {

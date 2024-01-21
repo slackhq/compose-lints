@@ -67,6 +67,7 @@ abstract class BaseSlackLintTest : LintDetectorTest() {
       """
           package androidx.compose.ui.tooling.preview
 
+          @Repeatable
           annotation class Preview
 
           interface PreviewParameterProvider<T> {
