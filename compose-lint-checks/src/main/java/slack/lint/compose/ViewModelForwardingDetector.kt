@@ -12,6 +12,9 @@ import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.UParameter
+import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.definedInInterface
 import slack.lint.compose.util.findDirectChildrenByClass
@@ -40,8 +43,7 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
       )
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
-
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     if (function.isOverride || function.definedInInterface || function.isActual) return
     val bodyBlock = function.bodyBlockExpression ?: return
 
@@ -51,9 +53,11 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
       parameters
         .filter { parameter ->
           // We can't do much better than this. We could look for viewModel() / weaverViewModel()
-          // but that
-          // would give us way less (and less useful) hits.
-          parameter.typeReference?.text?.endsWith("ViewModel") ?: false
+          // but that would give us way less (and less useful) hits.
+          context.evaluator
+            .getTypeClass(parameter.toUElementOfType<UParameter>()?.type)
+            ?.name
+            ?.endsWith("ViewModel") ?: false
         }
         .mapNotNull { it.name }
         .toSet()

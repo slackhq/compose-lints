@@ -3,30 +3,27 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
-import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class RememberMissingDetectorTest : BaseSlackLintTest() {
+class RememberMissingDetectorTest : BaseComposeLintTest() {
 
   override fun getDetector(): Detector = RememberMissingDetector()
 
   override fun getIssues(): List<Issue> = listOf(RememberMissingDetector.ISSUE)
-
-  // This mode is irrelevant to our test and totally untestable with stringy outputs
-  override val skipTestModes: Array<TestMode> = arrayOf(TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
 
   @Test
   fun `passes when a non-remembered mutableStateOf is used outside of a Composable`() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.mutableStateOf
         val msof = mutableStateOf("X")
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -34,6 +31,10 @@ class RememberMissingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.runtime.mutableStateOf
+        import androidx.compose.runtime.State
+
         @Composable
         fun MyComposable() {
             val something = mutableStateOf("X")
@@ -44,17 +45,16 @@ class RememberMissingDetectorTest : BaseSlackLintTest() {
       """
         .trimIndent()
     lint()
-      .files(kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       .run()
       .expect(
         """
-          src/test.kt:3: Error: Using mutableStateOf in a @Composable function without it being inside of a remember function.
+          src/test.kt:7: Error: Using mutableStateOf in a @Composable function without it being inside of a remember function.
           If you don't remember the state instance, a new state instance will be created when the function is recomposed.
           See https://slackhq.github.io/compose-lints/rules/#state-should-be-remembered-in-composables for more information. [ComposeRememberMissing]
               val something = mutableStateOf("X")
                               ~~~~~~~~~~~~~~~~~~~
-          src/test.kt:6: Error: Using mutableStateOf in a @Composable function without it being inside of a remember function.
+          src/test.kt:10: Error: Using mutableStateOf in a @Composable function without it being inside of a remember function.
           If you don't remember the state instance, a new state instance will be created when the function is recomposed.
           See https://slackhq.github.io/compose-lints/rules/#state-should-be-remembered-in-composables for more information. [ComposeRememberMissing]
           fun MyComposable(something: State<String> = mutableStateOf("X")) {
@@ -70,6 +70,10 @@ class RememberMissingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.runtime.mutableStateOf
+        import androidx.compose.runtime.State
+
         @Composable
         fun MyComposable(
             something: State<String> = remember { mutableStateOf("X") }
@@ -79,7 +83,7 @@ class RememberMissingDetectorTest : BaseSlackLintTest() {
         }
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -87,6 +91,10 @@ class RememberMissingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.runtime.mutableStateOf
+        import androidx.compose.runtime.State
+
         @Composable
         fun MyComposable(
             something: State<String> = rememberSaveable { mutableStateOf("X") }
@@ -96,7 +104,7 @@ class RememberMissingDetectorTest : BaseSlackLintTest() {
         }
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -104,10 +112,13 @@ class RememberMissingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
-        val dsof = derivedStateOf("X")
+        import androidx.compose.runtime.Composable
+        import androidx.compose.runtime.derivedStateOf
+
+        val dsof = derivedStateOf { "X" }
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -115,6 +126,10 @@ class RememberMissingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.runtime.State
+        import androidx.compose.runtime.derivedStateOf
+
         @Composable
         fun MyComposable() {
             val something = derivedStateOf { "X" }
@@ -125,17 +140,16 @@ class RememberMissingDetectorTest : BaseSlackLintTest() {
       """
         .trimIndent()
     lint()
-      .files(kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       .run()
       .expect(
         """
-          src/test.kt:3: Error: Using derivedStateOf in a @Composable function without it being inside of a remember function.
+          src/test.kt:7: Error: Using derivedStateOf in a @Composable function without it being inside of a remember function.
           If you don't remember the state instance, a new state instance will be created when the function is recomposed.
           See https://slackhq.github.io/compose-lints/rules/#state-should-be-remembered-in-composables for more information. [ComposeRememberMissing]
               val something = derivedStateOf { "X" }
                               ~~~~~~~~~~~~~~~~~~~~~~
-          src/test.kt:6: Error: Using derivedStateOf in a @Composable function without it being inside of a remember function.
+          src/test.kt:10: Error: Using derivedStateOf in a @Composable function without it being inside of a remember function.
           If you don't remember the state instance, a new state instance will be created when the function is recomposed.
           See https://slackhq.github.io/compose-lints/rules/#state-should-be-remembered-in-composables for more information. [ComposeRememberMissing]
           fun MyComposable(something: State<String> = derivedStateOf { "X" }) {
@@ -151,6 +165,11 @@ class RememberMissingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.runtime.State
+        import androidx.compose.runtime.derivedStateOf
+        import androidx.compose.runtime.remember
+
         @Composable
         fun MyComposable(
             something: State<String> = remember { derivedStateOf { "X" } }
@@ -160,6 +179,6 @@ class RememberMissingDetectorTest : BaseSlackLintTest() {
         }
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 }

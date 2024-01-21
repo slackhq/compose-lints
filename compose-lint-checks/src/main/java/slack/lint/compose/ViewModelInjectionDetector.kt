@@ -12,6 +12,7 @@ import com.android.tools.lint.detector.api.StringOption
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.StringSetLintOption
 import slack.lint.compose.util.definedInInterface
@@ -67,7 +68,7 @@ constructor(private val userFactories: StringSetLintOption = StringSetLintOption
     }
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     if (function.isOverride || function.definedInInterface) return
 
     val bodyBlock = function.bodyBlockExpression ?: return
