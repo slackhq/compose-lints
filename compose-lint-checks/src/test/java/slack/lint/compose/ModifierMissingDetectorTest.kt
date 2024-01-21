@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
-import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
@@ -51,8 +50,6 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
 
     lint()
       .files(*commonStubs, kotlin(code))
-      // TODO can't run this due to https://issuetracker.google.com/issues/302674274#comment6
-      .skipTestModes(TestMode.TYPE_ALIAS)
       .run()
       .expect(
         """
@@ -335,6 +332,10 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
     val code =
       """
           import androidx.compose.runtime.Composable
+          import androidx.compose.ui.tooling.preview.Preview
+          import androidx.compose.ui.Modifier
+          
+          fun Modifier.fillMaxSize(): Modifier = TODO()
 
           @Preview
           @Composable
