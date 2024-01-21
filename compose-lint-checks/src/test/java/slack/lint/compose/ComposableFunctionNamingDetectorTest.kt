@@ -4,7 +4,6 @@
 package slack.lint.compose
 
 import com.android.tools.lint.checks.infrastructure.TestLintTask
-import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
@@ -152,20 +151,28 @@ class ComposableFunctionNamingDetectorTest : BaseSlackLintTest() {
           .trimIndent()
       )
     // TODO see above
-//      .expect(
-//        testMode = TestMode.TYPE_ALIAS,
-//        expectedText =
-//        """
-//          src/test.kt:2: Error: Composable functions that return Unit should start with an uppercase letter.They are considered declarative entities that can be either present or absent in a composition and therefore follow the naming rules for classes.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingUppercase]
-//          fun myComposable() { }
-//              ~~~~~~~~~~~~
-//          src/test.kt:5: Error: Composable functions that return Unit should start with an uppercase letter.They are considered declarative entities that can be either present or absent in a composition and therefore follow the naming rules for classes.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingUppercase]
-//          fun myComposable(): TYPE_ALIAS_1 { }
-//              ~~~~~~~~~~~~
-//          2 errors, 0 warnings
-//        """
-//          .trimIndent()
-//      )
+    //      .expect(
+    //        testMode = TestMode.TYPE_ALIAS,
+    //        expectedText =
+    //        """
+    //          src/test.kt:2: Error: Composable functions that return Unit should start with an
+    // uppercase letter.They are considered declarative entities that can be either present or
+    // absent in a composition and therefore follow the naming rules for classes.See
+    // https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more
+    // information. [ComposeNamingUppercase]
+    //          fun myComposable() { }
+    //              ~~~~~~~~~~~~
+    //          src/test.kt:5: Error: Composable functions that return Unit should start with an
+    // uppercase letter.They are considered declarative entities that can be either present or
+    // absent in a composition and therefore follow the naming rules for classes.See
+    // https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more
+    // information. [ComposeNamingUppercase]
+    //          fun myComposable(): TYPE_ALIAS_1 { }
+    //              ~~~~~~~~~~~~
+    //          2 errors, 0 warnings
+    //        """
+    //          .trimIndent()
+    //      )
   }
 
   @Test

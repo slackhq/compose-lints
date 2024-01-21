@@ -68,7 +68,12 @@ constructor(
     // If the method is public, none of it's params should be tagged as preview
     // This is configurable by the `previewPublicOnlyIfParams` config value
     if (previewPublicOnlyIfParams.value) {
-      if (function.valueParameters.none { it.toUElementOfType<UParameter>()?.isPreviewParameter == true }) return
+      if (
+        function.valueParameters.none {
+          it.toUElementOfType<UParameter>()?.isPreviewParameter == true
+        }
+      )
+        return
     }
 
     // If we got here, it's a public method in a @Preview composable with a @PreviewParameter

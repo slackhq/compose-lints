@@ -149,7 +149,10 @@ val ComposableEmittersListRegex by lazy {
 }
 
 val ModifierNames by lazy(LazyThreadSafetyMode.NONE) { setOf("Modifier", "GlanceModifier") }
-val ModifierQualifiedNames by lazy(LazyThreadSafetyMode.NONE) { setOf("androidx.compose.ui.Modifier", "androidx.glance.GlanceModifier") }
+val ModifierQualifiedNames by
+  lazy(LazyThreadSafetyMode.NONE) {
+    setOf("androidx.compose.ui.Modifier", "androidx.glance.GlanceModifier")
+  }
 
 val KtCallableDeclaration.isModifier: Boolean
   get() = ModifierNames.contains(typeReference?.text)
@@ -161,9 +164,7 @@ fun UParameter.isModifier(evaluator: JavaEvaluator): Boolean {
     }
   }
   // Fall back to more thorough approach
-  return ModifierQualifiedNames.any {
-    evaluator.typeMatches(type, it)
-  }
+  return ModifierQualifiedNames.any { evaluator.typeMatches(type, it) }
 }
 
 val KtCallableDeclaration.isModifierReceiver: Boolean
@@ -176,9 +177,9 @@ val KtFunction.modifierParameter: KtParameter?
   }
 
 fun UMethod.modifierParameter(evaluator: JavaEvaluator): UParameter? {
-    val modifiers = uastParameters.filter { it.isModifier(evaluator) }
-    return modifiers.firstOrNull { it.name == "modifier" } ?: modifiers.firstOrNull()
-  }
+  val modifiers = uastParameters.filter { it.isModifier(evaluator) }
+  return modifiers.firstOrNull { it.name == "modifier" } ?: modifiers.firstOrNull()
+}
 
 val KtProperty.declaresCompositionLocal: Boolean
   get() {

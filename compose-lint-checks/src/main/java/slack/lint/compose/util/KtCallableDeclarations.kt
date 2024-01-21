@@ -18,9 +18,9 @@ fun KtParameter.isTypeMutable(evaluator: JavaEvaluator): Boolean {
     return true
   }
 
-  val uParamClass = toUElementOfType<UParameter>()?.type
-    ?.let(evaluator::getTypeClass)
-    ?.toUElementOfType<UClass>() ?: return false
+  val uParamClass =
+    toUElementOfType<UParameter>()?.type?.let(evaluator::getTypeClass)?.toUElementOfType<UClass>()
+      ?: return false
 
   if (uParamClass.hasAnnotation("androidx.compose.runtime.Immutable")) {
     return false
@@ -32,49 +32,50 @@ fun KtParameter.isTypeMutable(evaluator: JavaEvaluator): Boolean {
 /** Lint can't read "Mutable*" Kotlin collections that are compiler intrinsics. */
 val KnownMutableKotlinCollections =
   sequenceOf(
-    "MutableMap(\\s)?<.*,(\\s)?.*>\\??",
-    "MutableSet(\\s)?<.*>\\??",
-    "MutableList(\\s)?<.*>\\??",
-    "MutableCollection(\\s)?<.*>\\??",
-  ).map(::Regex)
+      "MutableMap(\\s)?<.*,(\\s)?.*>\\??",
+      "MutableSet(\\s)?<.*>\\??",
+      "MutableList(\\s)?<.*>\\??",
+      "MutableCollection(\\s)?<.*>\\??",
+    )
+    .map(::Regex)
 
 val KnownMutableCommonTypesSimpleNames =
   setOf(
-      // Set
-      "MutableSet",
-      "ArraySet",
-      "HashSet",
-      // List
-      "MutableList",
-      "ArrayList",
-      // Array
-      "SparseArray",
-      "SparseArrayCompat",
-      "LongSparseArray",
-      "SparseBooleanArray",
-      "SparseIntArray",
-      // Map
-      "MutableMap",
-      "HashMap",
-      "Hashtable",
-      // Compose
-      "MutableState",
-      // Flow
-      "MutableStateFlow",
-      "MutableSharedFlow",
-      // RxJava & RxRelay
-      "PublishSubject",
-      "BehaviorSubject",
-      "ReplaySubject",
-      "PublishRelay",
-      "BehaviorRelay",
-      "ReplayRelay"
-    )
+    // Set
+    "MutableSet",
+    "ArraySet",
+    "HashSet",
+    // List
+    "MutableList",
+    "ArrayList",
+    // Array
+    "SparseArray",
+    "SparseArrayCompat",
+    "LongSparseArray",
+    "SparseBooleanArray",
+    "SparseIntArray",
+    // Map
+    "MutableMap",
+    "HashMap",
+    "Hashtable",
+    // Compose
+    "MutableState",
+    // Flow
+    "MutableStateFlow",
+    "MutableSharedFlow",
+    // RxJava & RxRelay
+    "PublishSubject",
+    "BehaviorSubject",
+    "ReplaySubject",
+    "PublishRelay",
+    "BehaviorRelay",
+    "ReplayRelay"
+  )
 
 fun KtCallableDeclaration.isTypeUnstableCollection(evaluator: JavaEvaluator): Boolean {
-  val uParamClass = toUElementOfType<UParameter>()?.type
-    ?.let(evaluator::getTypeClass)
-    ?.toUElementOfType<UClass>() ?: return false
+  val uParamClass =
+    toUElementOfType<UParameter>()?.type?.let(evaluator::getTypeClass)?.toUElementOfType<UClass>()
+      ?: return false
 
   if (uParamClass.hasAnnotation("androidx.compose.runtime.Immutable")) {
     return false
@@ -84,9 +85,4 @@ fun KtCallableDeclaration.isTypeUnstableCollection(evaluator: JavaEvaluator): Bo
 }
 
 val KnownUnstableCollectionTypes =
-  sequenceOf(
-    "java.util.Collection",
-    "java.util.Set",
-    "java.util.List",
-    "java.util.Map"
-  )
+  sequenceOf("java.util.Collection", "java.util.Set", "java.util.List", "java.util.Map")

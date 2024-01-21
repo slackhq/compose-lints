@@ -111,9 +111,13 @@ allprojects {
 
 subprojects {
   pluginManager.withPlugin("java") {
-    configure<JavaPluginExtension> { toolchain { languageVersion.set(libs.versions.jdk.map(JavaLanguageVersion::of)) } }
+    configure<JavaPluginExtension> {
+      toolchain { languageVersion.set(libs.versions.jdk.map(JavaLanguageVersion::of)) }
+    }
 
-    tasks.withType<JavaCompile>().configureEach { options.release.set(libs.versions.jvmTarget.map(String::toInt)) }
+    tasks.withType<JavaCompile>().configureEach {
+      options.release.set(libs.versions.jvmTarget.map(String::toInt))
+    }
   }
 
   pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {

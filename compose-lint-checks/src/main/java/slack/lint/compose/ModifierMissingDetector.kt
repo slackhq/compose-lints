@@ -68,9 +68,9 @@ constructor(
     //  - are not a @Preview composable
     if (
       function.isOverride ||
-      function.definedInInterface ||
-      uMethod.isPreview ||
-      !uMethod.returnsUnitOrVoid(context.evaluator)
+        function.definedInInterface ||
+        uMethod.isPreview ||
+        !uMethod.returnsUnitOrVoid(context.evaluator)
     ) {
       return
     }

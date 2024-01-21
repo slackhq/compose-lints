@@ -38,7 +38,8 @@ class CompositionLocalUsageDetectorTest : BaseSlackLintTest() {
       .expectWarningCount(4)
       .expect(
         testMode = TestMode.PARENTHESIZED,
-        expectedText = """
+        expectedText =
+          """
           src/test.kt:2: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
                           private val LocalApple = (staticCompositionLocalOf<String> { "Apple" })
                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,7 +54,7 @@ class CompositionLocalUsageDetectorTest : BaseSlackLintTest() {
                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           0 errors, 4 warnings
         """
-          .trimIndent()
+            .trimIndent()
       )
       .expect(
         """

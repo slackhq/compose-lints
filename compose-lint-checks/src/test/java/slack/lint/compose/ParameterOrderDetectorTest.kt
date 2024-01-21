@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
-import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
@@ -20,8 +19,8 @@ class ParameterOrderDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable        
-        import androidx.compose.ui.Modifier        
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
 
         fun MyComposable(text1: String, modifier: Modifier = Modifier, other: String = "1", other2: String = "2") { }
 
@@ -46,7 +45,7 @@ class ParameterOrderDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable        
+        import androidx.compose.runtime.Composable
         import androidx.compose.ui.Modifier
 
         @Composable

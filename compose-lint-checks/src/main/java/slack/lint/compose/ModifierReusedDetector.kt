@@ -86,11 +86,11 @@ constructor(
             // If any of the siblings also use any of these, we also log them.
             // This is for the special case where only sibling composables reuse modifiers
             addAll(
-              current.siblings()
+              current
+                .siblings()
                 .mapNotNull { it.unwrapParenthesis() }
-                .filterIsInstance<KtCallExpression>().filter {
-                it.isUsingModifiers(modifierNames)
-              }
+                .filterIsInstance<KtCallExpression>()
+                .filter { it.isUsingModifiers(modifierNames) }
             )
             current = current.parent
           }

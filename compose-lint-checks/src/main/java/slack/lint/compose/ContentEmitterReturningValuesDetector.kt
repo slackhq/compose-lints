@@ -58,28 +58,33 @@ constructor(
   internal val KtFunction.directUiEmitterCount: Int
     get() =
       bodyBlockExpression?.let { block ->
-        block.statements.mapNotNull { it.unwrapParenthesis() }.filterIsInstance<KtCallExpression>().count {
-          it.emitsContent(contentEmitterOption.value)
-        }
+        block.statements
+          .mapNotNull { it.unwrapParenthesis() }
+          .filterIsInstance<KtCallExpression>()
+          .count { it.emitsContent(contentEmitterOption.value) }
       } ?: 0
 
   internal fun KtFunction.indirectUiEmitterCount(mapping: Map<KtFunction, Int>): Int {
     val bodyBlock = bodyBlockExpression ?: return 0
-    return bodyBlock.statements.mapNotNull { it.unwrapParenthesis() }.filterIsInstance<KtCallExpression>().count { callExpression ->
-      // If it's a direct hit on our list, it should count directly
-      if (callExpression.emitsContent(contentEmitterOption.value)) return@count true
+    return bodyBlock.statements
+      .mapNotNull { it.unwrapParenthesis() }
+      .filterIsInstance<KtCallExpression>()
+      .count { callExpression ->
+        // If it's a direct hit on our list, it should count directly
+        if (callExpression.emitsContent(contentEmitterOption.value)) return@count true
 
-      val name = callExpression.calleeExpression?.text ?: return@count false
-      // If the hit is in the provided mapping, it means it is using a composable that we know emits
-      // UI, that we inferred from previous passes
-      val value =
-        mapping
-          .mapKeys { entry -> entry.key.name }
-          .getOrElse(name) {
-            return@count false
-          }
-      value > 0
-    }
+        val name = callExpression.calleeExpression?.text ?: return@count false
+        // If the hit is in the provided mapping, it means it is using a composable that we know
+        // emits
+        // UI, that we inferred from previous passes
+        val value =
+          mapping
+            .mapKeys { entry -> entry.key.name }
+            .getOrElse(name) {
+              return@count false
+            }
+        value > 0
+      }
   }
 
   override fun getApplicableUastTypes() = listOf(UFile::class.java)

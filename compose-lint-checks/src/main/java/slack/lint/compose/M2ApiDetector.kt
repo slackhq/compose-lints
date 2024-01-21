@@ -70,7 +70,8 @@ constructor(private val allowList: StringSetLintOption = StringSetLintOption(ALL
       override fun visitQualifiedReferenceExpression(node: UQualifiedReferenceExpression) {
         val parent = node.uastParent
         if (parent is UQualifiedReferenceExpression && node == parent.receiver) {
-          // This is part of a longer selector expression, so let the lint handle the final reference
+          // This is part of a longer selector expression, so let the lint handle the final
+          // reference
           // i.e. given 'androidx.compose.material.BottomNavigationDefaults.Elevation', we only want
           // to report 'androidx.compose.material.BottomNavigationDefaults.Elevation', and _not_
           // 'androidx.compose.material.BottomNavigationDefaults'

@@ -66,23 +66,32 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
         """
           .trimIndent()
       )
-//      .expect(
-//        testMode = TestMode.TYPE_ALIAS,
-//        expectedText =
-//          """
-//          src/test.kt:4: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
-//          fun Something1() {
-//              ~~~~~~~~~~
-//          src/test.kt:9: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
-//          fun Something2() {
-//              ~~~~~~~~~~
-//          src/test.kt:14: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
-//          fun Something3(): TYPE_ALIAS_2 {
-//              ~~~~~~~~~~
-//          3 errors, 0 warnings
-//        """
-//            .trimIndent()
-//      )
+    //      .expect(
+    //        testMode = TestMode.TYPE_ALIAS,
+    //        expectedText =
+    //          """
+    //          src/test.kt:4: Error: This @Composable function emits content but doesn't have a
+    // modifier parameter.See
+    // https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for
+    // more information. [ComposeModifierMissing]
+    //          fun Something1() {
+    //              ~~~~~~~~~~
+    //          src/test.kt:9: Error: This @Composable function emits content but doesn't have a
+    // modifier parameter.See
+    // https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for
+    // more information. [ComposeModifierMissing]
+    //          fun Something2() {
+    //              ~~~~~~~~~~
+    //          src/test.kt:14: Error: This @Composable function emits content but doesn't have a
+    // modifier parameter.See
+    // https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for
+    // more information. [ComposeModifierMissing]
+    //          fun Something3(): TYPE_ALIAS_2 {
+    //              ~~~~~~~~~~
+    //          3 errors, 0 warnings
+    //        """
+    //            .trimIndent()
+    //      )
   }
 
   @Test
@@ -163,7 +172,7 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
       """
         import androidx.compose.runtime.Composable
         import androidx.compose.ui.Modifier
-        
+
         @Composable
         fun Something() {
             Row {
@@ -334,7 +343,7 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
           import androidx.compose.runtime.Composable
           import androidx.compose.ui.tooling.preview.Preview
           import androidx.compose.ui.Modifier
-          
+
           fun Modifier.fillMaxSize(): Modifier = TODO()
 
           @Preview

@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.uast.UMethod
 
 fun UMethod.returnsUnitOrVoid(evaluator: JavaEvaluator): Boolean {
-    return returnType?.let {
-      // TODO switch to PsiTypes.voidType() in newer lint versions
-      it == PsiType.VOID || evaluator.getTypeClass(it)?.qualifiedName == "kotlin.Unit"
-    } ?: false
-  }
+  return returnType?.let {
+    // TODO switch to PsiTypes.voidType() in newer lint versions
+    it == PsiType.VOID || evaluator.getTypeClass(it)?.qualifiedName == "kotlin.Unit"
+  } ?: false
+}
 
 val KtFunction.hasReceiverType: Boolean
   get() = receiverTypeReference != null

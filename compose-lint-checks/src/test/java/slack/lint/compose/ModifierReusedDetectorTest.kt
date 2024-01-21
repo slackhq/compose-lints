@@ -16,8 +16,7 @@ class ModifierReusedDetectorTest : BaseSlackLintTest() {
   override fun getIssues(): List<Issue> = listOf(ModifierReusedDetector.ISSUE)
 
   // PARENTHESIZED needs more work
-  override val skipTestModes: Array<TestMode> =
-    arrayOf(TestMode.PARENTHESIZED)
+  override val skipTestModes: Array<TestMode> = arrayOf(TestMode.PARENTHESIZED)
 
   @Test
   fun `errors when the modifier parameter of a Composable is used more than once by siblings or parent-children`() {

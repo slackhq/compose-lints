@@ -8,24 +8,16 @@ import com.android.tools.lint.checks.infrastructure.TestLintTask
 import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
-import com.android.utils.SdkUtils
-import java.io.BufferedInputStream
-import java.io.ByteArrayInputStream
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileNotFoundException
-import java.io.InputStream
-import java.net.MalformedURLException
-import junit.framework.TestCase
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 abstract class BaseSlackLintTest : LintDetectorTest() {
 
-  protected val commonStubs = arrayOf(
-    kotlin(
-      """
+  protected val commonStubs =
+    arrayOf(
+      kotlin(
+        """
           package androidx.compose.ui
 
           import androidx.compose.runtime.Composable
@@ -35,18 +27,18 @@ abstract class BaseSlackLintTest : LintDetectorTest() {
             companion object : Modifier
           }
       """
-        .trimIndent()
-    ),
-    kotlin(
-      """
+          .trimIndent()
+      ),
+      kotlin(
+        """
           package androidx.compose.runtime
 
           annotation class Composable
-          
+
           interface State<out T> {
               val value: T
           }
-          
+
           interface MutableState<T> : State<T> {
               override var value: T
               operator fun component1(): T
@@ -61,10 +53,10 @@ abstract class BaseSlackLintTest : LintDetectorTest() {
 
           inline fun <T> remember(crossinline calculation: () -> T): T = TODO()
       """
-        .trimIndent()
-    ),
-    kotlin(
-      """
+          .trimIndent()
+      ),
+      kotlin(
+        """
           package androidx.compose.ui.tooling.preview
 
           @Repeatable
@@ -74,15 +66,15 @@ abstract class BaseSlackLintTest : LintDetectorTest() {
               val values: Sequence<T>
               val count get() = values.count()
           }
-          
+
           annotation class PreviewParameter(
               val provider: KClass<out PreviewParameterProvider<*>>,
               val limit: Int = Int.MAX_VALUE
           )
       """
-        .trimIndent()
+          .trimIndent()
+      )
     )
-  )
 
   /** Optional override to customize the lint client name when running lint test tasks. */
   open val lintClientName: String? = null

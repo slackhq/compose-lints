@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
-import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
@@ -11,8 +10,9 @@ import org.junit.Test
 
 class PreviewPublicDetectorTest : BaseSlackLintTest() {
 
-  private val stubs = kotlin(
-    """
+  private val stubs =
+    kotlin(
+        """
         import androidx.compose.ui.tooling.preview.Preview
         import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 
@@ -22,7 +22,8 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
         class User
         class UserProvider : PreviewParameterProvider<User>
     """
-  ).indented()
+      )
+      .indented()
 
   override fun getDetector(): Detector = PreviewPublicDetector()
 

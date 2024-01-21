@@ -8,7 +8,6 @@ import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
-import kotlin.math.exp
 
 class MutableParametersDetectorTest : BaseSlackLintTest() {
 
@@ -18,10 +17,7 @@ class MutableParametersDetectorTest : BaseSlackLintTest() {
 
   // Can't get typealias working correctly in this case as the combination of an
   // alias + lint's inability to reach kotlin intrinsic collections defeats it
-  override val skipTestModes: Array<TestMode> =
-    arrayOf(
-      TestMode.TYPE_ALIAS
-    )
+  override val skipTestModes: Array<TestMode> = arrayOf(TestMode.TYPE_ALIAS)
 
   @Test
   fun `errors when a Composable has a mutable parameter`() {

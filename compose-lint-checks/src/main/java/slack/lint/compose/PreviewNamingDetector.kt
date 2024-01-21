@@ -53,12 +53,13 @@ class PreviewNamingDetector : Detector(), SourceCodeScanner {
 
         // We know here that we are in an annotation that either has a @Preview or other preview
         // annotations
-        val count = node.uAnnotations.count {
-          it.resolve().toUElementOfType<UClass>()?.let { annotation ->
-            annotation.qualifiedName in PREVIEW_ANNOTATIONS ||
-              annotation.uAnnotations.any { it.resolve()?.qualifiedName in PREVIEW_ANNOTATIONS }
-          } ?: false
-        }
+        val count =
+          node.uAnnotations.count {
+            it.resolve().toUElementOfType<UClass>()?.let { annotation ->
+              annotation.qualifiedName in PREVIEW_ANNOTATIONS ||
+                annotation.uAnnotations.any { it.resolve()?.qualifiedName in PREVIEW_ANNOTATIONS }
+            } ?: false
+          }
         val name = clazz.nameAsSafeName.asString()
         val message =
           if (count == 1 && !name.endsWith("Preview")) {

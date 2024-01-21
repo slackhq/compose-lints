@@ -54,8 +54,10 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
         .filter { parameter ->
           // We can't do much better than this. We could look for viewModel() / weaverViewModel()
           // but that would give us way less (and less useful) hits.
-          context.evaluator.getTypeClass(parameter.toUElementOfType<UParameter>()?.type)
-            ?.name?.endsWith("ViewModel") ?: false
+          context.evaluator
+            .getTypeClass(parameter.toUElementOfType<UParameter>()?.type)
+            ?.name
+            ?.endsWith("ViewModel") ?: false
         }
         .mapNotNull { it.name }
         .toSet()

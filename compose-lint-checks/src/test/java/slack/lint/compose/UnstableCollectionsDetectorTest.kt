@@ -17,10 +17,7 @@ class UnstableCollectionsDetectorTest : BaseSlackLintTest() {
 
   // Can't get typealias working correctly in this case as the combination of an
   // alias + lint's inability to reach kotlin intrinsic collections defeats it
-  override val skipTestModes: Array<TestMode> =
-    arrayOf(
-      TestMode.TYPE_ALIAS
-    )
+  override val skipTestModes: Array<TestMode> = arrayOf(TestMode.TYPE_ALIAS)
 
   @Test
   fun `warnings when a Composable has a Collection List Set Map parameter`() {
