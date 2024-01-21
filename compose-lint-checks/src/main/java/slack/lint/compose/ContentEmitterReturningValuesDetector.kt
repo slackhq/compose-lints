@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.uast.UFile
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.OptionLoadingDetector
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.emitsContent
@@ -92,7 +94,7 @@ constructor(
         val composables =
           file
             .findChildrenByClass<KtFunction>()
-            .filter { it.isComposable }
+            .filter { it.toUElementOfType<UMethod>()?.isComposable == true }
             // We don't want to analyze composables that are extension functions, as they might be
             // things like
             // BoxScope which are legit, and we want to avoid false positives.

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose.util
 
-import org.jetbrains.kotlin.psi.KtAnnotated
+import org.jetbrains.uast.UAnnotated
 
-val KtAnnotated.isComposable: Boolean
-  get() = annotationEntries.any { it.calleeExpression?.text == "Composable" }
+val UAnnotated.isComposable: Boolean
+  get() = findAnnotation("androidx.compose.runtime.Composable") != null

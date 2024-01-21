@@ -13,9 +13,10 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParameter
+import org.jetbrains.uast.toUElementOfType
 
 fun KtFunction.emitsContent(providedContentEmitters: Set<String>): Boolean {
-  return if (isComposable) {
+  return if (toUElementOfType<UMethod>()?.isComposable == true) {
     sequence {
         tailrec suspend fun SequenceScope<KtCallExpression>.scan(elements: List<PsiElement>) {
           if (elements.isEmpty()) return

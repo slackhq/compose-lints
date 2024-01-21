@@ -22,8 +22,8 @@ abstract class ComposableFunctionDetector(vararg options: LintOption) :
     if (!isKotlin(context.uastFile?.lang)) return null
     return object : UElementHandler() {
       override fun visitMethod(node: UMethod) {
-        val ktFunction = node.sourcePsi as? KtFunction ?: return
-        if (ktFunction.isComposable) {
+        if (node.isComposable) {
+          val ktFunction = node.sourcePsi as? KtFunction ?: return
           visitComposable(context, ktFunction)
         }
       }

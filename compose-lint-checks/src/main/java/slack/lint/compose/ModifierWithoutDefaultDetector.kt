@@ -11,6 +11,8 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.uast.UParameter
+import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.definedInInterface
 import slack.lint.compose.util.isAbstract
@@ -48,7 +50,7 @@ class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeS
     // Look for modifier params in the composable signature, and if any without a default value is
     // found, error out.
     function.valueParameters
-      .filter { it.isModifier }
+      .filter { it.toUElementOfType<UParameter>()?.isModifier(context.evaluator) ?: false }
       .filterNot { it.hasDefaultValue() }
       .forEach { modifierParameter ->
 
