@@ -76,19 +76,22 @@ class ViewModelForwardingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
-            @Composable
-            fun MyComposable(viewModel: MyViewModel) {
-                AnotherComposable(viewModel)
-            }
-            """
+        import androidx.compose.runtime.Composable
+
+        class MyViewModel
+        
+        @Composable
+        fun MyComposable(viewModel: MyViewModel) {
+            AnotherComposable(viewModel)
+        }
+      """
         .trimIndent()
     lint()
-      .files(kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       .run()
       .expect(
         """
-          src/test.kt:3: Error: Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting.See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information. [ComposeViewModelForwarding]
+          src/MyViewModel.kt:7: Error: Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting.See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information. [ComposeViewModelForwarding]
               AnotherComposable(viewModel)
               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           1 errors, 0 warnings

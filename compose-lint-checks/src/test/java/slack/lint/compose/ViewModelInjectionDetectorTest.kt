@@ -49,6 +49,9 @@ class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseSlackL
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
+
         @Composable
         fun MyComposable(
           modifier: Modifier,
@@ -58,7 +61,7 @@ class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseSlackL
       """
         .trimIndent()
 
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -66,6 +69,8 @@ class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseSlackL
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+
         @Composable
         override fun Content() {
           val viewModel = $viewModel<MyVM>()
@@ -73,7 +78,7 @@ class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseSlackL
       """
         .trimIndent()
 
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -81,41 +86,43 @@ class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseSlackL
     @Language("kotlin")
     val code =
       """
-        @Composable
-        fun MyComposable(modifier: Modifier) {
-          val viewModel = $viewModel<MyVM>()
-        }
+       import androidx.compose.runtime.Composable
+       import androidx.compose.ui.Modifier
 
         @Composable
-        fun MyComposableNoParams() {
-          val viewModel: MyVM = $viewModel()
-        }
+       fun MyComposable(modifier: Modifier) {
+         val viewModel = $viewModel<MyVM>()
+       }
 
-        @Composable
-        fun MyComposableTrailingLambda(block: () -> Unit) {
-          val viewModel: MyVM = $viewModel()
-        }
+       @Composable
+       fun MyComposableNoParams() {
+         val viewModel: MyVM = $viewModel()
+       }
+
+       @Composable
+       fun MyComposableTrailingLambda(block: () -> Unit) {
+         val viewModel: MyVM = $viewModel()
+       }
       """
         .trimIndent()
 
     val vmWordUnderline = "~".repeat(viewModel.length)
     lint()
-      .files(kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       .run()
       .expect(
         """
-            src/test.kt:3: Error: Implicit dependencies of composables should be made explicit.
+            src/test.kt:6: Error: Implicit dependencies of composables should be made explicit.
             Usages of $viewModel to acquire a ViewModel should be done in composable default parameters, so that it is more testable and flexible.
             See https://slackhq.github.io/compose-lints/rules/#viewmodels for more information. [ComposeViewModelInjection]
               val viewModel = $viewModel<MyVM>()
               ~~~~~~~~~~~~~~~~$vmWordUnderline~~~~~~~~
-            src/test.kt:8: Error: Implicit dependencies of composables should be made explicit.
+            src/test.kt:11: Error: Implicit dependencies of composables should be made explicit.
             Usages of $viewModel to acquire a ViewModel should be done in composable default parameters, so that it is more testable and flexible.
             See https://slackhq.github.io/compose-lints/rules/#viewmodels for more information. [ComposeViewModelInjection]
               val viewModel: MyVM = $viewModel()
               ~~~~~~~~~~~~~~~~~~~~~~$vmWordUnderline~~
-            src/test.kt:13: Error: Implicit dependencies of composables should be made explicit.
+            src/test.kt:16: Error: Implicit dependencies of composables should be made explicit.
             Usages of $viewModel to acquire a ViewModel should be done in composable default parameters, so that it is more testable and flexible.
             See https://slackhq.github.io/compose-lints/rules/#viewmodels for more information. [ComposeViewModelInjection]
               val viewModel: MyVM = $viewModel()
@@ -131,6 +138,9 @@ class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseSlackL
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
+
         @Composable
         fun MyComposable(modifier: Modifier) {
           if (blah) {
@@ -144,17 +154,16 @@ class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseSlackL
 
     val vmWordUnderline = "~".repeat(viewModel.length)
     lint()
-      .files(kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       .run()
       .expect(
         """
-            src/test.kt:4: Error: Implicit dependencies of composables should be made explicit.
+            src/test.kt:7: Error: Implicit dependencies of composables should be made explicit.
             Usages of $viewModel to acquire a ViewModel should be done in composable default parameters, so that it is more testable and flexible.
             See https://slackhq.github.io/compose-lints/rules/#viewmodels for more information. [ComposeViewModelInjection]
                 val viewModel = $viewModel<MyVM>()
                 ~~~~~~~~~~~~~~~~$vmWordUnderline~~~~~~~~
-            src/test.kt:6: Error: Implicit dependencies of composables should be made explicit.
+            src/test.kt:9: Error: Implicit dependencies of composables should be made explicit.
             Usages of $viewModel to acquire a ViewModel should be done in composable default parameters, so that it is more testable and flexible.
             See https://slackhq.github.io/compose-lints/rules/#viewmodels for more information. [ComposeViewModelInjection]
                 val viewModel: MyOtherVM = $viewModel()

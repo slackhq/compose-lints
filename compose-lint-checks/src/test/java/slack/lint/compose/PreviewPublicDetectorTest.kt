@@ -51,6 +51,12 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.tooling.preview.Preview
+
+        @Preview
+        annotation class CombinedPreviews
+
         @Preview
         @Composable
         fun MyComposable() { }
@@ -61,8 +67,7 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
         .trimIndent()
     lint()
       .configureOption(PreviewPublicDetector.PREVIEW_PUBLIC_ONLY_IF_PARAMS_OPTION, "false")
-      .files(kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       .run()
       .expect(
         """
@@ -97,6 +102,17 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.tooling.preview.Preview
+        import androidx.compose.ui.tooling.preview.PreviewParameter
+        import androidx.compose.ui.tooling.preview.PreviewParameter
+
+        @Preview
+        annotation class CombinedPreviews
+
+        class User
+        class UserProvider : PreviewParameterProvider<User>
+
         @Preview
         @Composable
         fun MyComposable(@PreviewParameter(User::class) user: User) {
@@ -108,8 +124,7 @@ class PreviewPublicDetectorTest : BaseSlackLintTest() {
       """
         .trimIndent()
     lint()
-      .files(kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       .run()
       .expect(
         """

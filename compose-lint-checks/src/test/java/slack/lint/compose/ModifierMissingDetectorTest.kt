@@ -11,23 +11,6 @@ import org.junit.Test
 
 class ModifierMissingDetectorTest : BaseSlackLintTest() {
 
-  private val stubs =
-    arrayOf(
-      kotlin(
-        """
-          package androidx.compose.ui
-
-          import androidx.compose.runtime.Composable
-
-          @Composable
-          interface Modifier {
-            companion object : Modifier
-          }
-      """
-          .trimIndent()
-      )
-    )
-
   override fun getDetector(): Detector = ModifierMissingDetector()
 
   override fun getIssues(): List<Issue> = listOf(ModifierMissingDetector.ISSUE)
@@ -38,6 +21,7 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
     val code =
       """
           import androidx.compose.ui.Modifier
+          import androidx.compose.runtime.Composable
 
           @Composable
           fun Something1() {
@@ -66,20 +50,19 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
         .trimIndent()
 
     lint()
-      .files(*stubs, kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       // TODO can't run this due to https://issuetracker.google.com/issues/302674274#comment6
       .skipTestModes(TestMode.TYPE_ALIAS)
       .run()
       .expect(
         """
-          src/test.kt:4: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:5: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           fun Something1() {
               ~~~~~~~~~~
-          src/test.kt:9: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:10: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           fun Something2() {
               ~~~~~~~~~~
-          src/test.kt:14: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:15: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           fun Something3(): Unit {
               ~~~~~~~~~~
           3 errors, 0 warnings
@@ -110,6 +93,8 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+          import androidx.compose.runtime.Composable
+
           @Composable
           fun Something1() {
               Whatever(modifier = Modifier.fillMaxSize()) {
@@ -126,15 +111,14 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
         .trimIndent()
 
     lint()
-      .files(kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       .run()
       .expect(
         """
-          src/test.kt:2: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:4: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           fun Something1() {
               ~~~~~~~~~~
-          src/test.kt:7: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:9: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           fun Something2(): Unit {
               ~~~~~~~~~~
           2 errors, 0 warnings
@@ -172,7 +156,7 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
           }
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -180,41 +164,43 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
-                @Composable
-                fun Something() {
-                    Row {
-                    }
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
+        
+        @Composable
+        fun Something() {
+            Row {
+            }
+        }
+        @Composable
+        protected fun Something() {
+            Column(modifier = Modifier.fillMaxSize()) {
+            }
+        }
+        @Composable
+        internal fun Something() {
+            SomethingElse {
+                Box(modifier = Modifier.fillMaxSize()) {
                 }
-                @Composable
-                protected fun Something() {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                    }
-                }
-                @Composable
-                internal fun Something() {
-                    SomethingElse {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                        }
-                    }
-                }
-                @Composable
-                private fun Something() {
-                    Whatever(modifier = Modifier.fillMaxSize()) {
-                    }
-                }
+            }
+        }
+        @Composable
+        private fun Something() {
+            Whatever(modifier = Modifier.fillMaxSize()) {
+            }
+        }
             """
         .trimIndent()
     lint()
-      .files(kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       .configureOption(ModifierMissingDetector.VISIBILITY_THRESHOLD, "public_and_internal")
       .run()
       .expect(
         """
-          src/test.kt:2: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:5: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           fun Something() {
               ~~~~~~~~~
-          src/test.kt:12: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:15: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           internal fun Something() {
                        ~~~~~~~~~
           2 errors, 0 warnings
@@ -228,48 +214,50 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
-                @Composable
-                fun Something() {
-                    Row {
-                    }
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
+
+        @Composable
+        fun Something() {
+            Row {
+            }
+        }
+        @Composable
+        protected fun Something() {
+            Column(modifier = Modifier.fillMaxSize()) {
+            }
+        }
+        @Composable
+        internal fun Something() {
+            SomethingElse {
+                Box(modifier = Modifier.fillMaxSize()) {
                 }
-                @Composable
-                protected fun Something() {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                    }
-                }
-                @Composable
-                internal fun Something() {
-                    SomethingElse {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                        }
-                    }
-                }
-                @Composable
-                private fun Something() {
-                    Whatever(modifier = Modifier.fillMaxSize()) {
-                    }
-                }
+            }
+        }
+        @Composable
+        private fun Something() {
+            Whatever(modifier = Modifier.fillMaxSize()) {
+            }
+        }
             """
         .trimIndent()
 
     lint()
-      .files(kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       .configureOption(ModifierMissingDetector.VISIBILITY_THRESHOLD, "all")
       .run()
       .expect(
         """
-          src/test.kt:2: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:5: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           fun Something() {
               ~~~~~~~~~
-          src/test.kt:7: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:10: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           protected fun Something() {
                         ~~~~~~~~~
-          src/test.kt:12: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:15: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           internal fun Something() {
                        ~~~~~~~~~
-          src/test.kt:19: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:22: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           private fun Something() {
                       ~~~~~~~~~
           4 errors, 0 warnings
@@ -298,7 +286,7 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
           }
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -323,7 +311,7 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
           }
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -338,7 +326,7 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
           }
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -346,6 +334,8 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+          import androidx.compose.runtime.Composable
+
           @Preview
           @Composable
           fun Something() {
@@ -369,7 +359,7 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
       """
         .trimIndent()
 
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -377,6 +367,8 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+          import androidx.compose.runtime.Composable
+
           @Composable
           fun MyDialog() {
             AlertDialog(
@@ -388,7 +380,7 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
       """
         .trimIndent()
 
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -396,6 +388,8 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+          import androidx.compose.runtime.Composable
+
           @Composable
           fun MyDialog() {
             Text(text = "Unicorn")
@@ -410,12 +404,11 @@ class ModifierMissingDetectorTest : BaseSlackLintTest() {
         .trimIndent()
 
     lint()
-      .files(kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       .run()
       .expect(
         """
-          src/test.kt:2: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+          src/test.kt:4: Error: This @Composable function emits content but doesn't have a modifier parameter.See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
           fun MyDialog() {
               ~~~~~~~~
           1 errors, 0 warnings

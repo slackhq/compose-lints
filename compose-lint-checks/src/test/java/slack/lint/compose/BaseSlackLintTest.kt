@@ -22,6 +22,59 @@ import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 abstract class BaseSlackLintTest : LintDetectorTest() {
+
+  protected val commonStubs = arrayOf(
+    kotlin(
+      """
+          package androidx.compose.ui
+
+          import androidx.compose.runtime.Composable
+
+          @Composable
+          interface Modifier {
+            companion object : Modifier
+          }
+      """
+        .trimIndent()
+    ),
+    kotlin(
+      """
+          package androidx.compose.runtime
+
+          annotation class Composable
+          
+          interface State<out T> {
+              val value: T
+          }
+          
+          interface MutableState<T> : State<T> {
+              override var value: T
+              operator fun component1(): T
+              operator fun component2(): (T) -> Unit
+          }
+      """
+        .trimIndent()
+    ),
+    kotlin(
+      """
+          package androidx.compose.ui.tooling.preview
+
+          annotation class Preview
+
+          interface PreviewParameterProvider<T> {
+              val values: Sequence<T>
+              val count get() = values.count()
+          }
+          
+          annotation class PreviewParameter(
+              val provider: KClass<out PreviewParameterProvider<*>>,
+              val limit: Int = Int.MAX_VALUE
+          )
+      """
+        .trimIndent()
+    )
+  )
+
   /** Optional override to customize the lint client name when running lint test tasks. */
   open val lintClientName: String? = null
 

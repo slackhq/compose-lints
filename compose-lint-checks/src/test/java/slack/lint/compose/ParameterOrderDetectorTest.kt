@@ -11,32 +11,6 @@ import org.junit.Test
 
 class ParameterOrderDetectorTest : BaseSlackLintTest() {
 
-  private val stubs =
-    arrayOf(
-      kotlin(
-        """
-          package androidx.compose.ui
-
-          import androidx.compose.runtime.Composable
-
-          @Composable
-          interface Modifier {
-            companion object : Modifier
-          }
-      """
-          .trimIndent()
-      ),
-      kotlin(
-        """
-          package androidx.compose.runtime
-          import androidx.compose.runtime.Composable
-
-          annotation class Composable
-      """
-          .trimIndent()
-      )
-    )
-
   override fun getDetector(): Detector = ParameterOrderDetector()
 
   override fun getIssues(): List<Issue> = listOf(ParameterOrderDetector.ISSUE)
@@ -64,7 +38,7 @@ class ParameterOrderDetectorTest : BaseSlackLintTest() {
         fun MyComposable(text1: String, modifier: Modifier = Modifier, m2: Modifier = Modifier, trailing: (() -> Unit)?) { }
       """
         .trimIndent()
-    lint().files(*stubs, kotlin(code)).run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -92,7 +66,7 @@ class ParameterOrderDetectorTest : BaseSlackLintTest() {
       """
         .trimIndent()
     lint()
-      .files(*stubs, kotlin(code))
+      .files(*commonStubs, kotlin(code))
       .run()
       .expect(
         """
