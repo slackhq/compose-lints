@@ -52,6 +52,14 @@ abstract class BaseSlackLintTest : LintDetectorTest() {
               operator fun component1(): T
               operator fun component2(): (T) -> Unit
           }
+
+          fun <T> mutableStateOf(value: T): MutableState<T> = TODO()
+
+          fun <T> derivedStateOf(
+              calculation: () -> T,
+          ): State<T> = TODO()
+
+          inline fun <T> remember(crossinline calculation: () -> T): T = TODO()
       """
         .trimIndent()
     ),
