@@ -30,7 +30,7 @@ constructor(
         "allowed-composable-function-names",
         "A comma-separated list of regexes of allowed composable function names",
         null,
-        "This property should define comma-separated list of regexes of allowed composable function names."
+        "This property should define comma-separated list of regexes of allowed composable function names.",
       )
 
     private val ISSUE_UPPERCASE =
@@ -46,7 +46,7 @@ constructor(
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ComposableFunctionNamingDetector>()
+          implementation = sourceImplementation<ComposableFunctionNamingDetector>(),
         )
         .setOptions(listOf(ALLOWED_COMPOSABLE_FUNCTION_NAMES))
 
@@ -63,7 +63,7 @@ constructor(
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ComposableFunctionNamingDetector>()
+          implementation = sourceImplementation<ComposableFunctionNamingDetector>(),
         )
         .setOptions(listOf(ALLOWED_COMPOSABLE_FUNCTION_NAMES))
 
@@ -88,7 +88,7 @@ constructor(
           ISSUE_UPPERCASE,
           function,
           context.getNameLocation(function),
-          ISSUE_UPPERCASE.getExplanation(TextFormat.TEXT)
+          ISSUE_UPPERCASE.getExplanation(TextFormat.TEXT),
         )
       }
     } else {
@@ -98,7 +98,7 @@ constructor(
           ISSUE_LOWERCASE,
           function,
           context.getNameLocation(function),
-          ISSUE_LOWERCASE.getExplanation(TextFormat.TEXT)
+          ISSUE_LOWERCASE.getExplanation(TextFormat.TEXT),
         )
       }
     }

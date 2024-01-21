@@ -29,7 +29,7 @@ class CompositionLocalUsageDetector : Detector(), SourceCodeScanner {
         "allowed-composition-locals",
         "A comma-separated list of CompositionLocals that should be allowed",
         null,
-        "This property should define a comma-separated list of `CompositionLocal`s that should be allowed."
+        "This property should define a comma-separated list of `CompositionLocal`s that should be allowed.",
       )
 
     val ISSUE =
@@ -44,7 +44,7 @@ class CompositionLocalUsageDetector : Detector(), SourceCodeScanner {
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.WARNING,
-          implementation = sourceImplementation<CompositionLocalUsageDetector>()
+          implementation = sourceImplementation<CompositionLocalUsageDetector>(),
         )
         .setOptions(listOf(ALLOW_LIST))
 
@@ -78,7 +78,7 @@ class CompositionLocalUsageDetector : Detector(), SourceCodeScanner {
             ISSUE,
             node,
             context.getLocation(node),
-            ISSUE.getExplanation(TextFormat.TEXT)
+            ISSUE.getExplanation(TextFormat.TEXT),
           )
         }
       }

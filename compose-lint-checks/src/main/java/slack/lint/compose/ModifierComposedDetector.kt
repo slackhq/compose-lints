@@ -34,14 +34,11 @@ class ModifierComposedDetector : Detector(), SourceCodeScanner {
         category = Category.CORRECTNESS,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<ModifierComposedDetector>()
+        implementation = sourceImplementation<ModifierComposedDetector>(),
       )
   }
 
-  override fun getApplicableUastTypes() =
-    listOf<Class<out UElement>>(
-      UCallExpression::class.java,
-    )
+  override fun getApplicableUastTypes() = listOf<Class<out UElement>>(UCallExpression::class.java)
 
   override fun createUastHandler(context: JavaContext): UElementHandler? {
     if (!isKotlin(context.uastFile?.lang)) return null

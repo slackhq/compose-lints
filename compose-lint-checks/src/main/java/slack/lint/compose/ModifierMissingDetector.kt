@@ -39,7 +39,7 @@ constructor(
         description = "Visibility threshold to check for Modifiers",
         defaultValue = "only_public",
         explanation =
-          "You can control the visibility of which composables to check for Modifiers. Possible values are: `only_public` (default), `public_and_internal` and `all`"
+          "You can control the visibility of which composables to check for Modifiers. Possible values are: `only_public` (default), `public_and_internal` and `all`",
       )
 
     val ISSUE =
@@ -54,7 +54,7 @@ constructor(
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ModifierMissingDetector>()
+          implementation = sourceImplementation<ModifierMissingDetector>(),
         )
         .setOptions(listOf(CONTENT_EMITTER_OPTION, VISIBILITY_THRESHOLD))
   }
@@ -97,7 +97,7 @@ constructor(
         ISSUE,
         function,
         context.getNameLocation(function),
-        ISSUE.getExplanation(TextFormat.TEXT)
+        ISSUE.getExplanation(TextFormat.TEXT),
       )
     }
   }

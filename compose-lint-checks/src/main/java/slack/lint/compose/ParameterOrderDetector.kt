@@ -27,7 +27,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
     fun createErrorMessage(currentOrder: List<UParameter>, properOrder: List<UParameter>): String =
       createErrorMessage(
         currentOrder.joinToString { it.text },
-        properOrder.joinToString { it.text }
+        properOrder.joinToString { it.text },
       )
 
     private fun createErrorMessage(currentOrder: String, properOrder: String): String =
@@ -46,7 +46,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<ParameterOrderDetector>()
+        implementation = sourceImplementation<ParameterOrderDetector>(),
       )
   }
 
@@ -100,7 +100,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
           .range(errorLocation)
           .with(properOrder.joinToString(prefix = "(", postfix = ")") { it.text })
           .reformat(true)
-          .build()
+          .build(),
       )
     }
   }
