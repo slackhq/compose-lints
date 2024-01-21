@@ -17,7 +17,7 @@ class MutableParametersDetectorTest : BaseSlackLintTest() {
   override fun getIssues(): List<Issue> = listOf(MutableParametersDetector.ISSUE)
 
   // Can't get typealias working correctly in this case as the combination of an
-  // alias + lint's inability to reach kotlin intrinsice collections defeats it
+  // alias + lint's inability to reach kotlin intrinsic collections defeats it
   override val skipTestModes: Array<TestMode> =
     arrayOf(
       TestMode.TYPE_ALIAS

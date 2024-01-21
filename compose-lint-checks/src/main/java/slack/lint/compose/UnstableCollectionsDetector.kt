@@ -44,7 +44,7 @@ class UnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScan
   }
 
   override fun visitComposable(context: JavaContext, function: KtFunction) {
-    for (param in function.valueParameters.filter { it.isTypeUnstableCollection }) {
+    for (param in function.valueParameters.filter { it.isTypeUnstableCollection(context.evaluator) }) {
       val variableName = param.nameAsSafeName.asString()
       val type = param.typeReference?.text ?: "List/Set/Map"
       val message =

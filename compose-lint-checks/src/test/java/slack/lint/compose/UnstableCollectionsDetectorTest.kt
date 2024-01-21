@@ -15,9 +15,12 @@ class UnstableCollectionsDetectorTest : BaseSlackLintTest() {
 
   override fun getIssues(): List<Issue> = listOf(UnstableCollectionsDetector.ISSUE)
 
-  // This mode is irrelevant to our test and totally untestable with stringy outputs
+  // Can't get typealias working correctly in this case as the combination of an
+  // alias + lint's inability to reach kotlin intrinsic collections defeats it
   override val skipTestModes: Array<TestMode> =
-    arrayOf(TestMode.PARENTHESIZED, TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS, TestMode.WHITESPACE)
+    arrayOf(
+      TestMode.TYPE_ALIAS
+    )
 
   @Test
   fun `warnings when a Composable has a Collection List Set Map parameter`() {
@@ -73,12 +76,22 @@ class UnstableCollectionsDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.MutableState
+        import androidx.compose.runtime.Composable
+
+        interface ImmutableList<T>
+        interface ImmutableSet<T>
+        interface ImmutableMap<K, V>
+        class StringList
+        class StringSet
+        class StringToIntMap
+
         @Composable
         fun Something(a: ImmutableList<String>, b: ImmutableSet<String>, c: ImmutableMap<String, Int>) {}
         @Composable
         fun Something(a: StringList, b: StringSet, c: StringToIntMap) {}
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 }

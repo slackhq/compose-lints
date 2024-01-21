@@ -71,8 +71,22 @@ val KnownMutableCommonTypesSimpleNames =
       "ReplayRelay"
     )
 
-val KtCallableDeclaration.isTypeUnstableCollection: Boolean
-  get() = typeReference?.text?.matchesAnyOf(KnownUnstableCollectionTypesRegex) == true
+fun KtCallableDeclaration.isTypeUnstableCollection(evaluator: JavaEvaluator): Boolean {
+  val uParamClass = toUElementOfType<UParameter>()?.type
+    ?.let(evaluator::getTypeClass)
+    ?.toUElementOfType<UClass>() ?: return false
 
-val KnownUnstableCollectionTypesRegex =
-  sequenceOf("Collection<.*>\\??", "Set<.*>\\??", "List<.*>\\??", "Map<.*>\\??").map { Regex(it) }
+  if (uParamClass.hasAnnotation("androidx.compose.runtime.Immutable")) {
+    return false
+  }
+
+  return uParamClass.qualifiedName in KnownUnstableCollectionTypes
+}
+
+val KnownUnstableCollectionTypes =
+  sequenceOf(
+    "java.util.Collection",
+    "java.util.Set",
+    "java.util.List",
+    "java.util.Map"
+  )
