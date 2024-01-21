@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
-import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
@@ -14,10 +13,6 @@ class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
   override fun getDetector(): Detector = ModifierWithoutDefaultDetector()
 
   override fun getIssues(): List<Issue> = listOf(ModifierWithoutDefaultDetector.ISSUE)
-
-  // This mode is irrelevant to our test and totally untestable with stringy outputs
-  override val skipTestModes: Array<TestMode> =
-    arrayOf(TestMode.PARENTHESIZED, TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
 
   @Test
   fun `errors when a Composable has modifiers but without default values`() {
@@ -69,6 +64,9 @@ class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+
       interface Bleh {
           @Composable
           fun Something(modifier: Modifier)
@@ -82,7 +80,7 @@ class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
     """
         .trimIndent()
 
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -90,6 +88,9 @@ class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+
       abstract class Bleh {
           @Composable
           abstract fun Something(modifier: Modifier)
@@ -97,7 +98,7 @@ class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
     """
         .trimIndent()
 
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -122,6 +123,6 @@ class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
         }
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 }
