@@ -73,7 +73,7 @@ abstract class BaseComposeLintTest : LintDetectorTest() {
           )
       """
           .trimIndent()
-      )
+      ),
     )
 
   /** Optional override to customize the lint client name when running lint test tasks. */

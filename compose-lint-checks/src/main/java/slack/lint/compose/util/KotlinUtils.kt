@@ -23,7 +23,7 @@ fun String.toCamelCase() =
         original.replaceFirstChar {
           if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
         }
-      }
+      },
     )
 
 fun String.toSnakeCase() = replace(humps, "_").lowercase(Locale.getDefault())

@@ -36,7 +36,7 @@ constructor(
         "preview-public-only-if-params",
         "If set to true, this check will only enforce on previews that have no PreviewParameters",
         true,
-        "If set to true, this check will only enforce on previews that have no PreviewParameters"
+        "If set to true, this check will only enforce on previews that have no PreviewParameters",
       )
 
     val ISSUE =
@@ -51,7 +51,7 @@ constructor(
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<PreviewPublicDetector>()
+          implementation = sourceImplementation<PreviewPublicDetector>(),
         )
         .setOptions(listOf(PREVIEW_PUBLIC_ONLY_IF_PARAMS_OPTION))
   }
@@ -107,7 +107,7 @@ constructor(
       function,
       context.getLocation(function),
       ISSUE.getExplanation(TextFormat.TEXT),
-      fix
+      fix,
     )
   }
 }

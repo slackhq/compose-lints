@@ -39,7 +39,7 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
         category = Category.CORRECTNESS,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<ViewModelForwardingDetector>()
+        implementation = sourceImplementation<ViewModelForwardingDetector>(),
       )
   }
 
@@ -89,7 +89,7 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
         ISSUE,
         callExpression,
         context.getLocation(callExpression),
-        ISSUE.getExplanation(TextFormat.TEXT)
+        ISSUE.getExplanation(TextFormat.TEXT),
       )
     }
   }

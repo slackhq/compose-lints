@@ -37,7 +37,7 @@ class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeS
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<ModifierWithoutDefaultDetector>()
+        implementation = sourceImplementation<ModifierWithoutDefaultDetector>(),
       )
   }
 
@@ -74,7 +74,7 @@ class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeS
             .text(currentText)
             .with("$currentText = Modifier")
             .autoFix()
-            .build()
+            .build(),
         )
       }
   }

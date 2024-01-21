@@ -39,7 +39,7 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<RememberMissingDetector>()
+        implementation = sourceImplementation<RememberMissingDetector>(),
       )
   }
 
@@ -60,7 +60,7 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
               ISSUE,
               callExpression,
               context.getLocation(callExpression),
-              MutableStateOfNotRemembered
+              MutableStateOfNotRemembered,
             )
           }
           "derivedStateOf" -> {
@@ -68,7 +68,7 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
               ISSUE,
               callExpression,
               context.getLocation(callExpression),
-              DerivedStateOfNotRemembered
+              DerivedStateOfNotRemembered,
             )
           }
         }

@@ -39,7 +39,7 @@ class ModifierComposedDetectorTest : BaseComposeLintTest() {
           TODO()
         }
         """
-        .trimIndent()
+        .trimIndent(),
     )
 
   override fun getDetector(): Detector = ModifierComposedDetector()

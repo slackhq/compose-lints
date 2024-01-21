@@ -34,7 +34,7 @@ constructor(private val userFactories: StringSetLintOption = StringSetLintOption
         "viewmodel-factories",
         "A comma-separated list of viewModel factories.",
         null,
-        "This property should define comma-separated list of allowed viewModel factory function names."
+        "This property should define comma-separated list of allowed viewModel factory function names.",
       )
 
     private fun errorMessage(factoryName: String): String =
@@ -53,7 +53,7 @@ constructor(private val userFactories: StringSetLintOption = StringSetLintOption
           category = Category.CORRECTNESS,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ViewModelInjectionDetector>()
+          implementation = sourceImplementation<ViewModelInjectionDetector>(),
         )
         .setOptions(listOf(USER_FACTORIES))
 

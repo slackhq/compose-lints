@@ -51,7 +51,7 @@ constructor(
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ModifierReusedDetector>()
+          implementation = sourceImplementation<ModifierReusedDetector>(),
         )
         .setOptions(listOf(CONTENT_EMITTER_OPTION))
   }
@@ -108,7 +108,7 @@ constructor(
           ISSUE,
           callExpression,
           context.getLocation(callExpression),
-          ISSUE.getExplanation(TextFormat.TEXT)
+          ISSUE.getExplanation(TextFormat.TEXT),
         )
       }
   }

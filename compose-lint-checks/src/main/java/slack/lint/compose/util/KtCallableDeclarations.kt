@@ -69,7 +69,7 @@ val KnownMutableCommonTypesSimpleNames =
     "ReplaySubject",
     "PublishRelay",
     "BehaviorRelay",
-    "ReplayRelay"
+    "ReplayRelay",
   )
 
 fun UParameter.isTypeUnstableCollection(evaluator: JavaEvaluator): Boolean {

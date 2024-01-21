@@ -26,7 +26,7 @@ internal inline fun <reified T> sourceImplementation(
       T::class.java,
       EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES),
       EnumSet.of(Scope.JAVA_FILE),
-      EnumSet.of(Scope.TEST_SOURCES)
+      EnumSet.of(Scope.TEST_SOURCES),
     )
   } else {
     Implementation(T::class.java, EnumSet.of(Scope.JAVA_FILE))
@@ -36,7 +36,7 @@ internal inline fun <reified T> sourceImplementation(
 /** Loads a [StringOption] as a [delimiter]-delimited [Set] of strings. */
 internal fun StringOption.loadAsSet(
   configuration: Configuration,
-  delimiter: String = ","
+  delimiter: String = ",",
 ): Set<String> {
   return getValue(configuration)
     ?.splitToSequence(delimiter)

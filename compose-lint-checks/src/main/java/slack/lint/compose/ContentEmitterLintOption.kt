@@ -17,7 +17,7 @@ class ContentEmitterLintOption(option: StringOption) : StringSetLintOption(optio
         "content-emitters",
         "A comma-separated list of known content-emitting composables",
         null,
-        "This property should define a comma-separated list of known content-emitting composables."
+        "This property should define a comma-separated list of known content-emitting composables.",
       )
     }
   }

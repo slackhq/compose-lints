@@ -34,7 +34,7 @@ constructor(private val allowList: StringSetLintOption = StringSetLintOption(ALL
         "allowed-m2-apis",
         "A comma-separated list of APIs in androidx.compose.material that should be allowed.",
         null,
-        "This property should define a comma-separated list of APIs in androidx.compose.material that should be allowed."
+        "This property should define a comma-separated list of APIs in androidx.compose.material that should be allowed.",
       )
 
     val ISSUE =
@@ -49,7 +49,7 @@ constructor(private val allowList: StringSetLintOption = StringSetLintOption(ALL
           category = CORRECTNESS,
           priority = NORMAL,
           severity = ERROR,
-          implementation = sourceImplementation<M2ApiDetector>()
+          implementation = sourceImplementation<M2ApiDetector>(),
         )
         .setOptions(listOf(ALLOW_LIST))
         .setEnabledByDefault(false)

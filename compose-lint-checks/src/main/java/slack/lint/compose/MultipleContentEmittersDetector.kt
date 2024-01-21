@@ -52,7 +52,7 @@ constructor(
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<MultipleContentEmittersDetector>()
+          implementation = sourceImplementation<MultipleContentEmittersDetector>(),
         )
         .setOptions(listOf(CONTENT_EMITTER_OPTION))
   }
@@ -154,7 +154,7 @@ constructor(
             ISSUE,
             composable,
             context.getLocation(composable),
-            ISSUE.getExplanation(TextFormat.TEXT)
+            ISSUE.getExplanation(TextFormat.TEXT),
           )
         }
 
@@ -193,7 +193,7 @@ constructor(
               ISSUE,
               composable,
               context.getLocation(composable),
-              ISSUE.getExplanation(TextFormat.TEXT)
+              ISSUE.getExplanation(TextFormat.TEXT),
             )
           }
       }
