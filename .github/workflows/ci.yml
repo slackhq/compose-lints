@@ -31,10 +31,11 @@ jobs:
           distribution: 'zulu'
           java-version: '21'
 
-      - name: Build
+      - name: Set up gradle
         uses: gradle/gradle-build-action@v2
-        with:
-          arguments: check
+
+      - name: Build
+        run: ./gradlew check
 
       - name: (Fail-only) Upload build reports
         if: failure()
