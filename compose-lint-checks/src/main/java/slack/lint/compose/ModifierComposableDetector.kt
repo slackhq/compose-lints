@@ -10,6 +10,7 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.*
 import slack.lint.compose.util.sourceImplementation
 
@@ -33,7 +34,7 @@ class ModifierComposableDetector : ComposableFunctionDetector(), SourceCodeScann
       )
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     if (!function.isModifierReceiver) return
     context.report(
       ISSUE,

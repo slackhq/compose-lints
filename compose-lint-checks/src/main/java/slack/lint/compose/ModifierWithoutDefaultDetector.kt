@@ -11,8 +11,9 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.uast.UParameter
-import org.jetbrains.uast.toUElementOfType
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.definedInInterface
 import slack.lint.compose.util.isAbstract
@@ -41,7 +42,7 @@ class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeS
       )
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     if (
       function.definedInInterface || function.isActual || function.isOverride || function.isAbstract
     )
@@ -49,9 +50,9 @@ class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeS
 
     // Look for modifier params in the composable signature, and if any without a default value is
     // found, error out.
-    function.valueParameters
-      .filter { it.toUElementOfType<UParameter>()?.isModifier(context.evaluator) ?: false }
-      .filterNot { it.hasDefaultValue() }
+    method.uastParameters
+      .filter { it.isModifier(context.evaluator) }
+      .filterNot { (it as? KtParameter)?.hasDefaultValue() == true }
       .forEach { modifierParameter ->
 
         // This error is easily auto fixable, we just inject ` = Modifier` to the param
@@ -59,13 +60,13 @@ class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeS
         val currentText = lastToken.text
         context.report(
           ISSUE,
-          modifierParameter,
-          context.getLocation(modifierParameter),
+          modifierParameter as UElement,
+          context.getLocation(modifierParameter.sourcePsi),
           ISSUE.getExplanation(TextFormat.TEXT),
           fix()
             .replace()
             .name("Add '= Modifier' default value.")
-            .range(context.getLocation(modifierParameter))
+            .range(context.getLocation(modifierParameter.sourcePsi))
             .shortenNames()
             .text(currentText)
             .with("$currentText = Modifier")

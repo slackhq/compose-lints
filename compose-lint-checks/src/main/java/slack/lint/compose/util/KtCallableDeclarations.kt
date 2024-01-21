@@ -4,23 +4,22 @@
 package slack.lint.compose.util
 
 import com.android.tools.lint.client.api.JavaEvaluator
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UParameter
 import org.jetbrains.uast.toUElementOfType
 
-fun KtParameter.isTypeMutable(evaluator: JavaEvaluator): Boolean {
+fun UParameter.isTypeMutable(evaluator: JavaEvaluator): Boolean {
   // Trivial check for Kotlin mutable collections. See its doc for details.
   // Note this doesn't work on typealiases, which unfortunately we can't really
   // do anything about
-  if (typeReference?.text?.matchesAnyOf(KnownMutableKotlinCollections) == true) {
+  if (
+    (this as? KtParameter)?.typeReference?.text?.matchesAnyOf(KnownMutableKotlinCollections) == true
+  ) {
     return true
   }
 
-  val uParamClass =
-    toUElementOfType<UParameter>()?.type?.let(evaluator::getTypeClass)?.toUElementOfType<UClass>()
-      ?: return false
+  val uParamClass = type.let(evaluator::getTypeClass)?.toUElementOfType<UClass>() ?: return false
 
   if (uParamClass.hasAnnotation("androidx.compose.runtime.Immutable")) {
     return false
@@ -72,10 +71,8 @@ val KnownMutableCommonTypesSimpleNames =
     "ReplayRelay"
   )
 
-fun KtCallableDeclaration.isTypeUnstableCollection(evaluator: JavaEvaluator): Boolean {
-  val uParamClass =
-    toUElementOfType<UParameter>()?.type?.let(evaluator::getTypeClass)?.toUElementOfType<UClass>()
-      ?: return false
+fun UParameter.isTypeUnstableCollection(evaluator: JavaEvaluator): Boolean {
+  val uParamClass = type.let(evaluator::getTypeClass)?.toUElementOfType<UClass>() ?: return false
 
   if (uParamClass.hasAnnotation("androidx.compose.runtime.Immutable")) {
     return false

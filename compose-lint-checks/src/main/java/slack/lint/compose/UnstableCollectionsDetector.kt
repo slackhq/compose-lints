@@ -10,6 +10,8 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import java.util.Locale
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isTypeUnstableCollection
 import slack.lint.compose.util.sourceImplementation
@@ -43,11 +45,10 @@ class UnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScan
       )
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
-    for (param in
-      function.valueParameters.filter { it.isTypeUnstableCollection(context.evaluator) }) {
-      val variableName = param.nameAsSafeName.asString()
-      val type = param.typeReference?.text ?: "List/Set/Map"
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
+    for (param in method.uastParameters.filter { it.isTypeUnstableCollection(context.evaluator) }) {
+      val variableName = param.name
+      val type = (param as? KtParameter)?.typeReference?.text ?: "List/Set/Map"
       val message =
         createErrorMessage(
           type = type,

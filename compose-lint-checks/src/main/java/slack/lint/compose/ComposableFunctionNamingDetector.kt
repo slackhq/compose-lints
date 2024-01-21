@@ -11,7 +11,6 @@ import com.android.tools.lint.detector.api.StringOption
 import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.uast.UMethod
-import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.StringSetLintOption
 import slack.lint.compose.util.hasReceiverType
@@ -71,7 +70,7 @@ constructor(
     val ISSUES = arrayOf(ISSUE_UPPERCASE, ISSUE_LOWERCASE)
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     // If it's a block we can't know if there is a return type or not from ktlint
     if (!function.hasBlockBody()) return
     val functionName = function.name?.takeUnless(String::isEmpty) ?: return
@@ -81,7 +80,6 @@ constructor(
     val isAllowed = allowedNames.value.any { it.toRegex().matches(functionName) }
     if (isAllowed) return
 
-    val method = function.toUElementOfType<UMethod>() ?: return
     if (method.returnsUnitOrVoid(context.evaluator)) {
       // If it returns Unit or doesn't have a return type, we should start with an uppercase letter
       // If the composable has a receiver, we can ignore this.

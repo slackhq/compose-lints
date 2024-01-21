@@ -24,11 +24,11 @@ abstract class ComposableFunctionDetector(vararg options: LintOption) :
       override fun visitMethod(node: UMethod) {
         if (node.isComposable) {
           val ktFunction = node.sourcePsi as? KtFunction ?: return
-          visitComposable(context, ktFunction)
+          visitComposable(context, node, ktFunction)
         }
       }
     }
   }
 
-  abstract fun visitComposable(context: JavaContext, function: KtFunction)
+  abstract fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction)
 }

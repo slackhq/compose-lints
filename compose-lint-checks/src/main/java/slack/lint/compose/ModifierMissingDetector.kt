@@ -13,7 +13,6 @@ import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import org.jetbrains.uast.UMethod
-import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.definedInInterface
 import slack.lint.compose.util.emitsContent
@@ -60,8 +59,7 @@ constructor(
         .setOptions(listOf(CONTENT_EMITTER_OPTION, VISIBILITY_THRESHOLD))
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
-    val uMethod = function.toUElementOfType<UMethod>() ?: return
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     // We want to find all composable functions that:
     //  - emit content
     //  - are not overridden or part of an interface
@@ -69,8 +67,8 @@ constructor(
     if (
       function.isOverride ||
         function.definedInInterface ||
-        uMethod.isPreview ||
-        !uMethod.returnsUnitOrVoid(context.evaluator)
+        method.isPreview ||
+        !method.returnsUnitOrVoid(context.evaluator)
     ) {
       return
     }
@@ -90,7 +88,7 @@ constructor(
     if (!shouldCheck) return
 
     // If there is a modifier param, we bail
-    if (uMethod.modifierParameter(context.evaluator) != null) return
+    if (method.modifierParameter(context.evaluator) != null) return
 
     // In case we didn't find any `modifier` parameters, we check if it emits content and report the
     // error if so.

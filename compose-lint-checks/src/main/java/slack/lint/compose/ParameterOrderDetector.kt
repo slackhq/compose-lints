@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionType
 import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParameter
 import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
@@ -23,10 +24,7 @@ import slack.lint.compose.util.sourceImplementation
 class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
   companion object {
-    fun createErrorMessage(
-      currentOrder: List<KtParameter>,
-      properOrder: List<KtParameter>
-    ): String =
+    fun createErrorMessage(currentOrder: List<UParameter>, properOrder: List<UParameter>): String =
       createErrorMessage(
         currentOrder.joinToString { it.text },
         properOrder.joinToString { it.text }
@@ -52,7 +50,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
       )
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     // We need to make sure the proper order is respected. It should be:
     // 1. params without defaults
     // 2. modifiers
@@ -60,31 +58,29 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
     // 4. optional: function that might have no default
 
     // Let's try to build the ideal ordering first, and compare against that.
-    val currentOrder = function.valueParameters
+    val currentOrder = method.uastParameters
 
     // We look in the original params without defaults and see if the last one is a function.
     val hasTrailingFunction = function.hasTrailingFunction(context.evaluator)
     val trailingLambda =
       if (hasTrailingFunction) {
-        listOf(function.valueParameters.last())
+        listOf(method.uastParameters.last())
       } else {
         emptyList()
       }
 
     // We extract the params without with and without defaults, and keep the order between them
     val (withDefaults, withoutDefaults) =
-      function.valueParameters
+      method.uastParameters
         .runIf(hasTrailingFunction) { dropLast(1) }
-        .partition { it.hasDefaultValue() }
+        .partition { (it as? KtParameter)?.hasDefaultValue() == true }
 
     // As ComposeModifierMissingCheck will catch modifiers without a Modifier default, we don't have
     // to care about that case. We will sort the params with defaults so that the modifier(s) go
     // first.
     val sortedWithDefaults =
       withDefaults.sortedWith(
-        compareByDescending<KtParameter> {
-            it.toUElementOfType<UParameter>()?.isModifier(context.evaluator) ?: false
-          }
+        compareByDescending<UParameter> { it.isModifier(context.evaluator) }
           .thenByDescending { it.name == "modifier" }
       )
 

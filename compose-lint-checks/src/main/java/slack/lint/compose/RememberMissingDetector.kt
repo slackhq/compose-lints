@@ -11,6 +11,7 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.sourceImplementation
@@ -42,7 +43,7 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
       )
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     // To keep memory consumption in check, we first traverse down until we see one of our known
     // functions
     // that need remembering

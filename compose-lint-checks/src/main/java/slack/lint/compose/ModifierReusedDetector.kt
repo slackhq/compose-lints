@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.KtValueArgumentName
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.uast.UMethod
-import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.emitsContent
 import slack.lint.compose.util.findChildrenByClass
@@ -57,11 +56,10 @@ constructor(
         .setOptions(listOf(CONTENT_EMITTER_OPTION))
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     if (!function.emitsContent(contentEmitterOption.value)) return
     val composableBlockExpression = function.bodyBlockExpression ?: return
-    val uMethod = function.toUElementOfType<UMethod>() ?: return
-    val modifier = uMethod.modifierParameter(context.evaluator) ?: return
+    val modifier = method.modifierParameter(context.evaluator) ?: return
     val initialName = modifier.name
 
     // Try to get all possible names by iterating on possible name reassignments until it's stable
