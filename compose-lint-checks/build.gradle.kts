@@ -19,12 +19,7 @@ lint {
   checkTestSources = true
   baseline = file("lint-baseline.xml")
 
-  fatal +=
-    setOf(
-      "LintDocExample",
-      "LintImplPsiEquals",
-      "LintImplUnexpectedDomain",
-    )
+  fatal += setOf("LintDocExample", "LintImplPsiEquals")
 }
 
 dependencies {
