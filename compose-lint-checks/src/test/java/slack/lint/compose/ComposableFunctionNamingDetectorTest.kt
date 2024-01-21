@@ -138,8 +138,6 @@ class ComposableFunctionNamingDetectorTest : BaseSlackLintTest() {
 
     lint()
       .files(*commonStubs, kotlin(code))
-      // TODO this is broken in lint at the moment: https://issuetracker.google.com/issues/302674274#comment6
-      .skipTestModes(TestMode.TYPE_ALIAS)
       .run()
       .expect(
         """
