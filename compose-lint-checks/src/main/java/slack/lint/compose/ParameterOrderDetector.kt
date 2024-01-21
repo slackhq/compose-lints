@@ -73,7 +73,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
     val (withDefaults, withoutDefaults) =
       method.uastParameters
         .runIf(hasTrailingFunction) { dropLast(1) }
-        .partition { (it as? KtParameter)?.hasDefaultValue() == true }
+        .partition { (it.sourcePsi as? KtParameter)?.hasDefaultValue() == true }
 
     // As ComposeModifierMissingCheck will catch modifiers without a Modifier default, we don't have
     // to care about that case. We will sort the params with defaults so that the modifier(s) go

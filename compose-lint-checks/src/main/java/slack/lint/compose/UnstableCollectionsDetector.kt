@@ -48,7 +48,7 @@ class UnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScan
   override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     for (param in method.uastParameters.filter { it.isTypeUnstableCollection(context.evaluator) }) {
       val variableName = param.name
-      val type = (param as? KtParameter)?.typeReference?.text ?: "List/Set/Map"
+      val type = (param.sourcePsi as? KtParameter)?.typeReference?.text ?: "List/Set/Map"
       val message =
         createErrorMessage(
           type = type,

@@ -12,7 +12,6 @@ import com.android.tools.lint.detector.api.TextFormat
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.definedInInterface
@@ -51,22 +50,26 @@ class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeS
     // Look for modifier params in the composable signature, and if any without a default value is
     // found, error out.
     method.uastParameters
-      .filter { it.isModifier(context.evaluator) }
-      .filterNot { (it as? KtParameter)?.hasDefaultValue() == true }
-      .forEach { modifierParameter ->
+      .withIndex()
+      .filter { (_, param) -> param.isModifier(context.evaluator) }
+      .filterNot { (_, param) ->
+        param.sourcePsi is KtParameter && (param.sourcePsi as KtParameter).hasDefaultValue()
+      }
+      .forEach { (i, _) ->
+        val modifierParameter = function.valueParameters[i]
 
         // This error is easily auto fixable, we just inject ` = Modifier` to the param
         val lastToken = modifierParameter.node.lastChildLeafOrSelf() as LeafPsiElement
         val currentText = lastToken.text
         context.report(
           ISSUE,
-          modifierParameter as UElement,
-          context.getLocation(modifierParameter.sourcePsi),
+          modifierParameter,
+          context.getLocation(modifierParameter),
           ISSUE.getExplanation(TextFormat.TEXT),
           fix()
             .replace()
             .name("Add '= Modifier' default value.")
-            .range(context.getLocation(modifierParameter.sourcePsi))
+            .range(context.getLocation(modifierParameter))
             .shortenNames()
             .text(currentText)
             .with("$currentText = Modifier")

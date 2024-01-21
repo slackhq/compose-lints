@@ -14,7 +14,8 @@ fun UParameter.isTypeMutable(evaluator: JavaEvaluator): Boolean {
   // Note this doesn't work on typealiases, which unfortunately we can't really
   // do anything about
   if (
-    (this as? KtParameter)?.typeReference?.text?.matchesAnyOf(KnownMutableKotlinCollections) == true
+    (sourcePsi as? KtParameter)?.typeReference?.text?.matchesAnyOf(KnownMutableKotlinCollections) ==
+      true
   ) {
     return true
   }
