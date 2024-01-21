@@ -4,7 +4,7 @@
 package slack.lint.compose.util
 
 import com.android.tools.lint.client.api.JavaEvaluator
-import com.intellij.psi.PsiType
+import com.intellij.psi.PsiTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
@@ -14,8 +14,7 @@ import org.jetbrains.uast.UMethod
 
 fun UMethod.returnsUnitOrVoid(evaluator: JavaEvaluator): Boolean {
   return returnType?.let {
-    // TODO switch to PsiTypes.voidType() in newer lint versions
-    it == PsiType.VOID || evaluator.getTypeClass(it)?.qualifiedName == "kotlin.Unit"
+    it == PsiTypes.voidType() || evaluator.getTypeClass(it)?.qualifiedName == "kotlin.Unit"
   } ?: false
 }
 
