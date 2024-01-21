@@ -15,28 +15,21 @@ class ViewModelForwardingDetectorTest : BaseSlackLintTest() {
 
   override fun getIssues(): List<Issue> = listOf(ViewModelForwardingDetector.ISSUE)
 
-  // These modes are irrelevant to our test or totally untestable with stringy outputs
-  // https://issuetracker.google.com/issues/302674274
-  override val skipTestModes: Array<TestMode> =
-    arrayOf(
-      TestMode.SUPPRESSIBLE,
-      TestMode.TYPE_ALIAS,
-      TestMode.PARENTHESIZED,
-    )
-
   @Test
   fun `allows the forwarding of ViewModels in overridden Composable functions`() {
     @Language("kotlin")
     val code =
       """
-            @Composable
-            override fun Content() {
-                val viewModel = weaverViewModel<MyVM>()
-                AnotherComposable(viewModel)
-            }
-            """
+        import androidx.compose.runtime.Composable
+
+        @Composable
+        override fun Content() {
+            val viewModel = weaverViewModel<MyVM>()
+            AnotherComposable(viewModel)
+        }
+        """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -44,16 +37,18 @@ class ViewModelForwardingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
-            interface MyInterface {
-                @Composable
-                fun Content() {
-                    val viewModel = weaverViewModel<MyVM>()
-                    AnotherComposable(viewModel)
-                }
-            }
-            """
+      import androidx.compose.runtime.Composable
+
+      interface MyInterface {
+          @Composable
+          fun Content() {
+              val viewModel = weaverViewModel<MyVM>()
+              AnotherComposable(viewModel)
+          }
+      }
+      """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -61,14 +56,16 @@ class ViewModelForwardingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
-            @Composable
-            fun MyComposable(viewModel: MyViewModel = weaverViewModel()) {
-                val state by viewModel.watchAsState()
-                AnotherComposable(state, onAvatarClicked = { viewModel(AvatarClickedIntent) })
-            }
-            """
+        import androidx.compose.runtime.Composable
+
+        @Composable
+        fun MyComposable(viewModel: MyViewModel = weaverViewModel()) {
+            val state by viewModel.watchAsState()
+            AnotherComposable(state, onAvatarClicked = { viewModel(AvatarClickedIntent) })
+        }
+        """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -105,15 +102,17 @@ class ViewModelForwardingDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
-            @Composable
-            fun Content() {
-                val viewModel = weaverViewModel<MyVM>()
-                key(viewModel) { }
-                val x = remember(viewModel) { "ABC" }
-                LaunchedEffect(viewModel) { }
-            }
-            """
+      import androidx.compose.runtime.Composable
+
+      @Composable
+      fun Content() {
+          val viewModel = weaverViewModel<MyVM>()
+          key(viewModel) { }
+          val x = remember(viewModel) { "ABC" }
+          LaunchedEffect(viewModel) { }
+      }
+      """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 }
