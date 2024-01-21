@@ -3,16 +3,24 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose.util
 
-import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.uast.UAnnotated
+import org.jetbrains.uast.UParameter
 
-val KtAnnotated.isPreview: Boolean
-  get() = annotationEntries.any { it.isPreviewAnnotation }
+private const val COMPOSE_PREVIEW = "androidx.compose.ui.tooling.preview.Preview"
+private const val COMPOSE_DESKTOP_PREVIEW = "androidx.compose.desktop.ui.tooling.preview.Preview"
 
-val KtAnnotationEntry.isPreviewAnnotation: Boolean
-  get() = calleeExpression?.text?.let { PreviewNameRegex.matches(it) } == true
+val PREVIEW_ANNOTATIONS = setOf(COMPOSE_PREVIEW, COMPOSE_DESKTOP_PREVIEW)
 
-val KtAnnotated.isPreviewParameter: Boolean
-  get() = annotationEntries.any { it.calleeExpression?.text == "PreviewParameter" }
+val UAnnotated.isPreview: Boolean
+  get() =
+    uAnnotations.any {
+      // Is it itself a preview annotation?
+      it.resolve()?.let { cls ->
+        cls.qualifiedName in PREVIEW_ANNOTATIONS ||
+          cls.hasAnnotation(COMPOSE_PREVIEW) ||
+          cls.hasAnnotation(COMPOSE_DESKTOP_PREVIEW)
+      } ?: false
+    }
 
-val PreviewNameRegex by lazy { Regex(".*Preview[s]*$") }
+val UParameter.isPreviewParameter: Boolean
+  get() = findAnnotation("androidx.compose.ui.tooling.preview.PreviewParameter") != null

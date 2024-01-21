@@ -2,13 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
-import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class ModifierComposedDetectorTest : BaseSlackLintTest() {
+class ModifierComposedDetectorTest : BaseComposeLintTest() {
 
   private val modifierStub =
     kotlin(
@@ -46,9 +45,6 @@ class ModifierComposedDetectorTest : BaseSlackLintTest() {
   override fun getDetector(): Detector = ModifierComposedDetector()
 
   override fun getIssues(): List<Issue> = listOf(ModifierComposedDetector.ISSUE)
-
-  // This mode is irrelevant to our test and totally untestable with stringy outputs
-  override val skipTestModes: Array<TestMode> = arrayOf(TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
 
   @Test
   fun `errors when a composable Modifier extension is detected`() {

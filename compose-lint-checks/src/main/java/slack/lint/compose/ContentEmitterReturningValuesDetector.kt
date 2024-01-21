@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.uast.UFile
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.OptionLoadingDetector
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.emitsContent
@@ -22,6 +24,7 @@ import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.hasReceiverType
 import slack.lint.compose.util.isComposable
 import slack.lint.compose.util.sourceImplementation
+import slack.lint.compose.util.unwrapParenthesis
 
 class ContentEmitterReturningValuesDetector
 @JvmOverloads
@@ -55,28 +58,33 @@ constructor(
   internal val KtFunction.directUiEmitterCount: Int
     get() =
       bodyBlockExpression?.let { block ->
-        block.statements.filterIsInstance<KtCallExpression>().count {
-          it.emitsContent(contentEmitterOption.value)
-        }
+        block.statements
+          .mapNotNull { it.unwrapParenthesis() }
+          .filterIsInstance<KtCallExpression>()
+          .count { it.emitsContent(contentEmitterOption.value) }
       } ?: 0
 
   internal fun KtFunction.indirectUiEmitterCount(mapping: Map<KtFunction, Int>): Int {
     val bodyBlock = bodyBlockExpression ?: return 0
-    return bodyBlock.statements.filterIsInstance<KtCallExpression>().count { callExpression ->
-      // If it's a direct hit on our list, it should count directly
-      if (callExpression.emitsContent(contentEmitterOption.value)) return@count true
+    return bodyBlock.statements
+      .mapNotNull { it.unwrapParenthesis() }
+      .filterIsInstance<KtCallExpression>()
+      .count { callExpression ->
+        // If it's a direct hit on our list, it should count directly
+        if (callExpression.emitsContent(contentEmitterOption.value)) return@count true
 
-      val name = callExpression.calleeExpression?.text ?: return@count false
-      // If the hit is in the provided mapping, it means it is using a composable that we know emits
-      // UI, that we inferred from previous passes
-      val value =
-        mapping
-          .mapKeys { entry -> entry.key.name }
-          .getOrElse(name) {
-            return@count false
-          }
-      value > 0
-    }
+        val name = callExpression.calleeExpression?.text ?: return@count false
+        // If the hit is in the provided mapping, it means it is using a composable that we know
+        // emits
+        // UI, that we inferred from previous passes
+        val value =
+          mapping
+            .mapKeys { entry -> entry.key.name }
+            .getOrElse(name) {
+              return@count false
+            }
+        value > 0
+      }
   }
 
   override fun getApplicableUastTypes() = listOf(UFile::class.java)
@@ -91,7 +99,7 @@ constructor(
         val composables =
           file
             .findChildrenByClass<KtFunction>()
-            .filter { it.isComposable }
+            .filter { it.toUElementOfType<UMethod>()?.isComposable == true }
             // We don't want to analyze composables that are extension functions, as they might be
             // things like
             // BoxScope which are legit, and we want to avoid false positives.
