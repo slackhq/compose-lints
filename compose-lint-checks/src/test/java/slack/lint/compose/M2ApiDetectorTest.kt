@@ -7,7 +7,7 @@ import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.junit.Test
 
-class M2ApiDetectorTest : BaseSlackLintTest() {
+class M2ApiDetectorTest : BaseComposeLintTest() {
 
   override fun getDetector(): Detector = M2ApiDetector()
 

@@ -6,7 +6,7 @@ import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.junit.Test
 
-class ComposeLintsIssueRegistryTest : BaseSlackLintTest() {
+class ComposeLintsIssueRegistryTest : BaseComposeLintTest() {
   @Test
   fun ensureUniqueIds() {
     val issues = ComposeLintsIssueRegistry().issues

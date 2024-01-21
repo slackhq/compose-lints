@@ -12,7 +12,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
-class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseSlackLintTest() {
+class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseComposeLintTest() {
 
   companion object {
     @JvmStatic

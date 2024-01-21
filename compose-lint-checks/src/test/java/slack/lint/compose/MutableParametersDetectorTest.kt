@@ -9,7 +9,7 @@ import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class MutableParametersDetectorTest : BaseSlackLintTest() {
+class MutableParametersDetectorTest : BaseComposeLintTest() {
 
   override fun getDetector(): Detector = MutableParametersDetector()
 

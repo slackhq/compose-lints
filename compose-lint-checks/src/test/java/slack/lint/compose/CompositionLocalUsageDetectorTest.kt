@@ -9,7 +9,7 @@ import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.junit.Test
 
-class CompositionLocalUsageDetectorTest : BaseSlackLintTest() {
+class CompositionLocalUsageDetectorTest : BaseComposeLintTest() {
 
   override fun getDetector(): Detector = CompositionLocalUsageDetector()
 

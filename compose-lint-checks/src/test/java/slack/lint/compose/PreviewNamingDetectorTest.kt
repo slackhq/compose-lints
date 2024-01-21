@@ -8,7 +8,7 @@ import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class PreviewNamingDetectorTest : BaseSlackLintTest() {
+class PreviewNamingDetectorTest : BaseComposeLintTest() {
 
   override fun getDetector(): Detector = PreviewNamingDetector()
 
