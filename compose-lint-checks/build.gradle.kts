@@ -17,6 +17,12 @@ lint {
   absolutePaths = false
   checkTestSources = true
   baseline = file("lint-baseline.xml")
+
+  fatal += setOf(
+    "LintDocExample",
+    "LintImplPsiEquals",
+    "LintImplUnexpectedDomain",
+  )
 }
 
 dependencies {
