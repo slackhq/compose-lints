@@ -24,7 +24,7 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
-  fun testDocumentationExample() {
+  fun testDocumentationExampleComposeNamingUppercase() {
     @Language("kotlin")
     val code =
       """
@@ -50,6 +50,31 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
           fun myComposable(): Unit { }
               ~~~~~~~~~~~~
           2 errors, 0 warnings
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
+  fun testDocumentationExampleComposeNamingLowercase() {
+    @Language("kotlin")
+    val code =
+      """
+        import androidx.compose.runtime.Composable
+
+        @Composable
+        fun MyComposable(): Something { }
+      """
+        .trimIndent()
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expect(
+        """
+          src/test.kt:4: Error: Composable functions that return a value should start with a lowercase letter.While useful and accepted outside of @Composable functions, this factory function convention has drawbacks that set inappropriate expectations for callers when used with @Composable functions.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingLowercase]
+          fun MyComposable(): Something { }
+              ~~~~~~~~~~~~
+          1 errors, 0 warnings
         """
           .trimIndent()
       )
