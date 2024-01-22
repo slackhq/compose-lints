@@ -4,7 +4,6 @@ package slack.lint.compose
 
 import com.android.tools.lint.client.api.IssueRegistry
 import com.android.tools.lint.client.api.Vendor
-import com.android.tools.lint.detector.api.CURRENT_API
 import com.android.tools.lint.detector.api.Issue
 import com.google.auto.service.AutoService
 
@@ -18,8 +17,8 @@ class ComposeLintsIssueRegistry : IssueRegistry() {
       feedbackUrl = "https://github.com/slackhq/compose-lints/issues",
     )
 
-  override val api: Int = CURRENT_API
-  override val minApi: Int = 14 // 8.0.0-alpha06
+  override val api: Int = 15
+  override val minApi: Int = 15 // 8.2.0-alpha06
 
   @Suppress("SpreadOperator")
   override val issues: List<Issue> =

@@ -77,7 +77,7 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
 
   private fun KtCallExpression.isRemembered(stopAt: PsiElement): Boolean {
     var current: PsiElement = parent
-    while (current != stopAt) {
+    while (!current.isEquivalentTo(stopAt)) {
       (current as? KtCallExpression)?.let { callExpression ->
         if (callExpression.calleeExpression?.text?.startsWith("remember") == true) return true
       }

@@ -76,7 +76,7 @@ constructor(
         // to see the real amount of usages.
         buildSet<KtCallExpression> {
           var current: PsiElement = callExpression
-          while (current != composableBlockExpression) {
+          while (!current.isEquivalentTo(composableBlockExpression)) {
             // If the current element is a CALL_EXPRESSION and using modifiers, log it
             if (current is KtCallExpression && current.isUsingModifiers(modifierNames)) {
               add(current)
