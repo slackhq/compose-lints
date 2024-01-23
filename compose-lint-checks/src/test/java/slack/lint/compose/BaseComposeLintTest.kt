@@ -34,6 +34,12 @@ abstract class BaseComposeLintTest : LintDetectorTest() {
           package androidx.compose.runtime
 
           annotation class Composable
+          @Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
+          annotation class StableMarker
+          @StableMarker
+          annotation class Stable
+          @StableMarker
+          annotation class Immutable
 
           interface State<out T> {
               val value: T
