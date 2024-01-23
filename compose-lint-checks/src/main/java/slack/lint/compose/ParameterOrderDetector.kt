@@ -17,6 +17,7 @@ import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParameter
 import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.isFunctionalInterface
 import slack.lint.compose.util.isModifier
 import slack.lint.compose.util.runIf
 import slack.lint.compose.util.sourceImplementation
@@ -118,7 +119,6 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
     val resolved =
       evaluator.getTypeClass(valueParameters.lastOrNull()?.toUElementOfType<UParameter>()?.type)
         ?: return false
-    return resolved.hasAnnotation("java.lang.FunctionalInterface") ||
-      resolved.qualifiedName?.startsWith("kotlin.jvm.functions.") == true
+    return resolved.isFunctionalInterface
   }
 }
