@@ -1,3 +1,5 @@
+// Copyright (C) 2024 Salesforce, Inc.
+// SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose.util
 
 import com.intellij.psi.PsiClass

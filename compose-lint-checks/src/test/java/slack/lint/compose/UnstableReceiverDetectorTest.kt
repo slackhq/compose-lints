@@ -1,5 +1,4 @@
 // Copyright (C) 2023 Salesforce, Inc.
-// Copyright 2022 Twitter, Inc.
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
@@ -78,10 +77,7 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
         fun Function<String>.OtherContent() {}
       """
         .trimIndent()
-    lint()
-      .files(*commonStubs, kotlin(code))
-      .run()
-      .expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -124,7 +120,8 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
           val Example.OtherContentProperty get() {}
               ~~~~~~~
           0 errors, 4 warnings
-        """.trimIndent()
+        """
+          .trimIndent()
       )
   }
 }

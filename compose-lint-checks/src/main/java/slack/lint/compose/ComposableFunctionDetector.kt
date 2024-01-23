@@ -29,7 +29,6 @@ abstract class ComposableFunctionDetector(vararg options: LintOption) :
             is KtPropertyAccessor -> {
               visitComposable(context, node, sourcePsi)
             }
-
             is KtFunction -> {
               visitComposable(context, node, sourcePsi)
             }
@@ -39,13 +38,9 @@ abstract class ComposableFunctionDetector(vararg options: LintOption) :
     }
   }
 
-  open fun visitComposable(context: JavaContext, method: UMethod) {
-  }
+  open fun visitComposable(context: JavaContext, method: UMethod) {}
 
-  open fun visitComposable(context: JavaContext, method: UMethod, property: KtPropertyAccessor) {
-  }
+  open fun visitComposable(context: JavaContext, method: UMethod, property: KtPropertyAccessor) {}
 
-  open fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
-
-  }
+  open fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {}
 }

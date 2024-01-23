@@ -17,37 +17,39 @@ val STABILITY_ANNOTATIONS = setOf(COMPOSE_STABLE, COMPOSE_IMMUTABLE)
 /**
  * Sets of known external stable constructs to the compose-compiler.
  *
- * @see <a href="https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/compiler/compiler-hosted/src/main/java/androidx/compose/compiler/plugins/kotlin/analysis/KnownStableConstructs.kt">KnownStableConstructs</a>
+ * @see <a
+ *   href="https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/compiler/compiler-hosted/src/main/java/androidx/compose/compiler/plugins/kotlin/analysis/KnownStableConstructs.kt">KnownStableConstructs</a>
  */
 object KnownStableConstructs {
 
-  val stableTypes = setOf(
-    Pair::class.qualifiedName!!,
-    Triple::class.qualifiedName!!,
-    Comparator::class.qualifiedName!!,
-    Result::class.qualifiedName!!,
-    ClosedRange::class.qualifiedName!!,
-    ClosedFloatingPointRange::class.qualifiedName!!,
-    // Guava
-    "com.google.common.collect.ImmutableList",
-    "com.google.common.collect.ImmutableEnumMap",
-    "com.google.common.collect.ImmutableMap",
-    "com.google.common.collect.ImmutableEnumSet",
-    "com.google.common.collect.ImmutableSet",
-    // Kotlinx immutable
-    "kotlinx.collections.immutable.ImmutableCollection",
-    "kotlinx.collections.immutable.ImmutableList",
-    "kotlinx.collections.immutable.ImmutableSet",
-    "kotlinx.collections.immutable.ImmutableMap",
-    "kotlinx.collections.immutable.PersistentCollection",
-    "kotlinx.collections.immutable.PersistentList",
-    "kotlinx.collections.immutable.PersistentSet",
-    "kotlinx.collections.immutable.PersistentMap",
-    // Dagger
-    "dagger.Lazy",
-    // Coroutines
-    "kotlin.coroutines.EmptyCoroutineContext",
-  )
+  val stableTypes =
+    setOf(
+      Pair::class.qualifiedName!!,
+      Triple::class.qualifiedName!!,
+      Comparator::class.qualifiedName!!,
+      Result::class.qualifiedName!!,
+      ClosedRange::class.qualifiedName!!,
+      ClosedFloatingPointRange::class.qualifiedName!!,
+      // Guava
+      "com.google.common.collect.ImmutableList",
+      "com.google.common.collect.ImmutableEnumMap",
+      "com.google.common.collect.ImmutableMap",
+      "com.google.common.collect.ImmutableEnumSet",
+      "com.google.common.collect.ImmutableSet",
+      // Kotlinx immutable
+      "kotlinx.collections.immutable.ImmutableCollection",
+      "kotlinx.collections.immutable.ImmutableList",
+      "kotlinx.collections.immutable.ImmutableSet",
+      "kotlinx.collections.immutable.ImmutableMap",
+      "kotlinx.collections.immutable.PersistentCollection",
+      "kotlinx.collections.immutable.PersistentList",
+      "kotlinx.collections.immutable.PersistentSet",
+      "kotlinx.collections.immutable.PersistentMap",
+      // Dagger
+      "dagger.Lazy",
+      // Coroutines
+      "kotlin.coroutines.EmptyCoroutineContext",
+    )
 }
 
 fun PsiType.isStable(
@@ -64,8 +66,7 @@ fun PsiType.isStable(
     PsiTypes.longType(),
     PsiTypes.shortType(),
     PsiTypes.booleanType(),
-    PsiTypes.voidType(),
-    -> return true
+    PsiTypes.voidType() -> return true
   }
   val resolved = resolveUClass() ?: return false
 
@@ -79,8 +80,7 @@ fun PsiType.isStable(
   return resolved.uAnnotations.any {
     // Is it itself a preview annotation?
     it.resolve()?.let { cls ->
-      cls.qualifiedName in STABILITY_ANNOTATIONS ||
-        cls.hasAnnotation(COMPOSE_STABLE_MARKER)
+      cls.qualifiedName in STABILITY_ANNOTATIONS || cls.hasAnnotation(COMPOSE_STABLE_MARKER)
     } ?: false
   }
 }

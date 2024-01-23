@@ -1,5 +1,4 @@
 // Copyright (C) 2023 Salesforce, Inc.
-// Copyright 2022 Twitter, Inc.
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
@@ -9,9 +8,7 @@ import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
@@ -30,7 +27,7 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
         id = "ComposeUnstableReceiver",
         briefDescription = "Unstable receivers will always be recomposed",
         explanation =
-        """
+          """
               Instance composable functions on non-stable classes will always be recomposed. \
               If possible, make the receiver type stable or refactor this function if that isn't possible. \
               See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information.
@@ -49,25 +46,24 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
   override fun visitComposable(context: JavaContext, method: UMethod) {
     lateinit var nodeToReport: KtTypeReference
     val receiverParam = method.uastParameters.firstOrNull()
-    val receiverType: PsiType? = when (val source = method.sourcePsi) {
-      is KtFunction -> {
-        source.receiverTypeReference?.let {
-          nodeToReport = it
-          // Receiver is the first uastParameter
-          receiverParam?.type
+    val receiverType: PsiType? =
+      when (val source = method.sourcePsi) {
+        is KtFunction -> {
+          source.receiverTypeReference?.let {
+            nodeToReport = it
+            // Receiver is the first uastParameter
+            receiverParam?.type
+          }
         }
-      }
-
-      is KtPropertyAccessor -> {
-        source.property.receiverTypeReference?.let {
-          nodeToReport = it
-          // Receiver is the first uastParameter
-          receiverParam?.type
+        is KtPropertyAccessor -> {
+          source.property.receiverTypeReference?.let {
+            nodeToReport = it
+            // Receiver is the first uastParameter
+            receiverParam?.type
+          }
         }
+        else -> null
       }
-
-      else -> null
-    }
 
     if (receiverType?.isStable(context.evaluator) == false) {
       context.report(
@@ -85,7 +81,10 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
           // If the containing class is an object, it will never be passed as a receiver arg
           ?.takeUnless { it.sourcePsi is KtObjectDeclaration }
           ?.let(context.evaluator::getClassType)
-      if (containingClassType?.isStable(context.evaluator, resolveUClass = { containingClass }) == false) {
+      if (
+        containingClassType?.isStable(context.evaluator, resolveUClass = { containingClass }) ==
+          false
+      ) {
         context.report(
           ISSUE,
           method,
