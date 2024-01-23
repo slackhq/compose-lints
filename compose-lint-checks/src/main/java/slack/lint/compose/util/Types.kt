@@ -10,3 +10,15 @@ val PsiClass.isFunctionalInterface: Boolean
       qualifiedName == "kotlin.Function" ||
       qualifiedName?.startsWith("kotlin.jvm.functions.") == true
   }
+
+val PsiClass.allSupertypes: Sequence<PsiClass>
+  get() {
+    return sequenceOf(this) +
+      superTypes
+        .asSequence()
+        .distinct()
+        .mapNotNull { it.resolve() }
+        .filterNot { it.qualifiedName == "java.lang.Object" }
+        .flatMap { resolved -> sequenceOf(resolved).plus(resolved.allSupertypes) }
+        .distinct()
+  }

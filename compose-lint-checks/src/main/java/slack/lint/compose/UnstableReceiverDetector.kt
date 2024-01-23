@@ -80,11 +80,9 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
         containingClass
           // If the containing class is an object, it will never be passed as a receiver arg
           ?.takeUnless { it.sourcePsi is KtObjectDeclaration }
-          ?.let(context.evaluator::getClassType)
-      if (
-        containingClassType?.isStable(context.evaluator, resolveUClass = { containingClass }) ==
-          false
-      ) {
+          ?.let(context.evaluator::getClassType) ?: return
+
+      if (!containingClassType.isStable(context.evaluator, resolveUClass = { containingClass })) {
         context.report(
           ISSUE,
           method,

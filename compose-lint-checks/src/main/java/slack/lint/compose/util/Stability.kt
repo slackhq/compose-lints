@@ -5,6 +5,7 @@ package slack.lint.compose.util
 import com.android.tools.lint.client.api.JavaEvaluator
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiTypes
+import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.toUElementOfType
 
@@ -68,19 +69,24 @@ fun PsiType.isStable(
     PsiTypes.booleanType(),
     PsiTypes.voidType() -> return true
   }
-  val resolved = resolveUClass() ?: return false
+  val root = resolveUClass() ?: return false
 
-  // Enums are stable
-  if (resolved.isEnum) return true
-  resolved.qualifiedName?.let { qualifiedName ->
-    if (qualifiedName == "java.lang.String") return true
-    if (qualifiedName in KnownStableConstructs.stableTypes) return true
+  for (resolved in root.allSupertypes) {
+    // Enums are stable
+    if (resolved.isEnum) return true
+    resolved.qualifiedName?.let { qualifiedName ->
+      if (qualifiedName == "java.lang.String") return true
+      if (qualifiedName in KnownStableConstructs.stableTypes) return true
+    }
+    if (resolved.isFunctionalInterface) return true
+    val isStableAnnotated =
+      resolved.annotations.any {
+        // Is it itself a preview annotation?
+        it.qualifiedName in STABILITY_ANNOTATIONS ||
+          it.toUElementOfType<UAnnotation>()?.resolve()?.hasAnnotation(COMPOSE_STABLE_MARKER) ==
+            true
+      }
+    if (isStableAnnotated) return true
   }
-  if (resolved.isFunctionalInterface) return true
-  return resolved.uAnnotations.any {
-    // Is it itself a preview annotation?
-    it.resolve()?.let { cls ->
-      cls.qualifiedName in STABILITY_ANNOTATIONS || cls.hasAnnotation(COMPOSE_STABLE_MARKER)
-    } ?: false
-  }
+  return false
 }
