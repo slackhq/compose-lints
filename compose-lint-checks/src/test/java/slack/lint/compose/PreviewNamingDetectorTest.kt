@@ -97,6 +97,7 @@ class PreviewNamingDetectorTest : BaseComposeLintTest() {
 
         @Preview
         @Preview
+        @Repeatable
         annotation class BananaPreview
         @BananaPreview
         @BananaPreview
