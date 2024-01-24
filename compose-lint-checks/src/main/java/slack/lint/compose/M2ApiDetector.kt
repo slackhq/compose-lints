@@ -34,7 +34,7 @@ constructor(private val allowList: StringSetLintOption = StringSetLintOption(ALL
         "allowed-m2-apis",
         "A comma-separated list of APIs in androidx.compose.material that should be allowed.",
         null,
-        "This property should define a comma-separated list of APIs in androidx.compose.material that should be allowed."
+        "This property should define a comma-separated list of APIs in androidx.compose.material that should be allowed.",
       )
 
     val ISSUE =
@@ -49,7 +49,7 @@ constructor(private val allowList: StringSetLintOption = StringSetLintOption(ALL
           category = CORRECTNESS,
           priority = NORMAL,
           severity = ERROR,
-          implementation = sourceImplementation<M2ApiDetector>()
+          implementation = sourceImplementation<M2ApiDetector>(),
         )
         .setOptions(listOf(ALLOW_LIST))
         .setEnabledByDefault(false)
@@ -67,8 +67,18 @@ constructor(private val allowList: StringSetLintOption = StringSetLintOption(ALL
     return object : UElementHandler() {
       override fun visitCallExpression(node: UCallExpression) = checkNode(node)
 
-      override fun visitQualifiedReferenceExpression(node: UQualifiedReferenceExpression) =
-        checkNode(node)
+      override fun visitQualifiedReferenceExpression(node: UQualifiedReferenceExpression) {
+        val parent = node.uastParent
+        if (parent is UQualifiedReferenceExpression && node == parent.receiver) {
+          // This is part of a longer selector expression, so let the lint handle the final
+          // reference
+          // i.e. given 'androidx.compose.material.BottomNavigationDefaults.Elevation', we only want
+          // to report 'androidx.compose.material.BottomNavigationDefaults.Elevation', and _not_
+          // 'androidx.compose.material.BottomNavigationDefaults'
+          return
+        }
+        return checkNode(node)
+      }
 
       private fun checkNode(node: UResolvable) {
         val resolved = node.resolve() ?: return

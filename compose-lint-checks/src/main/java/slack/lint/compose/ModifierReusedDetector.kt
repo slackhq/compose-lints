@@ -19,11 +19,13 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.KtValueArgumentName
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.emitsContent
 import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.modifierParameter
 import slack.lint.compose.util.sourceImplementation
+import slack.lint.compose.util.unwrapParenthesis
 
 class ModifierReusedDetector
 @JvmOverloads
@@ -49,16 +51,16 @@ constructor(
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ModifierReusedDetector>()
+          implementation = sourceImplementation<ModifierReusedDetector>(),
         )
         .setOptions(listOf(CONTENT_EMITTER_OPTION))
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     if (!function.emitsContent(contentEmitterOption.value)) return
     val composableBlockExpression = function.bodyBlockExpression ?: return
-    val modifier = function.modifierParameter ?: return
-    val initialName = modifier.name ?: return
+    val modifier = method.modifierParameter(context.evaluator) ?: return
+    val initialName = modifier.name
 
     // Try to get all possible names by iterating on possible name reassignments until it's stable
     val modifierNames = composableBlockExpression.obtainAllModifierNames(initialName)
@@ -74,7 +76,7 @@ constructor(
         // to see the real amount of usages.
         buildSet<KtCallExpression> {
           var current: PsiElement = callExpression
-          while (current != composableBlockExpression) {
+          while (!current.isEquivalentTo(composableBlockExpression)) {
             // If the current element is a CALL_EXPRESSION and using modifiers, log it
             if (current is KtCallExpression && current.isUsingModifiers(modifierNames)) {
               add(current)
@@ -82,9 +84,11 @@ constructor(
             // If any of the siblings also use any of these, we also log them.
             // This is for the special case where only sibling composables reuse modifiers
             addAll(
-              current.siblings().filterIsInstance<KtCallExpression>().filter {
-                it.isUsingModifiers(modifierNames)
-              }
+              current
+                .siblings()
+                .mapNotNull { it.unwrapParenthesis() }
+                .filterIsInstance<KtCallExpression>()
+                .filter { it.isUsingModifiers(modifierNames) }
             )
             current = current.parent
           }
@@ -104,7 +108,7 @@ constructor(
           ISSUE,
           callExpression,
           context.getLocation(callExpression),
-          ISSUE.getExplanation(TextFormat.TEXT)
+          ISSUE.getExplanation(TextFormat.TEXT),
         )
       }
   }

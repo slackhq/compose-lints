@@ -1,6 +1,27 @@
 Changelog
 =========
 
+**Unreleased**
+--------------
+
+- **New**: Implement `ModifierComposed` check to lint against use of `Modifier.composed`, which is no longer recommended in favor of the new `Modifier.Node` API.
+- **New**: Implement `ComposeUnstableReceiver` check to warn when composable extension functions or composables instance functions have unstable receivers/containing classes.
+- **New**: Check for property accessors with composition locals.
+- **Enhancement**: The `ComposeComposableModifier` message now recommends the new `Modifier.Node` API.
+- **Enhancement**: Make lints **significantly** more robust to edge cases like typealiases, import aliases, parentheses, fully-qualified references, and whitespace. Our tests now cover all these cases.
+- **Enhancement**: Update `@Preview` detection to also detect Compose Desktop's own `@Preview` annotation.
+- **Enhancement**: Improve the `ComposeParameterOrder` check to only lint the parameter list and add a quickfix.
+- **Enhancement**: Add support for checking for loops in multiple content emitters.
+- **Fix**: Fix allowed names config for Unit-returning functions.
+- **Fix**: Ignore context receivers in multiple content emissions lint.
+- **Fix**: Allow nullable types for trailing lambdas in `ComposeParameterOrder`.
+- **Docs**: Improve docs for `ComposeContentEmitterReturningValues`
+- Build against lint-api `31.2.1`.
+- Test against lint-api `31.4.0-alpha03`.
+- Raise Kotlin apiVersion/languageVersion to `1.9.0`.
+
+Special thanks to [@jzbrooks](https://github.com/jzbrooks), [@joeMalebe](https://github.com/joeMalebe), [@dellisd](https://github.com/dellisd) for contributing to this release!
+
 1.2.0
 -----
 

@@ -12,6 +12,7 @@ import com.android.tools.lint.detector.api.StringOption
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.StringSetLintOption
 import slack.lint.compose.util.definedInInterface
@@ -33,7 +34,7 @@ constructor(private val userFactories: StringSetLintOption = StringSetLintOption
         "viewmodel-factories",
         "A comma-separated list of viewModel factories.",
         null,
-        "This property should define comma-separated list of allowed viewModel factory function names."
+        "This property should define comma-separated list of allowed viewModel factory function names.",
       )
 
     private fun errorMessage(factoryName: String): String =
@@ -52,7 +53,7 @@ constructor(private val userFactories: StringSetLintOption = StringSetLintOption
           category = Category.CORRECTNESS,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ViewModelInjectionDetector>()
+          implementation = sourceImplementation<ViewModelInjectionDetector>(),
         )
         .setOptions(listOf(USER_FACTORIES))
 
@@ -67,7 +68,7 @@ constructor(private val userFactories: StringSetLintOption = StringSetLintOption
     }
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     if (function.isOverride || function.definedInInterface) return
 
     val bodyBlock = function.bodyBlockExpression ?: return

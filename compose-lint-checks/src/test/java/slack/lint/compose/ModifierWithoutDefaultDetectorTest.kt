@@ -3,27 +3,25 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
-import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
+class ModifierWithoutDefaultDetectorTest : BaseComposeLintTest() {
 
   override fun getDetector(): Detector = ModifierWithoutDefaultDetector()
 
   override fun getIssues(): List<Issue> = listOf(ModifierWithoutDefaultDetector.ISSUE)
-
-  // This mode is irrelevant to our test and totally untestable with stringy outputs
-  override val skipTestModes: Array<TestMode> =
-    arrayOf(TestMode.PARENTHESIZED, TestMode.SUPPRESSIBLE, TestMode.TYPE_ALIAS)
 
   @Test
   fun `errors when a Composable has modifiers but without default values`() {
     @Language("kotlin")
     val code =
       """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+
       @Composable
       fun Something(modifier: Modifier) { }
       @Composable
@@ -32,15 +30,14 @@ class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
         .trimIndent()
 
     lint()
-      .files(kotlin(code))
-      .allowCompilationErrors()
+      .files(*commonStubs, kotlin(code))
       .run()
       .expect(
         """
-          src/test.kt:2: Error: This @Composable function has a modifier parameter but it doesn't have a default value.See https://slackhq.github.io/compose-lints/rules/#modifiers-should-have-default-parameters for more information. [ComposeModifierWithoutDefault]
+          src/test.kt:5: Error: This @Composable function has a modifier parameter but it doesn't have a default value.See https://slackhq.github.io/compose-lints/rules/#modifiers-should-have-default-parameters for more information. [ComposeModifierWithoutDefault]
           fun Something(modifier: Modifier) { }
                         ~~~~~~~~~~~~~~~~~~
-          src/test.kt:4: Error: This @Composable function has a modifier parameter but it doesn't have a default value.See https://slackhq.github.io/compose-lints/rules/#modifiers-should-have-default-parameters for more information. [ComposeModifierWithoutDefault]
+          src/test.kt:7: Error: This @Composable function has a modifier parameter but it doesn't have a default value.See https://slackhq.github.io/compose-lints/rules/#modifiers-should-have-default-parameters for more information. [ComposeModifierWithoutDefault]
           fun Something(modifier: Modifier = Modifier, modifier2: Modifier) { }
                                                        ~~~~~~~~~~~~~~~~~~~
           2 errors, 0 warnings
@@ -49,14 +46,13 @@ class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
       )
       .expectFixDiffs(
         """
-          Autofix for src/test.kt line 2: Add '= Modifier' default value.:
-          @@ -2 +2
+          Autofix for src/test.kt line 5: Add '= Modifier' default value.:
+          @@ -5 +5
           - fun Something(modifier: Modifier) { }
           + fun Something(modifier: Modifier = Modifier) { }
-          Autofix for src/test.kt line 4: Add '= Modifier' default value.:
-          @@ -4 +4
+          Autofix for src/test.kt line 7: Add '= Modifier' default value.:
+          @@ -7 +7
           - fun Something(modifier: Modifier = Modifier, modifier2: Modifier) { }
-          @@ -5 +4
           + fun Something(modifier: Modifier = Modifier, modifier2: Modifier = Modifier) { }
         """
           .trimIndent()
@@ -68,6 +64,9 @@ class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+
       interface Bleh {
           @Composable
           fun Something(modifier: Modifier)
@@ -81,7 +80,7 @@ class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
     """
         .trimIndent()
 
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -89,6 +88,9 @@ class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
     @Language("kotlin")
     val code =
       """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+
       abstract class Bleh {
           @Composable
           abstract fun Something(modifier: Modifier)
@@ -96,7 +98,7 @@ class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
     """
         .trimIndent()
 
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -121,6 +123,6 @@ class ModifierWithoutDefaultDetectorTest : BaseSlackLintTest() {
         }
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 }

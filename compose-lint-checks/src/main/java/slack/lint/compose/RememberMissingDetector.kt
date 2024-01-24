@@ -11,6 +11,7 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.sourceImplementation
@@ -38,11 +39,11 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<RememberMissingDetector>()
+        implementation = sourceImplementation<RememberMissingDetector>(),
       )
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     // To keep memory consumption in check, we first traverse down until we see one of our known
     // functions
     // that need remembering
@@ -59,7 +60,7 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
               ISSUE,
               callExpression,
               context.getLocation(callExpression),
-              MutableStateOfNotRemembered
+              MutableStateOfNotRemembered,
             )
           }
           "derivedStateOf" -> {
@@ -67,7 +68,7 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
               ISSUE,
               callExpression,
               context.getLocation(callExpression),
-              DerivedStateOfNotRemembered
+              DerivedStateOfNotRemembered,
             )
           }
         }
@@ -76,7 +77,7 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
 
   private fun KtCallExpression.isRemembered(stopAt: PsiElement): Boolean {
     var current: PsiElement = parent
-    while (current != stopAt) {
+    while (!current.isEquivalentTo(stopAt)) {
       (current as? KtCallExpression)?.let { callExpression ->
         if (callExpression.calleeExpression?.text?.startsWith("remember") == true) return true
       }

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
+import com.android.tools.lint.client.api.JavaEvaluator
 import com.android.tools.lint.detector.api.Category
 import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
@@ -12,7 +13,11 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionType
 import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.UParameter
+import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.isFunctionalInterface
 import slack.lint.compose.util.isModifier
 import slack.lint.compose.util.runIf
 import slack.lint.compose.util.sourceImplementation
@@ -20,16 +25,13 @@ import slack.lint.compose.util.sourceImplementation
 class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
   companion object {
-    fun createErrorMessage(
-      currentOrder: List<KtParameter>,
-      properOrder: List<KtParameter>
-    ): String =
+    fun createErrorMessage(currentOrder: List<UParameter>, properOrder: List<UParameter>): String =
       createErrorMessage(
         currentOrder.joinToString { it.text },
-        properOrder.joinToString { it.text }
+        properOrder.joinToString { it.text },
       )
 
-    fun createErrorMessage(currentOrder: String, properOrder: String): String =
+    private fun createErrorMessage(currentOrder: String, properOrder: String): String =
       """
         Parameters in a composable function should be ordered following this pattern: params without defaults, modifiers, params with defaults and optionally, a trailing function that might not have a default param.
         Current params are: [$currentOrder] but should be [$properOrder].
@@ -45,11 +47,11 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<ParameterOrderDetector>()
+        implementation = sourceImplementation<ParameterOrderDetector>(),
       )
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     // We need to make sure the proper order is respected. It should be:
     // 1. params without defaults
     // 2. modifiers
@@ -57,29 +59,29 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
     // 4. optional: function that might have no default
 
     // Let's try to build the ideal ordering first, and compare against that.
-    val currentOrder = function.valueParameters
+    val currentOrder = method.uastParameters
 
     // We look in the original params without defaults and see if the last one is a function.
-    val hasTrailingFunction = function.hasTrailingFunction
+    val hasTrailingFunction = function.hasTrailingFunction(context.evaluator)
     val trailingLambda =
       if (hasTrailingFunction) {
-        listOf(function.valueParameters.last())
+        listOf(method.uastParameters.last())
       } else {
         emptyList()
       }
 
     // We extract the params without with and without defaults, and keep the order between them
     val (withDefaults, withoutDefaults) =
-      function.valueParameters
+      method.uastParameters
         .runIf(hasTrailingFunction) { dropLast(1) }
-        .partition { it.hasDefaultValue() }
+        .partition { (it.sourcePsi as? KtParameter)?.hasDefaultValue() == true }
 
     // As ComposeModifierMissingCheck will catch modifiers without a Modifier default, we don't have
-    // to care
-    // about that case. We will sort the params with defaults so that the modifier(s) go first.
+    // to care about that case. We will sort the params with defaults so that the modifier(s) go
+    // first.
     val sortedWithDefaults =
       withDefaults.sortedWith(
-        compareByDescending<KtParameter> { it.isModifier }
+        compareByDescending<UParameter> { it.isModifier(context.evaluator) }
           .thenByDescending { it.name == "modifier" }
       )
 
@@ -88,20 +90,35 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
     // If it's not the same as the current order, we show the rule violation.
     if (currentOrder != properOrder) {
+      val errorLocation = context.getLocation(function.valueParameterList)
       context.report(
         ISSUE,
         function,
-        context.getLocation(function),
-        createErrorMessage(currentOrder, properOrder)
+        errorLocation,
+        createErrorMessage(currentOrder, properOrder),
+        fix()
+          .replace()
+          .range(errorLocation)
+          .with(properOrder.joinToString(prefix = "(", postfix = ")") { it.text })
+          .reformat(true)
+          .build(),
       )
     }
   }
 
-  private val KtFunction.hasTrailingFunction: Boolean
-    get() =
+  private fun KtFunction.hasTrailingFunction(evaluator: JavaEvaluator): Boolean {
+    val shallowCheck =
       when (val outerType = valueParameters.lastOrNull()?.typeReference?.typeElement) {
         is KtFunctionType -> true
         is KtNullableType -> outerType.innerType is KtFunctionType
         else -> false
       }
+    if (shallowCheck) return true
+
+    // Fall back to thorough check in case of aliases
+    val resolved =
+      evaluator.getTypeClass(valueParameters.lastOrNull()?.toUElementOfType<UParameter>()?.type)
+        ?: return false
+    return resolved.isFunctionalInterface
+  }
 }

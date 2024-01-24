@@ -3,16 +3,21 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose.util
 
+import com.android.tools.lint.client.api.JavaEvaluator
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.UParameter
+import org.jetbrains.uast.toUElementOfType
 
 fun KtFunction.emitsContent(providedContentEmitters: Set<String>): Boolean {
-  return if (isComposable) {
+  return if (toUElementOfType<UMethod>()?.isComposable == true) {
     sequence {
         tailrec suspend fun SequenceScope<KtCallExpression>.scan(elements: List<PsiElement>) {
           if (elements.isEmpty()) return
@@ -131,7 +136,7 @@ private val ComposableEmittersList by lazy {
     "TopAppBarSurface",
     "VerticalPager",
     "VerticalPagerIndicator",
-    "WebView"
+    "WebView",
   )
 }
 
@@ -145,9 +150,23 @@ val ComposableEmittersListRegex by lazy {
 }
 
 val ModifierNames by lazy(LazyThreadSafetyMode.NONE) { setOf("Modifier", "GlanceModifier") }
+val ModifierQualifiedNames by
+  lazy(LazyThreadSafetyMode.NONE) {
+    setOf("androidx.compose.ui.Modifier", "androidx.glance.GlanceModifier")
+  }
 
 val KtCallableDeclaration.isModifier: Boolean
   get() = ModifierNames.contains(typeReference?.text)
+
+fun UParameter.isModifier(evaluator: JavaEvaluator): Boolean {
+  (sourcePsi as? KtParameter)?.let {
+    if (it.typeReference?.text in ModifierNames) {
+      return true
+    }
+  }
+  // Fall back to more thorough approach
+  return ModifierQualifiedNames.any { evaluator.typeMatches(type, it) }
+}
 
 val KtCallableDeclaration.isModifierReceiver: Boolean
   get() = ModifierNames.contains(receiverTypeReference?.text)
@@ -158,14 +177,31 @@ val KtFunction.modifierParameter: KtParameter?
     return modifiers.firstOrNull { it.name == "modifier" } ?: modifiers.firstOrNull()
   }
 
+fun UMethod.modifierParameter(evaluator: JavaEvaluator): UParameter? {
+  val modifiers = uastParameters.filter { it.isModifier(evaluator) }
+  return modifiers.firstOrNull { it.name == "modifier" } ?: modifiers.firstOrNull()
+}
+
 val KtProperty.declaresCompositionLocal: Boolean
-  get() =
-    !isVar &&
-      hasInitializer() &&
-      initializer is KtCallExpression &&
-      CompositionLocalReferenceExpressions.contains(
-        (initializer as KtCallExpression).referenceExpression()?.text
-      )
+  get() {
+    if (isVar || !hasInitializer()) return false
+
+    val initializer = initializer?.unwrapParenthesis() ?: return false
+
+    return initializer is KtCallExpression &&
+      initializer.referenceExpression()?.text in CompositionLocalReferenceExpressions
+  }
+
+val KtPropertyAccessor.declaresCompositionLocal: Boolean
+  get() {
+    if (!isGetter) return false
+    val body = bodyExpression ?: bodyBlockExpression
+    val expression =
+      body?.unwrapBlock()?.unwrapReturnExpression()?.unwrapParenthesis() ?: return false
+
+    return expression is KtCallExpression &&
+      expression.referenceExpression()?.text in CompositionLocalReferenceExpressions
+  }
 
 private val CompositionLocalReferenceExpressions by
   lazy(LazyThreadSafetyMode.NONE) { setOf("staticCompositionLocalOf", "compositionLocalOf") }

@@ -3,14 +3,20 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose.util
 
+import com.android.tools.lint.client.api.JavaEvaluator
+import com.intellij.psi.PsiTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
+import org.jetbrains.uast.UMethod
 
-val KtFunction.returnsValue: Boolean
-  get() = typeReference != null && typeReference!!.text != "Unit"
+fun UMethod.returnsUnitOrVoid(evaluator: JavaEvaluator): Boolean {
+  return returnType?.let {
+    it == PsiTypes.voidType() || evaluator.getTypeClass(it)?.qualifiedName == "kotlin.Unit"
+  } ?: false
+}
 
 val KtFunction.hasReceiverType: Boolean
   get() = receiverTypeReference != null

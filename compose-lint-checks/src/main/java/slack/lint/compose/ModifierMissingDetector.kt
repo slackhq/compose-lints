@@ -12,6 +12,7 @@ import com.android.tools.lint.detector.api.StringOption
 import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
+import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.definedInInterface
 import slack.lint.compose.util.emitsContent
@@ -19,7 +20,7 @@ import slack.lint.compose.util.isInternal
 import slack.lint.compose.util.isOverride
 import slack.lint.compose.util.isPreview
 import slack.lint.compose.util.modifierParameter
-import slack.lint.compose.util.returnsValue
+import slack.lint.compose.util.returnsUnitOrVoid
 import slack.lint.compose.util.sourceImplementation
 
 class ModifierMissingDetector
@@ -38,7 +39,7 @@ constructor(
         description = "Visibility threshold to check for Modifiers",
         defaultValue = "only_public",
         explanation =
-          "You can control the visibility of which composables to check for Modifiers. Possible values are: `only_public` (default), `public_and_internal` and `all`"
+          "You can control the visibility of which composables to check for Modifiers. Possible values are: `only_public` (default), `public_and_internal` and `all`",
       )
 
     val ISSUE =
@@ -53,21 +54,21 @@ constructor(
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<ModifierMissingDetector>()
+          implementation = sourceImplementation<ModifierMissingDetector>(),
         )
         .setOptions(listOf(CONTENT_EMITTER_OPTION, VISIBILITY_THRESHOLD))
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     // We want to find all composable functions that:
     //  - emit content
     //  - are not overridden or part of an interface
     //  - are not a @Preview composable
     if (
-      function.returnsValue ||
-        function.isOverride ||
+      function.isOverride ||
         function.definedInInterface ||
-        function.isPreview
+        method.isPreview ||
+        !method.returnsUnitOrVoid(context.evaluator)
     ) {
       return
     }
@@ -87,7 +88,7 @@ constructor(
     if (!shouldCheck) return
 
     // If there is a modifier param, we bail
-    if (function.modifierParameter != null) return
+    if (method.modifierParameter(context.evaluator) != null) return
 
     // In case we didn't find any `modifier` parameters, we check if it emits content and report the
     // error if so.
@@ -96,7 +97,7 @@ constructor(
         ISSUE,
         function,
         context.getNameLocation(function),
-        ISSUE.getExplanation(TextFormat.TEXT)
+        ISSUE.getExplanation(TextFormat.TEXT),
       )
     }
   }

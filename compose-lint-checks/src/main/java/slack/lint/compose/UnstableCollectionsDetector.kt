@@ -10,6 +10,8 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import java.util.Locale
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isTypeUnstableCollection
 import slack.lint.compose.util.sourceImplementation
@@ -39,27 +41,22 @@ class UnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScan
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.WARNING,
-        implementation = sourceImplementation<UnstableCollectionsDetector>()
+        implementation = sourceImplementation<UnstableCollectionsDetector>(),
       )
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
-    for (param in function.valueParameters.filter { it.isTypeUnstableCollection }) {
-      val variableName = param.nameAsSafeName.asString()
-      val type = param.typeReference?.text ?: "List/Set/Map"
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
+    for (param in method.uastParameters.filter { it.isTypeUnstableCollection(context.evaluator) }) {
+      val variableName = param.name
+      val type = (param.sourcePsi as? KtParameter)?.typeReference?.text ?: "List/Set/Map"
       val message =
         createErrorMessage(
           type = type,
           rawType = type.replace(DiamondRegex, ""),
-          variable = variableName
+          variable = variableName,
         )
       val targetToReport = param.typeReference ?: param
-      context.report(
-        ISSUE,
-        targetToReport,
-        context.getLocation(targetToReport),
-        message,
-      )
+      context.report(ISSUE, targetToReport, context.getLocation(targetToReport), message)
     }
   }
 }

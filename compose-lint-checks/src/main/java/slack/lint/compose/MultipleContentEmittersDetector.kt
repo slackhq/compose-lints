@@ -11,10 +11,14 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
 import com.android.tools.lint.detector.api.isKotlin
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.uast.UFile
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.OptionLoadingDetector
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.emitsContent
@@ -22,6 +26,7 @@ import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.hasReceiverType
 import slack.lint.compose.util.isComposable
 import slack.lint.compose.util.sourceImplementation
+import slack.lint.compose.util.unwrapParenthesis
 
 class MultipleContentEmittersDetector
 @JvmOverloads
@@ -40,42 +45,77 @@ constructor(
           briefDescription = "Composables should only be emit from one source",
           explanation =
             """
-              Composable functions should only be emitting content into the composition from one source at their top level.\
+              Composable functions should only be emitting content into the composition from one source at their top level.
+
               See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information.
             """,
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
-          implementation = sourceImplementation<MultipleContentEmittersDetector>()
+          implementation = sourceImplementation<MultipleContentEmittersDetector>(),
         )
         .setOptions(listOf(CONTENT_EMITTER_OPTION))
   }
 
   internal val KtFunction.directUiEmitterCount: Int
-    get() =
-      bodyBlockExpression?.let { block ->
-        block.statements.filterIsInstance<KtCallExpression>().count {
-          it.emitsContent(contentEmitterOption.value)
-        }
+    get() {
+      return bodyBlockExpression?.let { block ->
+        // If there's content emitted in a for loop, we assume there's at
+        // least two iterations and thus count any emitters in them as multiple
+        val forLoopCount =
+          if (block.forLoopHasUiEmitters) {
+            2
+          } else {
+            0
+          }
+        block.directUiEmitterCount + forLoopCount
       } ?: 0
+    }
+
+  internal val KtBlockExpression.forLoopHasUiEmitters: Boolean
+    get() {
+      return statements.filterIsInstance<KtForExpression>().any {
+        when (val body = it.body) {
+          is KtBlockExpression -> {
+            body.directUiEmitterCount > 0
+          }
+          is KtCallExpression -> {
+            body.emitsContent(contentEmitterOption.value)
+          }
+          else -> false
+        }
+      }
+    }
+
+  internal val KtBlockExpression.directUiEmitterCount: Int
+    get() {
+      return statements
+        .mapNotNull { it.unwrapParenthesis() }
+        .filterIsInstance<KtCallExpression>()
+        .count { it.emitsContent(contentEmitterOption.value) }
+    }
 
   internal fun KtFunction.indirectUiEmitterCount(mapping: Map<KtFunction, Int>): Int {
     val bodyBlock = bodyBlockExpression ?: return 0
-    return bodyBlock.statements.filterIsInstance<KtCallExpression>().count { callExpression ->
-      // If it's a direct hit on our list, it should count directly
-      if (callExpression.emitsContent(contentEmitterOption.value)) return@count true
+    return bodyBlock.statements
+      .mapNotNull { it.unwrapParenthesis() }
+      .filterIsInstance<KtCallExpression>()
+      .count { callExpression ->
+        // If it's a direct hit on our list, it should count directly
+        if (callExpression.emitsContent(contentEmitterOption.value)) return@count true
 
-      val name = callExpression.calleeExpression?.text ?: return@count false
-      // If the hit is in the provided mapping, it means it is using a composable that we know emits
-      // UI, that we inferred from previous passes
-      val value =
-        mapping
-          .mapKeys { entry -> entry.key.name }
-          .getOrElse(name) {
-            return@count false
-          }
-      value > 0
-    }
+        val name = callExpression.calleeExpression?.text ?: return@count false
+        // If the hit is in the provided mapping, it means it is using a composable that we know
+        // emits
+        // UI, that we inferred from previous passes
+        val value =
+          mapping
+            .mapKeys { entry -> entry.key.name }
+            .getOrElse(name) {
+              return@count false
+            }
+        value > 0
+      }
   }
 
   override fun getApplicableUastTypes() = listOf(UFile::class.java)
@@ -90,7 +130,7 @@ constructor(
         val composables =
           file
             .findChildrenByClass<KtFunction>()
-            .filter { it.isComposable }
+            .filter { it.toUElementOfType<UMethod>()?.isComposable == true }
             // We don't want to analyze composables that are extension functions, as they might be
             // things like
             // BoxScope which are legit, and we want to avoid false positives.
@@ -114,7 +154,7 @@ constructor(
             ISSUE,
             composable,
             context.getLocation(composable),
-            ISSUE.getExplanation(TextFormat.TEXT)
+            ISSUE.getExplanation(TextFormat.TEXT),
           )
         }
 
@@ -153,7 +193,7 @@ constructor(
               ISSUE,
               composable,
               context.getLocation(composable),
-              ISSUE.getExplanation(TextFormat.TEXT)
+              ISSUE.getExplanation(TextFormat.TEXT),
             )
           }
       }

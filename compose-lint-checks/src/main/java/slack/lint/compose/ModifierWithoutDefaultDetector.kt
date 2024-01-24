@@ -11,6 +11,8 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.definedInInterface
 import slack.lint.compose.util.isAbstract
@@ -35,11 +37,11 @@ class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeS
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<ModifierWithoutDefaultDetector>()
+        implementation = sourceImplementation<ModifierWithoutDefaultDetector>(),
       )
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     if (
       function.definedInInterface || function.isActual || function.isOverride || function.isAbstract
     )
@@ -47,10 +49,14 @@ class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeS
 
     // Look for modifier params in the composable signature, and if any without a default value is
     // found, error out.
-    function.valueParameters
-      .filter { it.isModifier }
-      .filterNot { it.hasDefaultValue() }
-      .forEach { modifierParameter ->
+    method.uastParameters
+      .withIndex()
+      .filter { (_, param) -> param.isModifier(context.evaluator) }
+      .filterNot { (_, param) ->
+        param.sourcePsi is KtParameter && (param.sourcePsi as KtParameter).hasDefaultValue()
+      }
+      .forEach { (i, _) ->
+        val modifierParameter = function.valueParameters[i]
 
         // This error is easily auto fixable, we just inject ` = Modifier` to the param
         val lastToken = modifierParameter.node.lastChildLeafOrSelf() as LeafPsiElement
@@ -68,7 +74,7 @@ class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeS
             .text(currentText)
             .with("$currentText = Modifier")
             .autoFix()
-            .build()
+            .build(),
         )
       }
   }

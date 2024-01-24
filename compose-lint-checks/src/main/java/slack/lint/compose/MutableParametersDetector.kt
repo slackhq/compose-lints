@@ -10,6 +10,7 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isTypeMutable
 import slack.lint.compose.util.sourceImplementation
@@ -29,19 +30,19 @@ class MutableParametersDetector : ComposableFunctionDetector(), SourceCodeScanne
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
-        implementation = sourceImplementation<MutableParametersDetector>()
+        implementation = sourceImplementation<MutableParametersDetector>(),
       )
   }
 
-  override fun visitComposable(context: JavaContext, function: KtFunction) {
-    function.valueParameters
-      .filter { it.isTypeMutable }
+  override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
+    method.uastParameters
+      .filter { it.isTypeMutable(context.evaluator) }
       .forEach { parameter ->
         context.report(
           ISSUE,
           parameter.typeReference,
           context.getLocation(parameter.typeReference),
-          ISSUE.getExplanation(TextFormat.TEXT)
+          ISSUE.getExplanation(TextFormat.TEXT),
         )
       }
   }

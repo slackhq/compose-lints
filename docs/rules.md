@@ -66,6 +66,15 @@ Passing `ArrayList<T>`, `MutableState<T>`, `ViewModel` are common examples of th
 
 Related rule: [`ComposeMutableParameters`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MutableParametersDetector.kt)
 
+### Unstable receivers
+
+In compose, all parameters must be stable or immutable in order for a composable function to be
+_restartable_ or _skippable_. This _includes_ the containing class or receiver, which the compose-compiler will treat as the 0th argument. Using an unstable receiver is usually a bug, so this lint offers a warning to raise this issue.
+
+More info: [Compose API Stability](https://developer.android.com/jetpack/compose/performance/stability)
+
+Related rule: [`UnstableReceiverDetector`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/UnstableReceiverDetector.kt)
+
 ### Do not emit content and return a result
 
 Composable functions should either emit layout content, or return a value, but not both.
@@ -301,13 +310,21 @@ Related rule: [`ComposeModifierWithoutDefault`](https://github.com/slackhq/compo
 
 ### Avoid Modifier extension factory functions
 
-Using `@Composable` builder functions for modifiers is not recommended, as they cause unnecessary recompositions. To avoid this, you should use `Modifier.composed` instead, as it limits recomposition to just the modifier instance, rather than the whole function tree.
+Using `@Composable` builder functions for modifiers is not recommended, as they cause unnecessary recompositions. To avoid this, you should use `Modifier.Node` instead, as it limits recomposition to just the modifier instance, rather than the whole function tree.
 
 Composed modifiers may be created outside of composition, shared across elements, and declared as top-level constants, making them more flexible than modifiers that can only be created via a `@Composable` function call, and easier to avoid accidentally sharing state across elements.
 
-More info: [Modifier extensions](https://developer.android.com/reference/kotlin/androidx/compose/ui/package-summary#extension-functions), [Composed modifiers in Jetpack Compose by Jorge Castillo](https://jorgecastillo.dev/composed-modifiers-in-jetpack-compose) and [Composed modifiers in API guidelines](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#composed-modifiers)
+More info: [Modifier extensions](https://developer.android.com/reference/kotlin/androidx/compose/ui/package-summary#extension-functions), [Composed modifiers in Jetpack Compose by Jorge Castillo](https://jorgecastillo.dev/composed-modifiers-in-jetpack-compose), [Custom Modifiers](https://developer.android.com/jetpack/compose/custom-modifiers), and [Composed modifiers in API guidelines](https://github.com/androidx/androidx/blob/androidx-main/compose/docs/compose-api-guidelines.md#composed-modifiers)
 
 Related rule: [`ComposeComposableModifier`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierComposableDetector.kt)
+
+### Migrate to `Modifier.Node`
+
+`Modifier.composed { ... }` is no longer recommended due to performance issues.
+
+You should use the [`Modifier.Node`](https://developer.android.com/jetpack/compose/custom-modifiers#implement-custom) API instead, as it was designed from the ground up to be far more performant than composed modifiers.
+
+Related rule: [`ComposeModifierComposed`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierComposedDetector.kt)
 
 ## Use Material 3
 

@@ -103,7 +103,7 @@ allprojects {
       endWithNewline()
       licenseHeaderFile(
         rootProject.file("spotless/spotless.kt"),
-        "(import|plugins|buildscript|dependencies|pluginManagement)"
+        "(import|plugins|buildscript|dependencies|pluginManagement)",
       )
     }
   }
@@ -111,15 +111,19 @@ allprojects {
 
 subprojects {
   pluginManager.withPlugin("java") {
-    configure<JavaPluginExtension> { toolchain { languageVersion.set(JavaLanguageVersion.of(20)) } }
+    configure<JavaPluginExtension> {
+      toolchain { languageVersion.set(libs.versions.jdk.map(JavaLanguageVersion::of)) }
+    }
 
-    tasks.withType<JavaCompile>().configureEach { options.release.set(11) }
+    tasks.withType<JavaCompile>().configureEach {
+      options.release.set(libs.versions.jvmTarget.map(String::toInt))
+    }
   }
 
   pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
     tasks.withType<KotlinCompile>().configureEach {
       compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_11)
+        jvmTarget.set(libs.versions.jvmTarget.map(JvmTarget::fromTarget))
         // TODO re-enable once lint uses Kotlin 1.5
         //  allWarningsAsErrors = true
         //  freeCompilerArgs = freeCompilerArgs + listOf("-progressive")
@@ -127,7 +131,7 @@ subprojects {
     }
   }
 
-  tasks.withType<Detekt>().configureEach { jvmTarget = "11" }
+  tasks.withType<Detekt>().configureEach { jvmTarget = libs.versions.jvmTarget.get() }
 
   pluginManager.withPlugin("com.vanniktech.maven.publish") {
     apply(plugin = "org.jetbrains.dokka")
