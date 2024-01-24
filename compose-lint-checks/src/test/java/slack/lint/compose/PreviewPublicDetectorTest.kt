@@ -44,26 +44,7 @@ class PreviewPublicDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
-  fun `passes for preview public composables that don't have preview params`() {
-    @Language("kotlin")
-    val code =
-      """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.tooling.preview.Preview
-
-        @Preview
-        @Composable
-        fun MyComposable() { }
-        @CombinedPreviews
-        @Composable
-        fun MyComposable() { }
-      """
-        .trimIndent()
-    lint().files(stubs, *commonStubs, kotlin(code)).run().expectClean()
-  }
-
-  @Test
-  fun `errors when a public preview composable is used when previewPublicOnlyIfParams is false`() {
+  fun testDocumentationExample() {
     @Language("kotlin")
     val code =
       """
@@ -79,7 +60,6 @@ class PreviewPublicDetectorTest : BaseComposeLintTest() {
       """
         .trimIndent()
     lint()
-      .configureOption(PreviewPublicDetector.PREVIEW_PUBLIC_ONLY_IF_PARAMS_OPTION, "false")
       .files(stubs, *commonStubs, kotlin(code))
       .run()
       .expect(

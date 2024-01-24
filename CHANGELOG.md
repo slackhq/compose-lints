@@ -15,6 +15,7 @@ Changelog
 - **Fix**: Fix allowed names config for Unit-returning functions.
 - **Fix**: Ignore context receivers in multiple content emissions lint.
 - **Fix**: Allow nullable types for trailing lambdas in `ComposeParameterOrder`.
+- **Fix**: Fix `ComposePreviewPublic` to always just require private, remove preview parameter configuration.
 - **Docs**: Improve docs for `ComposeContentEmitterReturningValues`
 - Build against lint-api `31.2.1`.
 - Test against lint-api `31.4.0-alpha03`.
