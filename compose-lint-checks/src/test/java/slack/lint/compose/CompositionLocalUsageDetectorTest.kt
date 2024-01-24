@@ -4,7 +4,6 @@
 package slack.lint.compose
 
 import com.android.tools.lint.checks.infrastructure.TestLintTask
-import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.junit.Test
@@ -13,7 +12,7 @@ class CompositionLocalUsageDetectorTest : BaseComposeLintTest() {
 
   override fun getDetector(): Detector = CompositionLocalUsageDetector()
 
-  override fun getIssues(): List<Issue> = listOf(CompositionLocalUsageDetector.ISSUE)
+  override fun getIssues(): List<Issue> = CompositionLocalUsageDetector.ISSUES.toList()
 
   override fun lint(): TestLintTask {
     return super.lint()
@@ -37,37 +36,17 @@ class CompositionLocalUsageDetectorTest : BaseComposeLintTest() {
       .run()
       .expectWarningCount(4)
       .expect(
-        testMode = TestMode.PARENTHESIZED,
-        expectedText =
-          """
-          src/test.kt:2: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
-                          private val LocalApple = (staticCompositionLocalOf<String> { "Apple" })
-                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          src/test.kt:3: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
-                          internal val LocalPlum: String = (staticCompositionLocalOf { "Plum" })
-                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          src/test.kt:4: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
-                          val LocalPrune = (compositionLocalOf { "Prune" })
-                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          src/test.kt:5: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
-                          private val LocalKiwi: String = (compositionLocalOf { "Kiwi" })
-                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          0 errors, 4 warnings
         """
-            .trimIndent(),
-      )
-      .expect(
-        """
-        src/test.kt:2: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
+        src/test.kt:2: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided. See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
                         private val LocalApple = staticCompositionLocalOf<String> { "Apple" }
                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        src/test.kt:3: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
+        src/test.kt:3: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided. See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
                         internal val LocalPlum: String = staticCompositionLocalOf { "Plum" }
                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        src/test.kt:4: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
+        src/test.kt:4: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided. See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
                         val LocalPrune = compositionLocalOf { "Prune" }
                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        src/test.kt:5: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
+        src/test.kt:5: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided. See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
                         private val LocalKiwi: String = compositionLocalOf { "Kiwi" }
                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         0 errors, 4 warnings
@@ -90,5 +69,36 @@ class CompositionLocalUsageDetectorTest : BaseComposeLintTest() {
       .allowCompilationErrors()
       .run()
       .expectClean()
+  }
+
+  @Test
+  fun `getter is an error`() {
+    lint()
+      .files(
+        kotlin(
+          """
+                val LocalBanana get() = compositionLocalOf { "Prune" }
+                val LocalPotato get() {
+                  return compositionLocalOf { "Prune" }
+                }
+            """
+        )
+      )
+      .allowCompilationErrors()
+      .run()
+      .expectErrorCount(2)
+      .expect(
+        expectedText =
+          """
+        src/test.kt:2: Error: `CompositionLocal`s should be singletons and not use getters. Otherwise a new instance will be returned every call. [ComposeCompositionLocalGetter]
+                        val LocalBanana get() = compositionLocalOf { "Prune" }
+                                        ~~~
+        src/test.kt:3: Error: `CompositionLocal`s should be singletons and not use getters. Otherwise a new instance will be returned every call. [ComposeCompositionLocalGetter]
+                        val LocalPotato get() {
+                                        ~~~
+        2 errors, 0 warnings
+        """
+            .trimIndent()
+      )
   }
 }

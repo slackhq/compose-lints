@@ -97,6 +97,7 @@ class PreviewNamingDetectorTest : BaseComposeLintTest() {
 
         @Preview
         @Preview
+        @Repeatable
         annotation class BananaPreview
         @BananaPreview
         @BananaPreview
@@ -105,6 +106,7 @@ class PreviewNamingDetectorTest : BaseComposeLintTest() {
         .trimIndent()
     lint()
       .files(*commonStubs, kotlin(code))
+      .allowDuplicates()
       .run()
       .expect(
         """
@@ -112,7 +114,7 @@ class PreviewNamingDetectorTest : BaseComposeLintTest() {
           See https://slackhq.github.io/compose-lints/rules/#naming-multipreview-annotations-properly for more information. [ComposePreviewNaming]
           @Preview
           ^
-          src/BananaPreview.kt:6: Error: Preview annotations with 2 preview annotations should end with the Previews suffix.
+          src/BananaPreview.kt:7: Error: Preview annotations with 2 preview annotations should end with the Previews suffix.
           See https://slackhq.github.io/compose-lints/rules/#naming-multipreview-annotations-properly for more information. [ComposePreviewNaming]
           @BananaPreview
           ^
