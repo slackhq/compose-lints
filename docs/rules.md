@@ -360,6 +360,14 @@ Material 3 (M3) reached stable in October 2022. In apps that have migrated to M3
     </issue>
     ```
 
+!!! note "Name mangling"
+    Kotlin will mangle the names of internal functions, which may match when resolving functions due to overloads. compose-lints will attempt to unmangle these names to match any in an allow-list, but can be disabled in case of any issues by setting the `enable-mangling-workaround` option in `lint.xml` to false.
+    ```xml
+    <issue id="ComposeM2Api"  severity="error">
+       <option name="enable-mangling-workaround" value="false" />
+    </issue>
+    ```
+
 **Related docs links**
 
 - Announcement post: https://material.io/blog/material-3-compose-stable
