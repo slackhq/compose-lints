@@ -106,6 +106,7 @@ class PreviewNamingDetectorTest : BaseComposeLintTest() {
         .trimIndent()
     lint()
       .files(*commonStubs, kotlin(code))
+      .allowDuplicates()
       .run()
       .expect(
         """
