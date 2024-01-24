@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParameter
@@ -189,6 +190,17 @@ val KtProperty.declaresCompositionLocal: Boolean
 
     return initializer is KtCallExpression &&
       initializer.referenceExpression()?.text in CompositionLocalReferenceExpressions
+  }
+
+val KtPropertyAccessor.declaresCompositionLocal: Boolean
+  get() {
+    if (!isGetter) return false
+    val body = bodyExpression ?: bodyBlockExpression
+    val expression =
+      body?.unwrapBlock()?.unwrapReturnExpression()?.unwrapParenthesis() ?: return false
+
+    return expression is KtCallExpression &&
+      expression.referenceExpression()?.text in CompositionLocalReferenceExpressions
   }
 
 private val CompositionLocalReferenceExpressions by
