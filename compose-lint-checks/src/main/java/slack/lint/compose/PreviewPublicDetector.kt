@@ -65,7 +65,8 @@ constructor(
     // If the method is public, none of it's params should be tagged as preview
     // This is configurable by the `previewPublicOnlyIfParams` config value
     if (previewPublicOnlyIfParams.value) {
-      if (method.uastParameters.none { it.isPreviewParameter }) return
+      // The empty check is important because none() will otherwise also return true on an empty list
+      if (method.uastParameters.isNotEmpty() && method.uastParameters.none { it.isPreviewParameter }) return
     }
 
     // If we got here, it's a public method in a @Preview composable with a @PreviewParameter
