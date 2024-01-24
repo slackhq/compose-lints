@@ -24,7 +24,7 @@ class ComposeLintsIssueRegistry : IssueRegistry() {
   override val issues: List<Issue> =
     listOf(
       *ComposableFunctionNamingDetector.ISSUES,
-      CompositionLocalUsageDetector.ISSUE,
+      *CompositionLocalUsageDetector.ISSUES,
       ContentEmitterReturningValuesDetector.ISSUE,
       ModifierComposableDetector.ISSUE,
       ModifierMissingDetector.ISSUE,
@@ -41,5 +41,6 @@ class ComposeLintsIssueRegistry : IssueRegistry() {
       ViewModelForwardingDetector.ISSUE,
       ViewModelInjectionDetector.ISSUE,
       ModifierComposedDetector.ISSUE,
+      UnstableReceiverDetector.ISSUE,
     )
 }

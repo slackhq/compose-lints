@@ -66,6 +66,15 @@ Passing `ArrayList<T>`, `MutableState<T>`, `ViewModel` are common examples of th
 
 Related rule: [`ComposeMutableParameters`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MutableParametersDetector.kt)
 
+### Unstable receivers
+
+In compose, all parameters must be stable or immutable in order for a composable function to be
+_restartable_ or _skippable_. This _includes_ the containing class or receiver, which the compose-compiler will treat as the 0th argument. Using an unstable receiver is usually a bug, so this lint offers a warning to raise this issue.
+
+More info: [Compose API Stability](https://developer.android.com/jetpack/compose/performance/stability)
+
+Related rule: [`UnstableReceiverDetector`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/UnstableReceiverDetector.kt)
+
 ### Do not emit content and return a result
 
 Composable functions should either emit layout content, or return a value, but not both.
