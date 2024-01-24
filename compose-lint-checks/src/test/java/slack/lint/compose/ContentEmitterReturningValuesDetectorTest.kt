@@ -13,7 +13,7 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
 
   override fun getDetector(): Detector = ContentEmitterReturningValuesDetector()
 
-  override fun getIssues(): List<Issue> = listOf(ContentEmitterReturningValuesDetector.ISSUE)
+  override fun getIssues(): List<Issue> = listOf(ContentEmitterReturningValuesDetector.ISSUE, MultipleContentEmittersDetector.ISSUE)
 
   override fun lint(): TestLintTask {
     return super.lint()
@@ -29,14 +29,9 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
     val code =
       """
         @Composable
-        fun Something() {
-            val something = rememberWhatever()
-            Column {
-                Text("Hi")
-                Text("Hola")
-            }
-            LaunchedEffect(Unit) {
-            }
+        fun Example(modifier: Modifier = Modifier) {
+            Box(modifier = modifier)
+            Box(Modifier)
         }
       """
         .trimIndent()
