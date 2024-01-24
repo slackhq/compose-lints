@@ -5,7 +5,8 @@ Changelog
 --------------
 
 - **New**: Implement `ModifierComposed` check to lint against use of `Modifier.composed`, which is no longer recommended in favor of the new `Modifier.Node` API.
-- **New**: Implement `ComposeUnstableReceiver` check to warn when composable extension functions or composables instance functions have unstable receivers/containing classes. 
+- **New**: Implement `ComposeUnstableReceiver` check to warn when composable extension functions or composables instance functions have unstable receivers/containing classes.
+- **New**: Check for property accessors with composition locals.
 - **Enhancement**: The `ComposeComposableModifier` message now recommends the new `Modifier.Node` API.
 - **Enhancement**: Make lints **significantly** more robust to edge cases like typealiases, import aliases, parentheses, fully-qualified references, and whitespace. Our tests now cover all these cases.
 - **Enhancement**: Update `@Preview` detection to also detect Compose Desktop's own `@Preview` annotation.
