@@ -3,8 +3,8 @@ kotlin = "1.9.22"
 ktfmt = "0.47"
 jdk = "21"
 jvmTarget = "17"
-lint = "31.2.1"
-lint-latest = "31.4.0-alpha04"
+lint = "31.2.2"
+lint-latest = "31.4.0-alpha06"
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.4" }
@@ -13,7 +13,7 @@ lint = { id = "com.android.lint", version = "8.4.0-alpha04" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version = "1.9.22-1.0.17" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.27.0" }
-spotless = { id = "com.diffplug.spotless", version = "6.24.0" }
+spotless = { id = "com.diffplug.spotless", version = "6.25.0" }
 
 [libraries]
 autoService-annotations = "com.google.auto.service:auto-service-annotations:1.1.1"
