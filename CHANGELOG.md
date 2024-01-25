@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.3.1
+-----
+
+_2024-01-25_
+
+- Lower the lint API back to `14`, not `15`.
+
 1.3.0
 -----
 
