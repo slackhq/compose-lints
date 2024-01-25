@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html class="no-js">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>slack.lint.compose.util</title>
     <link href="../../images/logo-icon.svg" rel="icon" type="image/svg">
     <script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
     if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -18,12 +19,13 @@
         }
     }
     </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
 <script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async="async"></script>
 <link href="../../styles/style.css" rel="Stylesheet">
-<link href="../../styles/jetbrains-mono.css" rel="Stylesheet">
 <link href="../../styles/main.css" rel="Stylesheet">
 <link href="../../styles/prism.css" rel="Stylesheet">
 <link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
 <script type="text/javascript" src="../../scripts/clipboard.js" async="async"></script>
 <script type="text/javascript" src="../../scripts/navigation-loader.js" async="async"></script>
 <script type="text/javascript" src="../../scripts/platform-content-handler.js" async="async"></script>
@@ -32,28 +34,33 @@
 <script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
 </head>
 <body>
-<div class="navigation-wrapper" id="navigation-wrapper">
-    <div id="leftToggler"><span class="icon-toggler"></span></div>
-    <div class="library-name">
-            <a href="../../index.html">
-                    <span>compose-lint-checks</span>
-            </a>
-    </div>
-    <div>
-    </div>
-    <div class="pull-right d-flex">
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../index.html">
+                            compose-lint-checks
+                    </a>
+            </div>
+            <div class="library-version">
+            </div>
+        </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":compose-lint-checks:dokkaHtml/main">jvm</button>
         </div>
-        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
-        <div id="searchBar"></div>
     </div>
-</div>
-<div id="container">
-    <div id="leftColumn">
-        <div id="sideMenu"></div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
     </div>
-    <div id="main">
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
 <div class="main-content" data-page-type="package" id="content" pageIds="compose-lint-checks::slack.lint.compose.util////PointingToDeclaration//-498228593">
   <div class="breadcrumbs"><a href="../../index.html">compose-lint-checks</a><span class="delimiter">/</span><span class="current">slack.lint.compose.util</span></div>
   <div class="cover ">
@@ -75,6 +82,21 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-boolean-lint-option/index.html">BooleanLintOption</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">option<span class="token operator">: </span><span data-unresolved-link="com.android.tools.lint.detector.api/BooleanOption///PointingToDeclaration/">BooleanOption</span></span></span><span class="token punctuation">)</span> : <a href="-lint-option/index.html">LintOption</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1793257371%2FClasslikes%2F-498228593" anchor-label="KnownStableConstructs" id="1793257371%2FClasslikes%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+          <div class="table-row" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-known-stable-constructs/index.html"><span>Known</span><wbr></wbr><span>Stable</span><wbr></wbr><span><span>Constructs</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1793257371%2FClasslikes%2F-498228593"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="-known-stable-constructs/index.html">KnownStableConstructs</a></div><div class="brief "><p class="paragraph">Sets of known external stable constructs to the compose-compiler.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -143,7 +165,22 @@
       </div>
       <div data-togglable="PROPERTY">
         <h2 class="">Properties</h2>
-        <div class="table"><a data-name="-1391692815%2FProperties%2F-498228593" anchor-label="ComposableEmittersListRegex" id="-1391692815%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+        <div class="table"><a data-name="-392068393%2FProperties%2F-498228593" anchor-label="allSupertypes" id="-392068393%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="all-supertypes.html"><span>all</span><wbr></wbr><span><span>Supertypes</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-392068393%2FProperties%2F-498228593"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="com.intellij.psi/PsiClass///PointingToDeclaration/">PsiClass</span><span class="token punctuation">.</span><a href="all-supertypes.html">allSupertypes</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html">Sequence</a><span class="token operator">&lt;</span><span class="token keyword"></span><span data-unresolved-link="com.intellij.psi/PsiClass///PointingToDeclaration/">PsiClass</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1391692815%2FProperties%2F-498228593" anchor-label="ComposableEmittersListRegex" id="-1391692815%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
           <div class="table-row" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
@@ -158,17 +195,17 @@
               </div>
             </div>
           </div>
-<a data-name="-1870256315%2FProperties%2F-498228593" anchor-label="declaresCompositionLocal" id="-1870256315%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+<a data-name="-925701165%2FProperties%2F-498228593" anchor-label="declaresCompositionLocal" id="-925701165%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
           <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="declares-composition-local.html"><span>declares</span><wbr></wbr><span>Composition</span><wbr></wbr><span><span>Local</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1870256315%2FProperties%2F-498228593"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-925701165%2FProperties%2F-498228593"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="org.jetbrains.kotlin.psi/KtProperty///PointingToDeclaration/">KtProperty</span><span class="token punctuation">.</span><a href="declares-composition-local.html">declaresCompositionLocal</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="org.jetbrains.kotlin.psi/KtProperty///PointingToDeclaration/">KtProperty</span><span class="token punctuation">.</span><a href="declares-composition-local.html">declaresCompositionLocal</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="org.jetbrains.kotlin.psi/KtPropertyAccessor///PointingToDeclaration/">KtPropertyAccessor</span><span class="token punctuation">.</span><a href="declares-composition-local.html">declaresCompositionLocal</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -233,17 +270,17 @@
               </div>
             </div>
           </div>
-<a data-name="-824796009%2FProperties%2F-498228593" anchor-label="isComposable" id="-824796009%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+<a data-name="1390969539%2FProperties%2F-498228593" anchor-label="isComposable" id="1390969539%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
           <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="is-composable.html"><span>is</span><wbr></wbr><span><span>Composable</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-824796009%2FProperties%2F-498228593"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1390969539%2FProperties%2F-498228593"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="org.jetbrains.kotlin.psi/KtAnnotated///PointingToDeclaration/">KtAnnotated</span><span class="token punctuation">.</span><a href="is-composable.html">isComposable</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="org.jetbrains.uast/UAnnotated///PointingToDeclaration/">UAnnotated</span><span class="token punctuation">.</span><a href="is-composable.html">isComposable</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -259,6 +296,21 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="org.jetbrains.kotlin.psi/KtFunction///PointingToDeclaration/">KtFunction</span><span class="token punctuation">.</span><a href="is-expect.html">isExpect</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1509703460%2FProperties%2F-498228593" anchor-label="isFunctionalInterface" id="1509703460%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-functional-interface.html"><span>is</span><wbr></wbr><span>Functional</span><wbr></wbr><span><span>Interface</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1509703460%2FProperties%2F-498228593"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="com.intellij.psi/PsiClass///PointingToDeclaration/">PsiClass</span><span class="token punctuation">.</span><a href="is-functional-interface.html">isFunctionalInterface</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -323,47 +375,32 @@
               </div>
             </div>
           </div>
-<a data-name="-264674746%2FProperties%2F-498228593" anchor-label="isPreview" id="-264674746%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+<a data-name="419836916%2FProperties%2F-498228593" anchor-label="isPreview" id="419836916%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
           <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="is-preview.html"><span>is</span><wbr></wbr><span><span>Preview</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-264674746%2FProperties%2F-498228593"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="419836916%2FProperties%2F-498228593"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="org.jetbrains.kotlin.psi/KtAnnotated///PointingToDeclaration/">KtAnnotated</span><span class="token punctuation">.</span><a href="is-preview.html">isPreview</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="org.jetbrains.uast/UAnnotated///PointingToDeclaration/">UAnnotated</span><span class="token punctuation">.</span><a href="is-preview.html">isPreview</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1240815938%2FProperties%2F-498228593" anchor-label="isPreviewAnnotation" id="1240815938%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
-          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="is-preview-annotation.html"><span>is</span><wbr></wbr><span>Preview</span><wbr></wbr><span><span>Annotation</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1240815938%2FProperties%2F-498228593"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="org.jetbrains.kotlin.psi/KtAnnotationEntry///PointingToDeclaration/">KtAnnotationEntry</span><span class="token punctuation">.</span><a href="is-preview-annotation.html">isPreviewAnnotation</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1721412317%2FProperties%2F-498228593" anchor-label="isPreviewParameter" id="-1721412317%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+<a data-name="-1302419512%2FProperties%2F-498228593" anchor-label="isPreviewParameter" id="-1302419512%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
           <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="is-preview-parameter.html"><span>is</span><wbr></wbr><span>Preview</span><wbr></wbr><span><span>Parameter</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1721412317%2FProperties%2F-498228593"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1302419512%2FProperties%2F-498228593"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="org.jetbrains.kotlin.psi/KtAnnotated///PointingToDeclaration/">KtAnnotated</span><span class="token punctuation">.</span><a href="is-preview-parameter.html">isPreviewParameter</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="org.jetbrains.uast/UParameter///PointingToDeclaration/">UParameter</span><span class="token punctuation">.</span><a href="is-preview-parameter.html">isPreviewParameter</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -413,62 +450,47 @@
               </div>
             </div>
           </div>
-<a data-name="27320204%2FProperties%2F-498228593" anchor-label="isTypeMutable" id="27320204%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
-          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="is-type-mutable.html"><span>is</span><wbr></wbr><span>Type</span><wbr></wbr><span><span>Mutable</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="27320204%2FProperties%2F-498228593"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="org.jetbrains.kotlin.psi/KtCallableDeclaration///PointingToDeclaration/">KtCallableDeclaration</span><span class="token punctuation">.</span><a href="is-type-mutable.html">isTypeMutable</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="159098978%2FProperties%2F-498228593" anchor-label="isTypeUnstableCollection" id="159098978%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
-          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="is-type-unstable-collection.html"><span>is</span><wbr></wbr><span>Type</span><wbr></wbr><span>Unstable</span><wbr></wbr><span><span>Collection</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="159098978%2FProperties%2F-498228593"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="org.jetbrains.kotlin.psi/KtCallableDeclaration///PointingToDeclaration/">KtCallableDeclaration</span><span class="token punctuation">.</span><a href="is-type-unstable-collection.html">isTypeUnstableCollection</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="568154294%2FProperties%2F-498228593" anchor-label="KnownMutableCommonTypesRegex" id="568154294%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+<a data-name="980277031%2FProperties%2F-498228593" anchor-label="KnownMutableCommonTypesSimpleNames" id="980277031%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
           <div class="table-row" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-known-mutable-common-types-regex.html"><span>Known</span><wbr></wbr><span>Mutable</span><wbr></wbr><span>Common</span><wbr></wbr><span>Types</span><wbr></wbr><span><span>Regex</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="568154294%2FProperties%2F-498228593"></span>
+                  <div><a href="-known-mutable-common-types-simple-names.html"><span>Known</span><wbr></wbr><span>Mutable</span><wbr></wbr><span>Common</span><wbr></wbr><span>Types</span><wbr></wbr><span>Simple</span><wbr></wbr><span><span>Names</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="980277031%2FProperties%2F-498228593"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-known-mutable-common-types-regex.html">KnownMutableCommonTypesRegex</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html">Sequence</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/-regex/index.html">Regex</a><span class="token operator">&gt;</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-known-mutable-common-types-simple-names.html">KnownMutableCommonTypesSimpleNames</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1647131131%2FProperties%2F-498228593" anchor-label="KnownUnstableCollectionTypesRegex" id="-1647131131%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+<a data-name="998219831%2FProperties%2F-498228593" anchor-label="KnownMutableKotlinCollections" id="998219831%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
           <div class="table-row" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-known-unstable-collection-types-regex.html"><span>Known</span><wbr></wbr><span>Unstable</span><wbr></wbr><span>Collection</span><wbr></wbr><span>Types</span><wbr></wbr><span><span>Regex</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1647131131%2FProperties%2F-498228593"></span>
+                  <div><a href="-known-mutable-kotlin-collections.html"><span>Known</span><wbr></wbr><span>Mutable</span><wbr></wbr><span>Kotlin</span><wbr></wbr><span><span>Collections</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="998219831%2FProperties%2F-498228593"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-known-unstable-collection-types-regex.html">KnownUnstableCollectionTypesRegex</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html">Sequence</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/-regex/index.html">Regex</a><span class="token operator">&gt;</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-known-mutable-kotlin-collections.html">KnownMutableKotlinCollections</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html">Sequence</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/-regex/index.html">Regex</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Lint can't read &quot;Mutable*&quot; Kotlin collections that are compiler intrinsics.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2123248178%2FProperties%2F-498228593" anchor-label="KnownUnstableCollectionTypes" id="-2123248178%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+          <div class="table-row" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-known-unstable-collection-types.html"><span>Known</span><wbr></wbr><span>Unstable</span><wbr></wbr><span>Collection</span><wbr></wbr><span><span>Types</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2123248178%2FProperties%2F-498228593"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-known-unstable-collection-types.html">KnownUnstableCollectionTypes</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html">Sequence</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -503,47 +525,47 @@
               </div>
             </div>
           </div>
-<a data-name="219674046%2FProperties%2F-498228593" anchor-label="PreviewNameRegex" id="219674046%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+<a data-name="-2079304785%2FProperties%2F-498228593" anchor-label="ModifierQualifiedNames" id="-2079304785%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
           <div class="table-row" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-preview-name-regex.html"><span>Preview</span><wbr></wbr><span>Name</span><wbr></wbr><span><span>Regex</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="219674046%2FProperties%2F-498228593"></span>
+                  <div><a href="-modifier-qualified-names.html"><span>Modifier</span><wbr></wbr><span>Qualified</span><wbr></wbr><span><span>Names</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2079304785%2FProperties%2F-498228593"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-preview-name-regex.html">PreviewNameRegex</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/-regex/index.html">Regex</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-modifier-qualified-names.html">ModifierQualifiedNames</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-100987284%2FProperties%2F-498228593" anchor-label="returnsValue" id="-100987284%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
-          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
+<a data-name="-1321792997%2FProperties%2F-498228593" anchor-label="PREVIEW_ANNOTATIONS" id="-1321792997%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+          <div class="table-row" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="returns-value.html"><span>returns</span><wbr></wbr><span><span>Value</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-100987284%2FProperties%2F-498228593"></span>
+                  <div><a href="-p-r-e-v-i-e-w_-a-n-n-o-t-a-t-i-o-n-s.html"><span><span>PREVIEW_ANNOTATIONS</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1321792997%2FProperties%2F-498228593"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="org.jetbrains.kotlin.psi/KtFunction///PointingToDeclaration/">KtFunction</span><span class="token punctuation">.</span><a href="returns-value.html">returnsValue</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-p-r-e-v-i-e-w_-a-n-n-o-t-a-t-i-o-n-s.html">PREVIEW_ANNOTATIONS</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="837718537%2FProperties%2F-498228593" anchor-label="startOffsetFromName" id="837718537%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
-          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
+<a data-name="-1563063270%2FProperties%2F-498228593" anchor-label="STABILITY_ANNOTATIONS" id="-1563063270%2FProperties%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+          <div class="table-row" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="start-offset-from-name.html"><span>start</span><wbr></wbr><span>Offset</span><wbr></wbr><span>From</span><wbr></wbr><span><span>Name</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="837718537%2FProperties%2F-498228593"></span>
+                  <div><a href="-s-t-a-b-i-l-i-t-y_-a-n-n-o-t-a-t-i-o-n-s.html"><span><span>STABILITY_ANNOTATIONS</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1563063270%2FProperties%2F-498228593"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><span data-unresolved-link="com.intellij.psi/PsiNameIdentifierOwner///PointingToDeclaration/">PsiNameIdentifierOwner</span><span class="token punctuation">.</span><a href="start-offset-from-name.html">startOffsetFromName</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="-s-t-a-b-i-l-i-t-y_-a-n-n-o-t-a-t-i-o-n-s.html">STABILITY_ANNOTATIONS</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -597,21 +619,6 @@
               </div>
             </div>
           </div>
-<a data-name="188290447%2FFunctions%2F-498228593" anchor-label="findDirectFirstChildByClass" id="188290447%2FFunctions%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
-          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="find-direct-first-child-by-class.html"><span>find</span><wbr></wbr><span>Direct</span><wbr></wbr><span>First</span><wbr></wbr><span>Child</span><wbr></wbr><span>By</span><wbr></wbr><span><span>Class</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="188290447%2FFunctions%2F-498228593"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="find-direct-first-child-by-class.html">T</a><span class="token operator"> : </span><span data-unresolved-link="com.intellij.psi/PsiElement///PointingToDeclaration/">PsiElement</span><span class="token operator">&gt; </span><span data-unresolved-link="com.intellij.psi/PsiElement///PointingToDeclaration/">PsiElement</span><span class="token punctuation">.</span><a href="find-direct-first-child-by-class.html"><span class="token function">findDirectFirstChildByClass</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="find-direct-first-child-by-class.html">T</a><span class="token operator">?</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
 <a data-name="-879673199%2FFunctions%2F-498228593" anchor-label="firstChildLeafOrSelf" id="-879673199%2FFunctions%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
           <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
             <div class="main-subrow keyValue ">
@@ -627,6 +634,21 @@
               </div>
             </div>
           </div>
+<a data-name="1030200898%2FFunctions%2F-498228593" anchor-label="isModifier" id="1030200898%2FFunctions%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-modifier.html"><span>is</span><wbr></wbr><span><span>Modifier</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1030200898%2FFunctions%2F-498228593"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span data-unresolved-link="org.jetbrains.uast/UParameter///PointingToDeclaration/">UParameter</span><span class="token punctuation">.</span><a href="is-modifier.html"><span class="token function">isModifier</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">evaluator<span class="token operator">: </span><span data-unresolved-link="com.android.tools.lint.client.api/JavaEvaluator///PointingToDeclaration/">JavaEvaluator</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-1973344787%2FFunctions%2F-498228593" anchor-label="isPartOfComment" id="-1973344787%2FFunctions%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
           <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
             <div class="main-subrow keyValue ">
@@ -638,6 +660,51 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span data-unresolved-link="com.intellij.lang/ASTNode///PointingToDeclaration/">ASTNode</span><span class="token punctuation">.</span><a href="is-part-of-comment.html"><span class="token function">isPartOfComment</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="906382506%2FFunctions%2F-498228593" anchor-label="isStable" id="906382506%2FFunctions%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-stable.html"><span>is</span><wbr></wbr><span><span>Stable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="906382506%2FFunctions%2F-498228593"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span data-unresolved-link="com.intellij.psi/PsiType///PointingToDeclaration/">PsiType</span><span class="token punctuation">.</span><a href="is-stable.html"><span class="token function">isStable</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">evaluator<span class="token operator">: </span><span data-unresolved-link="com.android.tools.lint.client.api/JavaEvaluator///PointingToDeclaration/">JavaEvaluator</span><span class="token punctuation">, </span></span><span class="parameter ">resolveUClass<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span class="token keyword"></span><span data-unresolved-link="org.jetbrains.uast/UClass///PointingToDeclaration/">UClass</span><span class="token operator">?</span><span class="token operator"> = </span>{ evaluator.getTypeClass(this)?.toUElementOfType&lt;UClass&gt;() }</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1846517495%2FFunctions%2F-498228593" anchor-label="isTypeMutable" id="1846517495%2FFunctions%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-type-mutable.html"><span>is</span><wbr></wbr><span>Type</span><wbr></wbr><span><span>Mutable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1846517495%2FFunctions%2F-498228593"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span data-unresolved-link="org.jetbrains.uast/UParameter///PointingToDeclaration/">UParameter</span><span class="token punctuation">.</span><a href="is-type-mutable.html"><span class="token function">isTypeMutable</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">evaluator<span class="token operator">: </span><span data-unresolved-link="com.android.tools.lint.client.api/JavaEvaluator///PointingToDeclaration/">JavaEvaluator</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="326356301%2FFunctions%2F-498228593" anchor-label="isTypeUnstableCollection" id="326356301%2FFunctions%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-type-unstable-collection.html"><span>is</span><wbr></wbr><span>Type</span><wbr></wbr><span>Unstable</span><wbr></wbr><span><span>Collection</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="326356301%2FFunctions%2F-498228593"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span data-unresolved-link="org.jetbrains.uast/UParameter///PointingToDeclaration/">UParameter</span><span class="token punctuation">.</span><a href="is-type-unstable-collection.html"><span class="token function">isTypeUnstableCollection</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">evaluator<span class="token operator">: </span><span data-unresolved-link="com.android.tools.lint.client.api/JavaEvaluator///PointingToDeclaration/">JavaEvaluator</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -668,6 +735,21 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">.</span><a href="matches-any-of.html"><span class="token function">matchesAnyOf</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">patterns<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html">Sequence</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/-regex/index.html">Regex</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1616930099%2FFunctions%2F-498228593" anchor-label="modifierParameter" id="1616930099%2FFunctions%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="modifier-parameter.html"><span>modifier</span><wbr></wbr><span><span>Parameter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1616930099%2FFunctions%2F-498228593"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span data-unresolved-link="org.jetbrains.uast/UMethod///PointingToDeclaration/">UMethod</span><span class="token punctuation">.</span><a href="modifier-parameter.html"><span class="token function">modifierParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">evaluator<span class="token operator">: </span><span data-unresolved-link="com.android.tools.lint.client.api/JavaEvaluator///PointingToDeclaration/">JavaEvaluator</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="org.jetbrains.uast/UParameter///PointingToDeclaration/">UParameter</span><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -713,6 +795,21 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span data-unresolved-link="com.intellij.lang/ASTNode///PointingToDeclaration/">ASTNode</span><span class="token punctuation">.</span><a href="parent.html"><span class="token function">parent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p<span class="token operator">: </span><span class="token punctuation">(</span><span class="token keyword"></span><span data-unresolved-link="com.intellij.lang/ASTNode///PointingToDeclaration/">ASTNode</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">strict<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.intellij.lang/ASTNode///PointingToDeclaration/">ASTNode</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1860597249%2FFunctions%2F-498228593" anchor-label="returnsUnitOrVoid" id="-1860597249%2FFunctions%2F-498228593" data-filterable-set=":compose-lint-checks:dokkaHtml/main"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":compose-lint-checks:dokkaHtml/main" data-filterable-set=":compose-lint-checks:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="returns-unit-or-void.html"><span>returns</span><wbr></wbr><span>Unit</span><wbr></wbr><span>Or</span><wbr></wbr><span><span>Void</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1860597249%2FFunctions%2F-498228593"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span data-unresolved-link="org.jetbrains.uast/UMethod///PointingToDeclaration/">UMethod</span><span class="token punctuation">.</span><a href="returns-unit-or-void.html"><span class="token function">returnsUnitOrVoid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">evaluator<span class="token operator">: </span><span data-unresolved-link="com.android.tools.lint.client.api/JavaEvaluator///PointingToDeclaration/">JavaEvaluator</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -768,11 +865,12 @@
   </div>
 </div>
       <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span
                 class="pull-right"><span>Generated by </span><a
                 href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
       </div>
+            </div>
+        </div>
     </div>
-</div>
 </body>
 </html>
