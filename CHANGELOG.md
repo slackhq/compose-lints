@@ -1,8 +1,10 @@
 Changelog
 =========
 
-**Unreleased**
---------------
+1.2.0
+-----
+
+_2023-04-19_
 
 - **New**: Implement `ModifierComposed` check to lint against use of `Modifier.composed`, which is no longer recommended in favor of the new `Modifier.Node` API.
 - **New**: Implement `ComposeUnstableReceiver` check to warn when composable extension functions or composables instance functions have unstable receivers/containing classes.
@@ -18,8 +20,8 @@ Changelog
 - **Fix**: Best-effort work around name mangling when comparing name in M2ApiDetector's allow list.
 - **Fix**: Fix `ComposePreviewPublic` to always just require private, remove preview parameter configuration.
 - **Docs**: Improve docs for `ComposeContentEmitterReturningValues`
-- Build against lint-api `31.2.1`.
-- Test against lint-api `31.4.0-alpha05`.
+- Build against lint-api `31.2.2`.
+- Test against lint-api `31.4.0-alpha06`.
 - Raise Kotlin apiVersion/languageVersion to `1.9.0`.
 
 Special thanks to [@jzbrooks](https://github.com/jzbrooks), [@joeMalebe](https://github.com/joeMalebe), [@dellisd](https://github.com/dellisd) for contributing to this release!
