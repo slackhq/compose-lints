@@ -1,10 +1,10 @@
 Changelog
 =========
 
-1.2.0
+1.3.0
 -----
 
-_2023-04-19_
+_2024-01-25_
 
 - **New**: Implement `ModifierComposed` check to lint against use of `Modifier.composed`, which is no longer recommended in favor of the new `Modifier.Node` API.
 - **New**: Implement `ComposeUnstableReceiver` check to warn when composable extension functions or composables instance functions have unstable receivers/containing classes.
