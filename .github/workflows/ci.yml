@@ -32,7 +32,7 @@ jobs:
           java-version: '21'
 
       - name: Set up gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
 
       - name: Build
         run: ./gradlew check
