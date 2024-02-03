@@ -31,8 +31,8 @@ jobs:
           distribution: 'zulu'
           java-version: '21'
 
-      - name: Set up gradle
-        uses: gradle/gradle-build-action@v2
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Build
         run: ./gradlew check
