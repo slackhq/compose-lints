@@ -3,6 +3,7 @@
 package slack.lint.compose
 
 import com.android.tools.lint.client.api.UElementHandler
+import com.android.tools.lint.detector.api.BooleanOption
 import com.android.tools.lint.detector.api.Category.Companion.CORRECTNESS
 import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
@@ -23,8 +24,10 @@ import slack.lint.compose.util.sourceImplementation
 
 internal class M2ApiDetector
 @JvmOverloads
-constructor(private val allowList: StringSetLintOption = StringSetLintOption(ALLOW_LIST)) :
-  OptionLoadingDetector(allowList), SourceCodeScanner {
+constructor(
+  private val allowList: StringSetLintOption = StringSetLintOption(ALLOW_LIST),
+  private val workAroundMangling: BooleanOption = MANGLING_WORKAROUND,
+) : OptionLoadingDetector(allowList), SourceCodeScanner {
 
   companion object {
     private const val M2Package = "androidx.compose.material"
@@ -35,6 +38,14 @@ constructor(private val allowList: StringSetLintOption = StringSetLintOption(ALL
         "A comma-separated list of APIs in androidx.compose.material that should be allowed.",
         null,
         "This property should define a comma-separated list of APIs in androidx.compose.material that should be allowed.",
+      )
+
+    internal val MANGLING_WORKAROUND =
+      BooleanOption(
+        "enable-mangling-workaround",
+        "Try to work around name mangling.",
+        false,
+        "See https://github.com/slackhq/compose-lints/issues/167",
       )
 
     val ISSUE =
@@ -51,7 +62,7 @@ constructor(private val allowList: StringSetLintOption = StringSetLintOption(ALL
           severity = ERROR,
           implementation = sourceImplementation<M2ApiDetector>(),
         )
-        .setOptions(listOf(ALLOW_LIST))
+        .setOptions(listOf(ALLOW_LIST, MANGLING_WORKAROUND))
         .setEnabledByDefault(false)
   }
 
@@ -85,7 +96,15 @@ constructor(private val allowList: StringSetLintOption = StringSetLintOption(ALL
         val packageName = context.evaluator.getPackage(resolved)?.qualifiedName ?: return
         if (packageName == M2Package) {
           // Ignore any in the allow-list.
-          if (resolved is PsiNamedElement && resolved.name in allowList.value) return
+          val resolvedName =
+            (resolved as? PsiNamedElement)?.name?.let {
+              if (workAroundMangling.getValue(context)) {
+                it.substringBefore("-")
+              } else {
+                it
+              }
+            }
+          if (resolvedName in allowList.value) return
           context.report(
             issue = ISSUE,
             location = context.getLocation(node),
