@@ -22,6 +22,8 @@ lint {
   fatal += setOf("LintDocExample", "LintImplPsiEquals")
 }
 
+tasks.test { maxParallelForks = Runtime.getRuntime().availableProcessors() * 2 }
+
 dependencies {
   compileOnly(libs.lint.api)
   ksp(libs.autoService.ksp)
