@@ -100,6 +100,8 @@ abstract class BaseComposeLintTest : LintDetectorTest() {
 
   override fun lint(): TestLintTask {
     val lintTask = super.lint()
+    // TODO parameterize this? Run twice?
+    lintTask.configureOptions { flags -> flags.setUseK2Uast(true) }
     lintClientName?.let { lintTask.clientFactory { TestLintClient(it) } }
     lintTask.allowCompilationErrors(false)
 
