@@ -25,11 +25,21 @@ import slack.lint.compose.util.sourceImplementation
 class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
   companion object {
-    fun createErrorMessage(currentOrder: List<UParameter>, properOrder: List<UParameter>): String =
+    fun createErrorMessage(
+      currentOrder: List<UParameter>,
+      properOrder: List<UParameter>
+    ): String =
       createErrorMessage(
-        currentOrder.joinToString { it.text },
-        properOrder.joinToString { it.text },
+        currentOrder.joinToString { getText(it) },
+        properOrder.joinToString { getText(it) },
       )
+
+    fun getText(uParameter: UParameter): String =
+      try {
+        uParameter.text
+      } catch (exception: Exception) {
+        uParameter.name
+      }
 
     private fun createErrorMessage(currentOrder: String, properOrder: String): String =
       """
@@ -99,7 +109,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
         fix()
           .replace()
           .range(errorLocation)
-          .with(properOrder.joinToString(prefix = "(", postfix = ")") { it.text })
+          .with(properOrder.joinToString(prefix = "(", postfix = ")") { getText(it) })
           .reformat(true)
           .build(),
       )
@@ -117,7 +127,9 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
     // Fall back to thorough check in case of aliases
     val resolved =
-      evaluator.getTypeClass(valueParameters.lastOrNull()?.toUElementOfType<UParameter>()?.type)
+      evaluator.getTypeClass(
+        valueParameters.lastOrNull()?.toUElementOfType<UParameter>()?.type
+      )
         ?: return false
     return resolved.isFunctionalInterface
   }
