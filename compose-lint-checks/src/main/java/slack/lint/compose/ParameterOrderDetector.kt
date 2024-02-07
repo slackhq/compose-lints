@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParameter
+import org.jetbrains.uast.toUElement
 import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isFunctionalInterface
@@ -25,10 +26,7 @@ import slack.lint.compose.util.sourceImplementation
 class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
   companion object {
-    fun createErrorMessage(
-      currentOrder: List<UParameter>,
-      properOrder: List<UParameter>
-    ): String =
+    fun createErrorMessage(currentOrder: List<UParameter>, properOrder: List<UParameter>): String =
       createErrorMessage(
         currentOrder.joinToString { getText(it) },
         properOrder.joinToString { getText(it) },
@@ -36,9 +34,10 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
     fun getText(uParameter: UParameter): String =
       try {
+        uParameter.toUElement()
         uParameter.text
       } catch (exception: Exception) {
-        uParameter.name
+        "${uParameter.name}: ${uParameter.type.presentableText}"
       }
 
     private fun createErrorMessage(currentOrder: String, properOrder: String): String =
@@ -127,9 +126,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
     // Fall back to thorough check in case of aliases
     val resolved =
-      evaluator.getTypeClass(
-        valueParameters.lastOrNull()?.toUElementOfType<UParameter>()?.type
-      )
+      evaluator.getTypeClass(valueParameters.lastOrNull()?.toUElementOfType<UParameter>()?.type)
         ?: return false
     return resolved.isFunctionalInterface
   }
