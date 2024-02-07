@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParameter
-import org.jetbrains.uast.toUElement
 import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isFunctionalInterface
@@ -34,7 +33,6 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
     fun getText(uParameter: UParameter): String =
       try {
-        uParameter.toUElement()
         uParameter.text
       } catch (exception: Exception) {
         "${uParameter.name}: ${uParameter.type.presentableText}"
