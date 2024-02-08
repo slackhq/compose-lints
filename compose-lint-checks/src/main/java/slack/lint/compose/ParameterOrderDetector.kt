@@ -31,12 +31,11 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
         properOrder.joinToString { getText(it) },
       )
 
-    fun getText(uParameter: UParameter): String =
-      try {
-        uParameter.text
-      } catch (exception: Exception) {
-        "${uParameter.name}: ${uParameter.type.presentableText}"
-      }
+    fun getText(uParameter: UParameter): String {
+      val psiElement = uParameter.sourcePsi
+        ?: return "${uParameter.name}: ${uParameter.type.presentableText}"
+      return psiElement.text
+    }
 
     private fun createErrorMessage(currentOrder: String, properOrder: String): String =
       """

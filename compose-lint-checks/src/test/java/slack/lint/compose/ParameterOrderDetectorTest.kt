@@ -101,7 +101,7 @@ class ParameterOrderDetectorTest : BaseComposeLintTest() {
           fun MyComposable(text1: String, m2: Modifier = Modifier, modifier: Modifier = Modifier, trailing: () -> Unit) { }
                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           src/test.kt:20: Error: Parameters in a composable function should be ordered following this pattern: params without defaults, modifiers, params with defaults and optionally, a trailing function that might not have a default param.
-          Current params are: [text: String, modifier: Modifier, lambda: Function0<Unit>] but should be [modifier: Modifier, text: String, lambda: Function0<Unit>].
+          Current params are: [text: String = "123", modifier: Modifier = Modifier, lambda: () -> Unit] but should be [modifier: Modifier = Modifier, text: String = "123", lambda: () -> Unit].
           See https://slackhq.github.io/compose-lints/rules/#ordering-composable-parameters-properly for more information. [ComposeParameterOrder]
           inline fun <reified T> MyComposable(text: String = "123", modifier: Modifier = Modifier, lambda: () -> Unit) : T { }
                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -131,10 +131,10 @@ class ParameterOrderDetectorTest : BaseComposeLintTest() {
           @@ -17 +17
           - fun MyComposable(text1: String, m2: Modifier = Modifier, modifier: Modifier = Modifier, trailing: () -> Unit) { }
           + fun MyComposable(text1: String, modifier: Modifier = Modifier, m2: Modifier = Modifier, trailing: () -> Unit) { }
-          Fix for src/test.kt line 20: Replace with (modifier: Modifier, text: String, lambda: Function0<Unit>):
+          Fix for src/test.kt line 20: Replace with (modifier: Modifier = Modifier, text: String = "123", lambda: () -> Unit):
           @@ -20 +20
           - inline fun <reified T> MyComposable(text: String = "123", modifier: Modifier = Modifier, lambda: () -> Unit) : T { }
-          + inline fun <reified T> MyComposable(modifier: Modifier, text: String, lambda: Function0<Unit>) : T { }
+          + inline fun <reified T> MyComposable(modifier: Modifier = Modifier, text: String = "123", lambda: () -> Unit) : T { }
         """
           .trimIndent()
       )
