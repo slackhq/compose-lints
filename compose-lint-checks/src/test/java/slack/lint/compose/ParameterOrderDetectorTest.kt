@@ -35,6 +35,9 @@ class ParameterOrderDetectorTest : BaseComposeLintTest() {
 
         @Composable
         fun MyComposable(text1: String, modifier: Modifier = Modifier, m2: Modifier = Modifier, trailing: (() -> Unit)?) { }
+
+        @Composable
+        inline fun <reified T> MyComposable(modifier: Modifier = Modifier, text: String = "123", lambda: () -> Unit) : T { }
       """
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
@@ -62,6 +65,9 @@ class ParameterOrderDetectorTest : BaseComposeLintTest() {
 
         @Composable
         fun MyComposable(text1: String, m2: Modifier = Modifier, modifier: Modifier = Modifier, trailing: () -> Unit) { }
+
+        @Composable
+        inline fun <reified T> MyComposable(text: String = "123", modifier: Modifier = Modifier, lambda: () -> Unit) : T { }
       """
         .trimIndent()
     lint()
@@ -94,7 +100,12 @@ class ParameterOrderDetectorTest : BaseComposeLintTest() {
           See https://slackhq.github.io/compose-lints/rules/#ordering-composable-parameters-properly for more information. [ComposeParameterOrder]
           fun MyComposable(text1: String, m2: Modifier = Modifier, modifier: Modifier = Modifier, trailing: () -> Unit) { }
                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          5 errors, 0 warnings
+          src/test.kt:20: Error: Parameters in a composable function should be ordered following this pattern: params without defaults, modifiers, params with defaults and optionally, a trailing function that might not have a default param.
+          Current params are: [text: String = "123", modifier: Modifier = Modifier, lambda: () -> Unit] but should be [modifier: Modifier = Modifier, text: String = "123", lambda: () -> Unit].
+          See https://slackhq.github.io/compose-lints/rules/#ordering-composable-parameters-properly for more information. [ComposeParameterOrder]
+          inline fun <reified T> MyComposable(text: String = "123", modifier: Modifier = Modifier, lambda: () -> Unit) : T { }
+                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          6 errors, 0 warnings
         """
           .trimIndent()
       )
@@ -120,7 +131,11 @@ class ParameterOrderDetectorTest : BaseComposeLintTest() {
           @@ -17 +17
           - fun MyComposable(text1: String, m2: Modifier = Modifier, modifier: Modifier = Modifier, trailing: () -> Unit) { }
           + fun MyComposable(text1: String, modifier: Modifier = Modifier, m2: Modifier = Modifier, trailing: () -> Unit) { }
-          """
+          Fix for src/test.kt line 20: Replace with (modifier: Modifier = Modifier, text: String = "123", lambda: () -> Unit):
+          @@ -20 +20
+          - inline fun <reified T> MyComposable(text: String = "123", modifier: Modifier = Modifier, lambda: () -> Unit) : T { }
+          + inline fun <reified T> MyComposable(modifier: Modifier = Modifier, text: String = "123", lambda: () -> Unit) : T { }
+        """
           .trimIndent()
       )
   }

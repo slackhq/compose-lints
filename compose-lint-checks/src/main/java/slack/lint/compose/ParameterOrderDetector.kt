@@ -27,9 +27,13 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
   companion object {
     fun createErrorMessage(currentOrder: List<UParameter>, properOrder: List<UParameter>): String =
       createErrorMessage(
-        currentOrder.joinToString { it.text },
-        properOrder.joinToString { it.text },
+        currentOrder.joinToString { getText(it) },
+        properOrder.joinToString { getText(it) },
       )
+
+    fun getText(uParameter: UParameter): String {
+      return uParameter.sourcePsi?.text ?: "${uParameter.name}: ${uParameter.type.presentableText}"
+    }
 
     private fun createErrorMessage(currentOrder: String, properOrder: String): String =
       """
@@ -99,7 +103,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
         fix()
           .replace()
           .range(errorLocation)
-          .with(properOrder.joinToString(prefix = "(", postfix = ")") { it.text })
+          .with(properOrder.joinToString(prefix = "(", postfix = ")") { getText(it) })
           .reformat(true)
           .build(),
       )
