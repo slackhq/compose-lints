@@ -32,9 +32,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
       )
 
     fun getText(uParameter: UParameter): String {
-      val psiElement = uParameter.sourcePsi
-        ?: return "${uParameter.name}: ${uParameter.type.presentableText}"
-      return psiElement.text
+      return uParameter.sourcePsi?.text ?: "${uParameter.name}: ${uParameter.type.presentableText}"
     }
 
     private fun createErrorMessage(currentOrder: String, properOrder: String): String =
