@@ -3,6 +3,7 @@
 package slack.lint.compose
 
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest
+import com.android.tools.lint.checks.infrastructure.TestLintClient
 import com.android.tools.lint.checks.infrastructure.TestLintTask
 import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
@@ -97,6 +98,8 @@ abstract class BaseComposeLintTest : LintDetectorTest() {
   override fun lint(): TestLintTask {
     val lintTask = super.lint()
     lintTask.configureOptions { flags -> flags.setUseK2Uast(TestBuildConfig.USE_K2_UAST) }
+    // This is... necessary? https://issuetracker.google.com/issues/323703301
+    lintTask.clientFactory { TestLintClient("test").apply { setLintTask(lintTask) } }
     lintTask.allowCompilationErrors(false)
 
     skipTestModes?.let { testModesToSkip -> lintTask.skipTestModes(*testModesToSkip) }
