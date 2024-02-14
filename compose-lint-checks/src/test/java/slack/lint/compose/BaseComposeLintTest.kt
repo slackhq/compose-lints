@@ -3,7 +3,6 @@
 package slack.lint.compose
 
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest
-import com.android.tools.lint.checks.infrastructure.TestLintClient
 import com.android.tools.lint.checks.infrastructure.TestLintTask
 import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
@@ -82,9 +81,6 @@ abstract class BaseComposeLintTest : LintDetectorTest() {
       ),
     )
 
-  /** Optional override to customize the lint client name when running lint test tasks. */
-  open val lintClientName: String? = null
-
   /**
    * Lint periodically adds new "TestModes" to LintDetectorTest. These modes act as a sort of chaos
    * testing mechanism, adding different common variations of code (extra spaces, extra parens, etc)
@@ -101,7 +97,6 @@ abstract class BaseComposeLintTest : LintDetectorTest() {
   override fun lint(): TestLintTask {
     val lintTask = super.lint()
     lintTask.configureOptions { flags -> flags.setUseK2Uast(TestBuildConfig.USE_K2_UAST) }
-    lintClientName?.let { lintTask.clientFactory { TestLintClient(it) } }
     lintTask.allowCompilationErrors(false)
 
     skipTestModes?.let { testModesToSkip -> lintTask.skipTestModes(*testModesToSkip) }
