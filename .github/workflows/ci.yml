@@ -20,6 +20,7 @@ jobs:
     name: "K2 UAST = ${{ matrix.useK2Uast }}"
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         useK2Uast: [true, false]
     steps:
