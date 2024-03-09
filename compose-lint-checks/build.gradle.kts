@@ -19,7 +19,6 @@ lint {
   checkTestSources = true
   baseline = file("lint-baseline.xml")
   disable += setOf("GradleDependency")
-
   fatal += setOf("LintDocExample", "LintImplPsiEquals", "UastImplementation")
 }
 
