@@ -19,8 +19,8 @@ lint {
   absolutePaths = false
   checkTestSources = true
   baseline = file("lint-baseline.xml")
-
-  fatal += setOf("LintDocExample", "LintImplPsiEquals")
+  disable += setOf("GradleDependency")
+  fatal += setOf("LintDocExample", "LintImplPsiEquals", "UastImplementation")
 }
 
 buildConfig {

@@ -3,17 +3,17 @@ kotlin = "2.0.0-Beta4"
 ktfmt = "0.47"
 jdk = "21"
 jvmTarget = "17"
-lint = "31.3.0"
-lint-latest = "31.4.0-alpha12"
+lint = "31.3.1"
+lint-latest = "31.4.0-alpha13"
 
 [plugins]
 buildConfig = { id = "com.github.gmazzo.buildconfig", version = "5.3.5" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.5" }
-dokka = { id = "org.jetbrains.dokka", version = "1.9.10" }
-lint = { id = "com.android.lint", version = "8.4.0-alpha12" }
+dokka = { id = "org.jetbrains.dokka", version = "1.9.20" }
+lint = { id = "com.android.lint", version = "8.4.0-alpha13" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version = "2.0.0-Beta4-1.0.18" }
-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.27.0" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.28.0" }
 spotless = { id = "com.diffplug.spotless", version = "6.25.0" }
 
 [libraries]

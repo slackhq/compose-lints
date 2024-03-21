@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.4.0-alpha12" type="baseline" client="gradle" dependencies="false" name="AGP (8.4.0-alpha12)" variant="all" version="8.4.0-alpha12">
+
+    <issue
+        id="LintImplTextFormat"
+        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;letterThey&quot;, not &quot;letter They&quot;"
+        errorLine1="              Composable functions that return Unit should start with an uppercase letter.\"
+        errorLine2="                                                                                         ~~">
+        <location
+            file="src/main/java/slack/lint/compose/ComposableFunctionNamingDetector.kt"
+            line="42"
+            column="90"/>
+    </issue>
+
+    <issue
+        id="LintImplTextFormat"
+        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;classesSee&quot;, not &quot;classes See&quot;"
+        errorLine1="              They are considered declarative entities that can be either present or absent in a composition and therefore follow the naming rules for classes.\"
+        errorLine2="                                                                                                                                                              ~~">
+        <location
+            file="src/main/java/slack/lint/compose/ComposableFunctionNamingDetector.kt"
+            line="43"
+            column="159"/>
+    </issue>
+
+    <issue
+        id="LintImplTextFormat"
+        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;letterWhile&quot;, not &quot;letter While&quot;"
+        errorLine1="              Composable functions that return a value should start with a lowercase letter.\"
+        errorLine2="                                                                                           ~~">
+        <location
+            file="src/main/java/slack/lint/compose/ComposableFunctionNamingDetector.kt"
+            line="59"
+            column="92"/>
+    </issue>
+
+    <issue
+        id="LintImplTextFormat"
+        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;functionsSee&quot;, not &quot;functions See&quot;"
+        errorLine1="              While useful and accepted outside of @Composable functions, this factory function convention has drawbacks that set inappropriate expectations for callers when used with @Composable functions.\"
+        errorLine2="                                                                                                                                                                                                             ~~">
+        <location
+            file="src/main/java/slack/lint/compose/ComposableFunctionNamingDetector.kt"
+            line="60"
+            column="206"/>
+    </issue>
+
+    <issue
+        id="LintImplTextFormat"
+        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;bothIf&quot;, not &quot;both If&quot;"
+        errorLine1="            Composable functions should either emit content into the composition or return a value, but not both.\"
+        errorLine2="                                                                                                                ~~">
+        <location
+            file="src/main/java/slack/lint/compose/ContentEmitterReturningValuesDetector.kt"
+            line="46"
+            column="113"/>
+    </issue>
+
+    <issue
+        id="LintImplTextFormat"
+        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;callerSee&quot;, not &quot;caller See&quot;"
+        errorLine1="            If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller.\"
+        errorLine2="                                                                                                                                                                                                 ~~">
+        <location
+            file="src/main/java/slack/lint/compose/ContentEmitterReturningValuesDetector.kt"
+            line="47"
+            column="194"/>
+    </issue>
+
+    <issue
+        id="LintImplTextFormat"
+        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;APIsSee&quot;, not &quot;APIs See&quot;"
+        errorLine1="              Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.\"
+        errorLine2="                                                                                         ~~">
+        <location
+            file="src/main/java/slack/lint/compose/M2ApiDetector.kt"
+            line="57"
+            column="90"/>
+    </issue>
+
+    <issue
+        id="LintImplTextFormat"
+        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;recompositionsYou&quot;, not &quot;recompositions You&quot;"
+        errorLine1="          Using @Composable builder functions for modifiers is not recommended, as they cause unnecessary recompositions.\"
+        errorLine2="                                                                                                                        ~~">
+        <location
+            file="src/main/java/slack/lint/compose/ModifierComposableDetector.kt"
+            line="26"
+            column="121"/>
+    </issue>
+
+    <issue
+        id="LintImplTextFormat"
+        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;treeSee&quot;, not &quot;tree See&quot;"
+        errorLine1="          You should use the Modifier.Node API instead, as it limits recomposition to just the modifier instance, rather than the whole function tree.\"
+        errorLine2="                                                                                                                                                     ~~">
+        <location
+            file="src/main/java/slack/lint/compose/ModifierComposableDetector.kt"
+            line="27"
+            column="150"/>
+    </issue>
+
+    <issue
+        id="LintImplTextFormat"
+        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;parameterSee&quot;, not &quot;parameter See&quot;"
+        errorLine1="              This @Composable function emits content but doesn&apos;t have a modifier parameter.\"
+        errorLine2="                                                                                           ~~">
+        <location
+            file="src/main/java/slack/lint/compose/ModifierMissingDetector.kt"
+            line="51"
+            column="92"/>
+    </issue>
+
+    <issue
+        id="LintImplTextFormat"
+        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;valueSee&quot;, not &quot;value See&quot;"
+        errorLine1="              This @Composable function has a modifier parameter but it doesn&apos;t have a default value.\"
+        errorLine2="                                                                                                    ~~">
+        <location
+            file="src/main/java/slack/lint/compose/ModifierWithoutDefaultDetector.kt"
+            line="34"
+            column="101"/>
+    </issue>
+
+</issues>
