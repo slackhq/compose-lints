@@ -3,14 +3,14 @@ kotlin = "2.0.0-Beta5"
 ktfmt = "0.47"
 jdk = "21"
 jvmTarget = "17"
-lint = "31.3.1"
-lint-latest = "31.5.0-alpha01"
+lint = "31.3.2"
+lint-latest = "31.5.0-alpha04"
 
 [plugins]
 buildConfig = { id = "com.github.gmazzo.buildconfig", version = "5.3.5" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.5" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.6" }
 dokka = { id = "org.jetbrains.dokka", version = "1.9.20" }
-lint = { id = "com.android.lint", version = "8.5.0-alpha01" }
+lint = { id = "com.android.lint", version = "8.5.0-alpha04" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version = "2.0.0-Beta5-1.0.19" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.28.0" }
