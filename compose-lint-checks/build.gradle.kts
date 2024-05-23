@@ -9,6 +9,7 @@ plugins {
   alias(libs.plugins.lint)
   alias(libs.plugins.ksp)
   alias(libs.plugins.mavenPublish)
+  alias(libs.plugins.buildConfig)
 }
 
 lint {
@@ -21,6 +22,20 @@ lint {
   disable += setOf("GradleDependency")
   fatal += setOf("LintDocExample", "LintImplPsiEquals", "UastImplementation")
 }
+
+buildConfig {
+  packageName("slack.lint.compose")
+  useKotlinOutput { internalVisibility = true }
+  sourceSets.getByName("test") {
+    buildConfigField(
+      "Boolean",
+      "USE_K2_UAST",
+      providers.systemProperty("useK2Uast").orElse("false"),
+    )
+  }
+}
+
+tasks.test { maxParallelForks = Runtime.getRuntime().availableProcessors() * 2 }
 
 dependencies {
   compileOnly(libs.lint.api)
