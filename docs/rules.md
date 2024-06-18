@@ -73,7 +73,7 @@ _restartable_ or _skippable_. This _includes_ the containing class or receiver, 
 
 More info: [Compose API Stability](https://developer.android.com/jetpack/compose/performance/stability)
 
-Related rule: [`UnstableReceiverDetector`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/UnstableReceiverDetector.kt)
+Related rule: [`ComposeUnstableReceiver`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/UnstableReceiverDetector.kt)
 
 ### Do not emit content and return a result
 
