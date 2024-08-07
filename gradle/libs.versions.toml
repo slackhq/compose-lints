@@ -4,7 +4,7 @@ ktfmt = "0.50"
 jdk = "21"
 jvmTarget = "17"
 lint = "31.4.1"
-lint-latest = "31.6.0-alpha04"
+lint-latest = "31.6.0-rc01"
 
 [plugins]
 buildConfig = { id = "com.github.gmazzo.buildconfig", version = "5.3.5" }
