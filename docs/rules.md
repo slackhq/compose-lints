@@ -154,9 +154,10 @@ Slot parameters provide a convenient and idiomatic way to accept arbitrary conte
 
 Callers of a component that takes a slot parameter have natural expectations about the lifecycle of
 that slot.
-Specifically, the slot should either be composed (invoked) exactly once, or not invoked at all.
-Furthermore, if the slot is continuously composed, even if there are visual or structure changes
-inside the component, callers expect the internal state of the slot to be preserved.
+Specifically, the slot should either be composed (invoked) in exactly one place, or not invoked at
+all.
+Even if there are visual or structure changes inside the component, callers expect the internal
+state of the slot to be preserved.
 
 Components should either use custom layouts to meet this expectation or `movableContentOf`.
 

@@ -39,8 +39,7 @@ constructor(
           explanation =
             """
             Slots should be invoked in at most once place to meet lifecycle expectations. \
-            Slots should not be invoked multiple times in the same composition, as callers don't expect the slot's contents to be duplicated in multiple places. \
-            Slots should also not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes. \
+            Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes. \
             See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information.
           """,
           category = Category.CORRECTNESS,
