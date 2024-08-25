@@ -5,6 +5,7 @@ package slack.lint.compose.util
 import com.android.tools.lint.client.api.Configuration
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Implementation
+import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.StringOption
@@ -36,9 +37,11 @@ internal inline fun <reified T> sourceImplementation(
 /** Loads a [StringOption] as a [delimiter]-delimited [Set] of strings. */
 internal fun StringOption.loadAsSet(
   configuration: Configuration,
+  issue: Issue,
   delimiter: String = ",",
 ): Set<String> {
-  return getValue(configuration)
+  return configuration
+    .getOption(issue, name)
     ?.splitToSequence(delimiter)
     .orEmpty()
     .map(String::trim)

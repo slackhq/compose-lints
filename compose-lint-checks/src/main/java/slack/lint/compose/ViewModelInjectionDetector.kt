@@ -25,7 +25,7 @@ import slack.lint.compose.util.unwrapParenthesis
 class ViewModelInjectionDetector
 @JvmOverloads
 constructor(private val userFactories: StringSetLintOption = StringSetLintOption(USER_FACTORIES)) :
-  ComposableFunctionDetector(userFactories), SourceCodeScanner {
+  ComposableFunctionDetector(userFactories to ISSUE), SourceCodeScanner {
 
   companion object {
 
