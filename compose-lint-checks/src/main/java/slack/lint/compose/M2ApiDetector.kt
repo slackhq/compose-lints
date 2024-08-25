@@ -11,12 +11,12 @@ import com.android.tools.lint.detector.api.Severity.ERROR
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.StringOption
 import com.android.tools.lint.detector.api.TextFormat
-import com.android.tools.lint.detector.api.isKotlin
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UQualifiedReferenceExpression
 import org.jetbrains.uast.UResolvable
+import org.jetbrains.uast.kotlin.isKotlin
 import slack.lint.compose.util.OptionLoadingDetector
 import slack.lint.compose.util.Priorities.NORMAL
 import slack.lint.compose.util.StringSetLintOption

@@ -29,7 +29,6 @@ val testPathPrefix = "src/test/java/slack/lint/compose"
 val externalFiles =
   arrayOf(
     "$utilPathPrefix/ASTNodes.kt",
-    "$utilPathPrefix/BooleanLintOption",
     "$utilPathPrefix/Composables.kt",
     "$utilPathPrefix/KotlinUtils.kt",
     "$utilPathPrefix/KtAnnotateds.kt",

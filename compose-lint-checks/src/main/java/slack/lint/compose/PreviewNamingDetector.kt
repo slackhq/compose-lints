@@ -10,9 +10,9 @@ import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
-import com.android.tools.lint.detector.api.isKotlin
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.uast.UClass
+import org.jetbrains.uast.kotlin.isKotlin
 import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.PREVIEW_ANNOTATIONS
 import slack.lint.compose.util.Priorities
