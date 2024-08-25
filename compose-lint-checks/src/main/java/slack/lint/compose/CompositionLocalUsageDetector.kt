@@ -13,13 +13,13 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.StringOption
 import com.android.tools.lint.detector.api.TextFormat
-import com.android.tools.lint.detector.api.isKotlin
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UField
 import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.kotlin.isKotlin
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.declaresCompositionLocal
 import slack.lint.compose.util.sourceImplementation

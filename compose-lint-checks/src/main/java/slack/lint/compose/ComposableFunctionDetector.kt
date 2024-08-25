@@ -6,10 +6,10 @@ package slack.lint.compose
 import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.SourceCodeScanner
-import com.android.tools.lint.detector.api.isKotlin
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.kotlin.isKotlin
 import slack.lint.compose.util.LintOption
 import slack.lint.compose.util.OptionLoadingDetector
 import slack.lint.compose.util.isComposable
