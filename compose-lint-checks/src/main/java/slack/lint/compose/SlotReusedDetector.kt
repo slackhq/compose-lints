@@ -21,16 +21,9 @@ import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.slotParameters
 import slack.lint.compose.util.sourceImplementation
 
-class SlotReusedDetector
-@JvmOverloads
-constructor(
-  private val contentEmitterOption: ContentEmitterLintOption =
-    ContentEmitterLintOption(CONTENT_EMITTER_OPTION)
-) : ComposableFunctionDetector(contentEmitterOption), SourceCodeScanner {
+class SlotReusedDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
   companion object {
-
-    val CONTENT_EMITTER_OPTION = ContentEmitterLintOption.newOption()
 
     val ISSUE =
       Issue.create(
@@ -47,11 +40,9 @@ constructor(
           severity = Severity.ERROR,
           implementation = sourceImplementation<SlotReusedDetector>(),
         )
-        .setOptions(listOf(CONTENT_EMITTER_OPTION))
   }
 
   override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
-    if (!function.emitsContent(contentEmitterOption.value)) return
     val composableBlockExpression = function.bodyBlockExpression ?: return
     val slotParameters = method.slotParameters(context.evaluator)
 
