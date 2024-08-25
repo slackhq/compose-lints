@@ -22,7 +22,7 @@ class ComposableFunctionNamingDetector
 constructor(
   private val allowedNames: StringSetLintOption =
     StringSetLintOption(ALLOWED_COMPOSABLE_FUNCTION_NAMES)
-) : ComposableFunctionDetector(allowedNames) {
+) : ComposableFunctionDetector(allowedNames to ISSUE_UPPERCASE, allowedNames to ISSUE_LOWERCASE) {
 
   companion object {
     internal val ALLOWED_COMPOSABLE_FUNCTION_NAMES =

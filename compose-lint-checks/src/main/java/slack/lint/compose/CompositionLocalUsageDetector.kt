@@ -72,7 +72,8 @@ class CompositionLocalUsageDetector : Detector(), SourceCodeScanner {
 
     /** Loads a comma-separated list of allowed names from the [ALLOW_LIST] option. */
     fun loadAllowList(context: Context): Set<String> {
-      return context.configuration.getOption(ALLOW_LIST_ISSUE, ALLOW_LIST.name)
+      return context.configuration
+        .getOption(ALLOW_LIST_ISSUE, ALLOW_LIST.name)
         ?.splitToSequence(",")
         .orEmpty()
         .map(String::trim)

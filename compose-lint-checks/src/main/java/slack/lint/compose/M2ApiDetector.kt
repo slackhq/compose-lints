@@ -27,7 +27,7 @@ internal class M2ApiDetector
 constructor(
   private val allowList: StringSetLintOption = StringSetLintOption(ALLOW_LIST),
   private val workAroundMangling: BooleanOption = MANGLING_WORKAROUND,
-) : OptionLoadingDetector(allowList), SourceCodeScanner {
+) : OptionLoadingDetector(allowList to ISSUE), SourceCodeScanner {
 
   companion object {
     private const val M2Package = "androidx.compose.material"

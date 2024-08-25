@@ -31,7 +31,7 @@ class ContentEmitterReturningValuesDetector
 constructor(
   private val contentEmitterOption: ContentEmitterLintOption =
     ContentEmitterLintOption(CONTENT_EMITTER_OPTION)
-) : OptionLoadingDetector(contentEmitterOption), SourceCodeScanner {
+) : OptionLoadingDetector(contentEmitterOption to ISSUE), SourceCodeScanner {
 
   companion object {
 

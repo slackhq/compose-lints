@@ -4,6 +4,7 @@
 package slack.lint.compose
 
 import com.android.tools.lint.client.api.UElementHandler
+import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import org.jetbrains.kotlin.psi.KtFunction
@@ -14,8 +15,10 @@ import slack.lint.compose.util.LintOption
 import slack.lint.compose.util.OptionLoadingDetector
 import slack.lint.compose.util.isComposable
 
-abstract class ComposableFunctionDetector(vararg options: LintOption) :
-  OptionLoadingDetector(*options), SourceCodeScanner {
+abstract class ComposableFunctionDetector(options: List<Pair<LintOption, Issue>>) :
+  OptionLoadingDetector(options), SourceCodeScanner {
+
+  constructor(vararg options: Pair<LintOption, Issue>) : this(options.toList())
 
   final override fun getApplicableUastTypes() = listOf(UMethod::class.java)
 

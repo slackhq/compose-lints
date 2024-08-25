@@ -32,7 +32,7 @@ class ModifierReusedDetector
 constructor(
   private val contentEmitterOption: ContentEmitterLintOption =
     ContentEmitterLintOption(CONTENT_EMITTER_OPTION)
-) : ComposableFunctionDetector(contentEmitterOption), SourceCodeScanner {
+) : ComposableFunctionDetector(contentEmitterOption to ISSUE), SourceCodeScanner {
 
   companion object {
 
