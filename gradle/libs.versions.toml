@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.0.20"
-ktfmt = "0.50"
+ktfmt = "0.52"
 jdk = "21"
 jvmTarget = "17"
 lint = "31.4.1"
