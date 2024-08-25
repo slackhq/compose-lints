@@ -4,21 +4,21 @@ ktfmt = "0.50"
 jdk = "21"
 jvmTarget = "17"
 lint = "31.4.1"
-lint-latest = "31.6.0-alpha04"
+lint-latest = "31.6.0-rc01"
 
 [plugins]
-buildConfig = { id = "com.github.gmazzo.buildconfig", version = "5.3.5" }
+buildConfig = { id = "com.github.gmazzo.buildconfig", version = "5.4.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.6" }
 dokka = { id = "org.jetbrains.dokka", version = "1.9.20" }
-lint = { id = "com.android.lint", version = "8.6.0-alpha04" }
+lint = { id = "com.android.lint", version = "8.6.0-rc01" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version = "2.0.0-1.0.22" }
-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.28.0" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.29.0" }
 spotless = { id = "com.diffplug.spotless", version = "6.25.0" }
 
 [libraries]
 autoService-annotations = "com.google.auto.service:auto-service-annotations:1.1.1"
-autoService-ksp = "dev.zacsweers.autoservice:auto-service-ksp:1.1.0"
+autoService-ksp = "dev.zacsweers.autoservice:auto-service-ksp:1.2.0"
 junit = "junit:junit:4.13.2"
 ktfmt = { module = "com.facebook:ktfmt", version.ref = "ktfmt" }
 lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "lint" }
