@@ -148,6 +148,23 @@ Related rule: [`ComposeMultipleContentEmitters`](https://github.com/slackhq/comp
     </issue>
     ```
 
+### Do not invoke slots in more than once place
+
+Slot parameters provide a convenient and idiomatic way to accept arbitrary content for a component.
+
+Callers of a component that takes a slot parameter have natural expectations about the lifecycle of
+that slot.
+Specifically, the slot should either be composed (invoked) in exactly one place, or not invoked at
+all.
+Even if there are visual or structure changes inside the component, callers expect the internal
+state of the slot to be preserved.
+
+Components should either use custom layouts to meet this expectation or `movableContentOf`.
+
+More information: [Lifecycle expectations for slot parameters](https://android.googlesource.com/platform/frameworks/support/+/androidx-main/compose/docs/compose-component-api-guidelines.md#lifecycle-expectations-for-slot-parameters)
+
+Related rule: [`SlotReused`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/SlotReusedDetector.kt)
+
 ### Naming multipreview annotations properly
 
 Multipreview annotations should be named by using `Previews` as suffix (or `Preview` if just one). These annotations have to be explicitly named to make sure that they are clearly identifiable as a `@Preview` alternative on its usages.
@@ -376,4 +393,3 @@ Material 3 (M3) reached stable in October 2022. In apps that have migrated to M3
 - Guidance: https://developer.android.com/jetpack/compose/themes/material3
 - Reply (primary sample app): https://github.com/android/compose-samples/tree/main/Reply
 - More samples: https://github.com/android/compose-samples
-

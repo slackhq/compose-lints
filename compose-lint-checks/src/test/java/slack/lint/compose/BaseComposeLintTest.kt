@@ -57,6 +57,8 @@ abstract class BaseComposeLintTest : LintDetectorTest() {
           ): State<T> = TODO()
 
           inline fun <T> remember(crossinline calculation: () -> T): T = TODO()
+
+          fun movableContentOf(content: @Composable () -> Unit): @Composable () -> Unit = TODO()
       """
           .trimIndent()
       ),
