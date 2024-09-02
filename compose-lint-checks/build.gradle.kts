@@ -46,5 +46,5 @@ tasks.withType<KotlinCompile>().configureEach {
 
 tasks.test {
   // Disable noisy java applications launching during tests
-  jvmArgs("java.awt.headless=true")
+  jvmArgs("-Djava.awt.headless=true")
 }
