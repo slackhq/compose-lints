@@ -168,6 +168,10 @@ fun UParameter.isModifier(evaluator: JavaEvaluator): Boolean {
   return ModifierQualifiedNames.any { evaluator.typeMatches(type, it) }
 }
 
+fun UParameter.isSlotParameter(evaluator: JavaEvaluator): Boolean =
+  typeReference?.type?.hasAnnotation("androidx.compose.runtime.Composable") == true &&
+    evaluator.getTypeClass(this.type).let { it != null && it.isFunctionalInterface }
+
 val KtCallableDeclaration.isModifierReceiver: Boolean
   get() = ModifierNames.contains(receiverTypeReference?.text)
 
@@ -181,6 +185,9 @@ fun UMethod.modifierParameter(evaluator: JavaEvaluator): UParameter? {
   val modifiers = uastParameters.filter { it.isModifier(evaluator) }
   return modifiers.firstOrNull { it.name == "modifier" } ?: modifiers.firstOrNull()
 }
+
+fun UMethod.slotParameters(evaluator: JavaEvaluator): List<UParameter> =
+  uastParameters.filter { it.isSlotParameter(evaluator) }
 
 val KtProperty.declaresCompositionLocal: Boolean
   get() {
