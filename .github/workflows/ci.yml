@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        useK2Uast: [true, false]
+        useK2Uast: [ true, false ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,6 +47,23 @@ jobs:
           path: |
             **/build/reports/*
 
-      - name: Publish snapshot (main branch only)
-        if: github.repository == 'slackhq/compose-lints' && github.ref == 'refs/heads/main'
-        run: ./gradlew publish -PmavenCentralUsername=${{ secrets.SONATYPEUSERNAME }} -PmavenCentralPassword=${{ secrets.SONATYPEPASSWORD }}
+  publish-snapshots:
+    name: "Publish snapshots"
+    if: github.repository == 'slackhq/compose-lints' && github.ref == 'refs/heads/main'
+    needs: 'build'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Publish
+        run: ./gradlew publish -PmavenCentralUsername=${{ secrets.SONATYPEUSERNAME }} -PmavenCentralPassword=${{ secrets.SONATYPEPASSWORD }} --no-configuration-cache
