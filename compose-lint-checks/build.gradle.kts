@@ -22,7 +22,11 @@ lint {
   fatal += setOf("LintDocExample", "LintImplPsiEquals", "UastImplementation")
 }
 
-tasks.test { maxParallelForks = Runtime.getRuntime().availableProcessors() * 2 }
+tasks.test {
+  // Disable noisy java applications launching during tests
+  jvmArgs("-Djava.awt.headless=true")
+  maxParallelForks = Runtime.getRuntime().availableProcessors() * 2
+}
 
 dependencies {
   compileOnly(libs.lint.api)
@@ -42,9 +46,4 @@ tasks.withType<KotlinCompile>().configureEach {
     apiVersion.set(kgpKotlinVersion)
     languageVersion.set(kgpKotlinVersion)
   }
-}
-
-tasks.test {
-  // Disable noisy java applications launching during tests
-  jvmArgs("-Djava.awt.headless=true")
 }
