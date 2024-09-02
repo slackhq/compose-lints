@@ -5,7 +5,6 @@ package slack.lint.compose
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
-import org.junit.Assume.assumeFalse
 import org.junit.Test
 
 class SlotReusedDetectorTest : BaseComposeLintTest() {
@@ -16,8 +15,6 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
 
   @Test
   fun `errors when the slot parameter of a Composable is used more than once at the same time`() {
-    // Currently fails on K2 UAST, related to https://issuetracker.google.com/issues/361986680
-    assumeFalse(TestBuildConfig.USE_K2_UAST)
     @Language("kotlin")
     val code =
       """
@@ -69,8 +66,6 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
 
   @Test
   fun `errors when the slot parameter of a Composable is used more than once in different branches`() {
-    // Currently fails on K2 UAST, related to https://issuetracker.google.com/issues/361986680
-    assumeFalse(TestBuildConfig.USE_K2_UAST)
     @Language("kotlin")
     val code =
       """
@@ -110,8 +105,6 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
 
   @Test
   fun `errors when slot parameter is used in different movableContentOfs`() {
-    // Currently fails on K2 UAST, related to https://issuetracker.google.com/issues/361986680
-    assumeFalse(TestBuildConfig.USE_K2_UAST)
     @Language("kotlin")
     val code =
       """
@@ -153,8 +146,6 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
 
   @Test
   fun `errors when multiple slot parameters of a Composable are used more than once in different branches`() {
-    // Currently fails on K2 UAST, related to https://issuetracker.google.com/issues/361986680
-    assumeFalse(TestBuildConfig.USE_K2_UAST)
     @Language("kotlin")
     val code =
       """
@@ -200,8 +191,6 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
 
   @Test
   fun `passes when the slot parameter is shadowed`() {
-    // Currently fails on K2 UAST, related to https://issuetracker.google.com/issues/361986680
-    assumeFalse(TestBuildConfig.USE_K2_UAST)
     @Language("kotlin")
     val code =
       """
@@ -275,8 +264,6 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
 
   @Test
   fun `passes when using slot parameter in only one branch`() {
-    // Currently fails on K2 UAST, related to https://issuetracker.google.com/issues/361986680
-    assumeFalse(TestBuildConfig.USE_K2_UAST)
     @Language("kotlin")
     val code =
       """

@@ -37,13 +37,13 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build
-        run: ./gradlew check -DuseK2Uast=${{ matrix.useK2Uast }}
+        run: ./gradlew check -Dlint.use.fir.uast=${{ matrix.useK2Uast }}
 
       - name: (Fail-only) Upload build reports
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: reports
+          name: reports-useK2Uast=${{ matrix.useK2Uast }}
           path: |
             **/build/reports/*
 
