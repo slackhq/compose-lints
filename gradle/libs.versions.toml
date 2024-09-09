@@ -7,7 +7,7 @@ lint = "31.5.2"
 lint-latest = "31.7.0-beta01"
 
 [plugins]
-detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.6" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.7" }
 dokka = { id = "org.jetbrains.dokka", version = "1.9.20" }
 lint = { id = "com.android.lint", version = "8.6.0" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
