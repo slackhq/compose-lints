@@ -372,6 +372,36 @@ class ModifierMissingDetectorTest : BaseComposeLintTest() {
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
+  // https://github.com/slackhq/compose-lints/issues/377
+  @Test
+  fun `deeply nested previews can still be detected and allowed`() {
+    @Language("kotlin")
+    val code =
+      """
+          import androidx.compose.runtime.Composable
+          import androidx.compose.ui.tooling.preview.Preview
+          import androidx.compose.ui.Modifier
+
+          @Preview
+          annotation class DeviceWidthPreviews
+
+          @DeviceWidthPreviews
+          annotation class ThemePreviews
+
+          @ThemePreviews
+          annotation class ComponentPreviews
+
+          @ComponentPreviews
+          @Composable
+          fun Something() {
+            Text("Hi")
+          }
+      """
+        .trimIndent()
+
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
+
   @Test
   fun `non content emitting root composables are ignored`() {
     @Language("kotlin")
