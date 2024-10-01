@@ -81,6 +81,20 @@ abstract class BaseComposeLintTest : LintDetectorTest() {
       """
           .trimIndent()
       ),
+      kotlin(
+        """
+          package androidx.compose.ui
+
+          import androidx.compose.runtime.Composable
+          import androidx.compose.ui.Modifier
+
+          @Composable
+          fun Text(text: String, modifier: Modifier = Modifier) {
+
+          }
+      """
+          .trimIndent()
+      ),
     )
 
   /**

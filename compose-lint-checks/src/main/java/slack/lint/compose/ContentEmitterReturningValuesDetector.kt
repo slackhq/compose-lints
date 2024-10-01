@@ -23,6 +23,7 @@ import slack.lint.compose.util.emitsContent
 import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.hasReceiverType
 import slack.lint.compose.util.isComposable
+import slack.lint.compose.util.returnsUnitOrVoid
 import slack.lint.compose.util.sourceImplementation
 import slack.lint.compose.util.unwrapParenthesis
 
@@ -43,8 +44,8 @@ constructor(
           briefDescription = "Composable functions should emit XOR return",
           explanation =
             """
-            Composable functions should either emit content into the composition or return a value, but not both.\
-            If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller.\
+            Composable functions should either emit content into the composition or return a value, but not both. \
+            If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller. \
             See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information.
         """,
           category = Category.PRODUCTIVITY,
@@ -99,26 +100,32 @@ constructor(
         val composables =
           file
             .findChildrenByClass<KtFunction>()
-            .filter { it.toUElementOfType<UMethod>()?.isComposable == true }
+            .filter {
+              val method = it.toUElementOfType<UMethod>() ?: return@filter false
+              method.isComposable && !method.returnsUnitOrVoid(context.evaluator)
+            }
             // We don't want to analyze composables that are extension functions, as they might be
             // things like
             // BoxScope which are legit, and we want to avoid false positives.
-            .filter { it.hasBlockBody() }
             // We want only methods with a body
+            .filter { it.hasBlockBody() }
             .filterNot { it.hasReceiverType }
+            .toList()
+
+        if (composables.isEmpty()) return
 
         // Now we want to get the count of direct emitters in them: the composables we know for a
         // fact that output UI
         val composableToEmissionCount = composables.associateWith { it.directUiEmitterCount }
 
-        // We can start showing errors, for composables that emit more than once (from the list of
+        // We can start showing errors, for composables that emit at all (from the list of
         // known composables)
-        val directEmissionsReported = composableToEmissionCount.filterValues { it > 1 }.keys
+        val directEmissionsReported = composableToEmissionCount.keys
         for (composable in directEmissionsReported) {
           context.report(
             ISSUE,
             composable,
-            context.getLocation(composable),
+            context.getNameLocation(composable),
             ISSUE.getExplanation(TextFormat.TEXT),
           )
         }
@@ -156,7 +163,7 @@ constructor(
             context.report(
               ISSUE,
               composable,
-              context.getLocation(composable),
+              context.getNameLocation(composable),
               ISSUE.getExplanation(TextFormat.TEXT),
             )
           }

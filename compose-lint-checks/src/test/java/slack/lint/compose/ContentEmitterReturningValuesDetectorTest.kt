@@ -28,6 +28,8 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+
         @Composable
         fun Something() {
             val something = rememberWhatever()
@@ -48,6 +50,8 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+
         @Composable
         fun ColumnScope.Something() {
             Text("Hi")
@@ -64,54 +68,19 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
-  fun `errors when a Composable function has more than one UI emitter at the top level`() {
-    @Language("kotlin")
-    val code =
-      """
-        import androidx.compose.runtime.Composable
-
-        @Composable
-        fun Something() {
-            Text("Hi")
-            Text("Hola")
-        }
-        @Composable
-        fun Something() {
-            Spacer16()
-            Text("Hola")
-        }
-      """
-        .trimIndent()
-    lint()
-      .files(*commonStubs, kotlin(code))
-      .run()
-      .expect(
-        """
-          src/test.kt:3: Error: Composable functions should either emit content into the composition or return a value, but not both.If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller.See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
-          @Composable
-          ^
-          src/test.kt:8: Error: Composable functions should either emit content into the composition or return a value, but not both.If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller.See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
-          @Composable
-          ^
-          2 errors, 0 warnings
-        """
-          .trimIndent()
-      )
-  }
-
-  @Test
   fun `errors when a Composable function has more than one indirect UI emitter at the top level`() {
     @Language("kotlin")
     val code =
       """
         import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Text
 
         @Composable
         fun Something1() {
             Something2()
         }
         @Composable
-        fun Something2() {
+        fun Something2(): String {
             Text("Hola")
             Something3()
         }
@@ -124,9 +93,17 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
             Banana()
         }
         @Composable
-        fun Something5() {
+        fun Something5(): String {
             Something3()
             Something4()
+        }
+        @Composable
+        fun Potato() {
+            Text("Potato")
+        }
+        @Composable
+        fun Banana() {
+            Text("Banana")
         }
       """
         .trimIndent()
@@ -135,12 +112,12 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:7: Error: Composable functions should either emit content into the composition or return a value, but not both.If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller.See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
-          @Composable
-          ^
-          src/test.kt:20: Error: Composable functions should either emit content into the composition or return a value, but not both.If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller.See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
-          @Composable
-          ^
+          src/test.kt:9: Error: Composable functions should either emit content into the composition or return a value, but not both. If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller. See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
+          fun Something2(): String {
+              ~~~~~~~~~~
+          src/test.kt:22: Error: Composable functions should either emit content into the composition or return a value, but not both. If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller. See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
+          fun Something5(): String {
+              ~~~~~~~~~~
           2 errors, 0 warnings
         """
           .trimIndent()
@@ -153,12 +130,14 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
     val code =
       """
         import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Text
 
         @Composable
-        fun Something() {
+        fun Something(): String {
             Text("Hi")
             Text("Hola")
             Something2()
+            return "hi"
         }
         @Composable
         fun Something2() {
@@ -171,12 +150,30 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:3: Error: Composable functions should either emit content into the composition or return a value, but not both.If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller.See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
-          @Composable
-          ^
+          src/test.kt:5: Error: Composable functions should either emit content into the composition or return a value, but not both. If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller. See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
+          fun Something(): String {
+              ~~~~~~~~~
           1 errors, 0 warnings
         """
           .trimIndent()
       )
+  }
+
+  // https://github.com/slackhq/compose-lints/issues/339
+  @Test
+  fun `multiple emitters are not a warning in this lint`() {
+    @Language("kotlin")
+    val code =
+      """
+        import androidx.compose.runtime.Composable
+
+        @Composable
+        fun Test(modifier: Modifier = Modifier) {
+            Text(text = "TextOne")
+            Text(text = "TextTwo")
+        }
+      """
+        .trimIndent()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 }
