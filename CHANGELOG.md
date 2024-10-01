@@ -1,6 +1,12 @@
 Changelog
 =========
 
+**Unreleased**
+--------------
+
+- **Fix**: Don't report duplicate errors about multiple content emitters.
+- **Enhancement**: Report the function name for readability in `ComposeContentEmitterReturningValues`.
+
 1.3.1
 -----
 
