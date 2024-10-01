@@ -181,4 +181,37 @@ class PreviewPublicDetectorTest : BaseComposeLintTest() {
         .trimIndent()
     lint().files(stubs, *commonStubs, kotlin(code)).run().expectClean()
   }
+
+  // https://github.com/slackhq/compose-lints/issues/379
+  @Test
+  fun `test-only public previews are ok`() {
+    @Language("kotlin")
+    val code =
+      """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.tooling.preview.Preview
+        import androidx.annotation.VisibleForTesting
+
+        @VisibleForTesting
+        @Preview
+        @Composable
+        fun MyComposable() {}
+      """
+        .trimIndent()
+    lint()
+      .files(
+        stubs,
+        kotlin(
+          """
+          package androidx.annotation
+
+          annotation class VisibleForTesting
+        """
+        ),
+        *commonStubs,
+        kotlin(code),
+      )
+      .run()
+      .expectClean()
+  }
 }

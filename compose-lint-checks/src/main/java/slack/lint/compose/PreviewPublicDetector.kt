@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierTypeOrDefault
 import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isPreview
+import slack.lint.compose.util.isVisibleForTesting
 import slack.lint.compose.util.sourceImplementation
 
 class PreviewPublicDetector : ComposableFunctionDetector(), SourceCodeScanner {
@@ -44,6 +45,8 @@ class PreviewPublicDetector : ComposableFunctionDetector(), SourceCodeScanner {
     if (!method.isPreview) return
     // We only care about public methods
     if (!function.isPublic) return
+    // If it's used for tests, allow it
+    if (method.isVisibleForTesting) return
 
     // If we got here, it's a public method in a @Preview composable with a @PreviewParameter
     // parameter
