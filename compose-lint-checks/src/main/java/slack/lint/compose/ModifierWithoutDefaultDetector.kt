@@ -18,6 +18,7 @@ import slack.lint.compose.util.definedInInterface
 import slack.lint.compose.util.isAbstract
 import slack.lint.compose.util.isActual
 import slack.lint.compose.util.isModifier
+import slack.lint.compose.util.isModifierReceiver
 import slack.lint.compose.util.isOverride
 import slack.lint.compose.util.lastChildLeafOrSelf
 import slack.lint.compose.util.sourceImplementation
@@ -43,9 +44,14 @@ class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeS
 
   override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     if (
-      function.definedInInterface || function.isActual || function.isOverride || function.isAbstract
-    )
+      function.definedInInterface ||
+        function.isActual ||
+        function.isOverride ||
+        function.isAbstract ||
+        function.isModifierReceiver
+    ) {
       return
+    }
 
     // Look for modifier params in the composable signature, and if any without a default value is
     // found, error out.
