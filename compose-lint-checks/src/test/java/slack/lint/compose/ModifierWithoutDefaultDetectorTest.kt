@@ -106,6 +106,9 @@ class ModifierWithoutDefaultDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
+
         @Composable
         fun Something(modifier: Modifier = Modifier) {
             Row(modifier = modifier) {
@@ -120,6 +123,26 @@ class ModifierWithoutDefaultDetectorTest : BaseComposeLintTest() {
         fun Something(modifier: Modifier = SomeOtherValueFromSomeConstant) {
             Row(modifier = modifier) {
             }
+        }
+      """
+        .trimIndent()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
+
+  // https://github.com/slackhq/compose-lints/issues/408
+  @Test
+  fun `Modifier extensions are fine`() {
+    @Language("kotlin")
+    val code =
+      """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
+
+        @Composable
+        fun Modifier.customBackground(
+             foo: Foo,
+        ): Modifier {
+             // compute background based on Foo
         }
       """
         .trimIndent()
