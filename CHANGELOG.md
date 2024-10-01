@@ -6,6 +6,8 @@ Changelog
 
 - **Fix**: Don't report duplicate errors about multiple content emitters.
 - **Enhancement**: Report the function name for readability in `ComposeContentEmitterReturningValues`.
+- **Enhancement**: Check for inherited `@Preview` annotations up to four levels.
+- **Enhancement**: Allow `@VisibleForTestin`/`@TestOnly`-annotated preview composables to be public.
 
 1.3.1
 -----
