@@ -207,7 +207,6 @@ class PreviewPublicDetectorTest : BaseComposeLintTest() {
 
           annotation class VisibleForTesting
         """
-            .trimIndent()
         ),
         *commonStubs,
         kotlin(code),
