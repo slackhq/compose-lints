@@ -1003,7 +1003,7 @@ More info: <a href="https://medium.com/androiddevelopers/jetpack-compose-stabili
 <p class="admonition-title">Configuration</p>
 <p>To add your custom composables so they are used in this rule (things like your design system composables), you can configure a <code>content-emitters</code> option in <code>lint.xml</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">&lt;issue</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;ComposeMultipleContentEmitters&quot;</span><span class="nt">&gt;</span>
-<span class="w">   </span><span class="nt">&lt;option</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;allowed-composition-locals&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;CustomEmitter,AnotherEmitter&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">   </span><span class="nt">&lt;option</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;content-emitters&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;CustomEmitter,AnotherEmitter&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
 <span class="nt">&lt;/issue&gt;</span>
 </code></pre></div>
 </div>
@@ -1045,7 +1045,7 @@ This effectively ties the function to be called from a Column, but is still not 
 <p class="admonition-title">Configuration</p>
 <p>To add your custom composables so they are used in this rule (things like your design system composables), you can configure a <code>content-emitters</code> option in <code>lint.xml</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">&lt;issue</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;ComposeMultipleContentEmitters&quot;</span><span class="nt">&gt;</span>
-<span class="w">   </span><span class="nt">&lt;option</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;allowed-composition-locals&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;CustomEmitter,AnotherEmitter&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">   </span><span class="nt">&lt;option</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;content-emitters&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;CustomEmitter,AnotherEmitter&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
 <span class="nt">&lt;/issue&gt;</span>
 </code></pre></div>
 </div>
@@ -1062,7 +1062,7 @@ state of the slot to be preserved.</p>
 <p>Related rule: <a href="https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/SlotReusedDetector.kt"><code>SlotReused</code></a></p>
 <h3 id="naming-multipreview-annotations-properly">Naming multipreview annotations properly<a class="headerlink" href="#naming-multipreview-annotations-properly" title="Permanent link">&para;</a></h3>
 <p>Multipreview annotations should be named by using <code>Previews</code> as suffix (or <code>Preview</code> if just one). These annotations have to be explicitly named to make sure that they are clearly identifiable as a <code>@Preview</code> alternative on its usages.</p>
-<p>More information: <a href="https://developer.android.com/jetpack/compose/tooling#preview-multipreview">Multipreview annotations</a></p>
+<p>More information: <a href="https://developer.android.com/develop/ui/compose/tooling/previews#preview-multiple">Multipreview annotations</a></p>
 <p>Related rule: <a href="https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/PreviewNamingDetector.kt"><code>ComposePreviewNaming</code></a></p>
 <h3 id="naming-composable-functions-properly">Naming @Composable functions properly<a class="headerlink" href="#naming-composable-functions-properly" title="Permanent link">&para;</a></h3>
 <p>Composable functions that return <code>Unit</code> should start with an uppercase letter. They are considered declarative entities that can be either present or absent in a composition and therefore follow the naming rules for classes.</p>
