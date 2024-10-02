@@ -4,14 +4,21 @@ Changelog
 **Unreleased**
 --------------
 
+1.4.1
+-----
+
+_2024-10-02_
+
 - **Fix**: Fix false positives reported by `ComposeContentEmitterReturningValues`.
 - **Fix**: Fix `content-emitters` configuration in docs.
 - **Fix**: Fix link to multipreview annotations in docs.
 
+Special thanks to [@erikghonyan](https://github.com/erikghonyan) for contributing to this release!
+
 1.4.0
 -----
 
-_2024-01-25_
+_2024-10-01_
 
 - **New**: Implement `SlotReused` lint.  See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information.
 - **Enhancement**: Report the function name for readability in `ComposeContentEmitterReturningValues`.
@@ -28,7 +35,7 @@ _2024-01-25_
 - Test against K2 UAST.
 - Build against Kotlin `2.0.20`.
 
-Special thanks to [@alexvanyo](https://github.com/alexvanyo), [@seve-andre](https://github.com/seve-andre), [@svenjacobs](https://github.com/svenjacobs), [@ychescale9](https://github.com/ychescale9), [@shahzadansari](https://github.com/shahzadansari), [@kozaxinan](https://github.com/kozaxinan), for contributing to this release!
+Special thanks to [@alexvanyo](https://github.com/alexvanyo), [@seve-andre](https://github.com/seve-andre), [@svenjacobs](https://github.com/svenjacobs), [@ychescale9](https://github.com/ychescale9), [@shahzadansari](https://github.com/shahzadansari), and [@kozaxinan](https://github.com/kozaxinan) for contributing to this release!
 
 1.3.1
 -----
