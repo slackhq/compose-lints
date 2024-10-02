@@ -169,7 +169,7 @@ Related rule: [`SlotReused`](https://github.com/slackhq/compose-lints/blob/main/
 
 Multipreview annotations should be named by using `Previews` as suffix (or `Preview` if just one). These annotations have to be explicitly named to make sure that they are clearly identifiable as a `@Preview` alternative on its usages.
 
-More information: [Multipreview annotations](https://developer.android.com/jetpack/compose/tooling#preview-multipreview)
+More information: [Multipreview annotations](https://developer.android.com/develop/ui/compose/tooling/previews#preview-multiple)
 
 Related rule: [`ComposePreviewNaming`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/PreviewNamingDetector.kt)
 
