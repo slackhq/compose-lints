@@ -102,7 +102,7 @@ constructor(
             .findChildrenByClass<KtFunction>()
             .filter {
               val method = it.toUElementOfType<UMethod>() ?: return@filter false
-              method.isComposable && !method.returnsUnitOrVoid(context.evaluator)
+              method.isComposable
             }
             // We don't want to analyze composables that are extension functions, as they might be
             // things like
@@ -120,21 +120,24 @@ constructor(
 
         // We can start showing errors, for composables that emit at all (from the list of
         // known composables)
-        val directEmissionsReported = composableToEmissionCount.keys
+        val directEmissionsReported = composableToEmissionCount.filterValues { it > 0 }.keys
         for (composable in directEmissionsReported) {
-          context.report(
-            ISSUE,
-            composable,
-            context.getNameLocation(composable),
-            ISSUE.getExplanation(TextFormat.TEXT),
-          )
+          if (
+            composable.toUElementOfType<UMethod>()?.returnsUnitOrVoid(context.evaluator) != true
+          ) {
+            context.report(
+              ISSUE,
+              composable,
+              context.getNameLocation(composable),
+              ISSUE.getExplanation(TextFormat.TEXT),
+            )
+          }
         }
 
         // Now we can give some extra passes through the list of composables, and try to get a more
         // accurate count.
         // We want to make sure that if these composables are using other composables in this file
-        // that emit UI,
-        // those are taken into account too. For example:
+        // that emit UI, those are taken into account too. For example:
         // @Composable fun Comp1() { Text("Hi") }
         // @Composable fun Comp2() { Text("Hola") }
         // @Composable fun Comp3() { Comp1() Comp2() } // This wouldn't be picked up at first, but
@@ -156,16 +159,20 @@ constructor(
         // Here we have the settled data after all the needed passes, so we want to show errors for
         // them, if they were not caught already by the 1st emission loop
         currentMapping
-          .filterValues { it > 1 }
+          .filterValues { it > 0 }
           .filterNot { directEmissionsReported.contains(it.key) }
           .keys
           .forEach { composable ->
-            context.report(
-              ISSUE,
-              composable,
-              context.getNameLocation(composable),
-              ISSUE.getExplanation(TextFormat.TEXT),
-            )
+            if (
+              composable.toUElementOfType<UMethod>()?.returnsUnitOrVoid(context.evaluator) != true
+            ) {
+              context.report(
+                ISSUE,
+                composable,
+                context.getNameLocation(composable),
+                ISSUE.getExplanation(TextFormat.TEXT),
+              )
+            }
           }
       }
     }

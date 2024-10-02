@@ -90,7 +90,7 @@ Related rule: [`ComposeContentEmitterReturningValues`](https://github.com/slackh
 
     ```xml
     <issue id="ComposeMultipleContentEmitters">
-       <option name="allowed-composition-locals" value="CustomEmitter,AnotherEmitter" />
+       <option name="content-emitters" value="CustomEmitter,AnotherEmitter" />
     </issue>
     ```
 
@@ -144,7 +144,7 @@ Related rule: [`ComposeMultipleContentEmitters`](https://github.com/slackhq/comp
 
     ```xml
     <issue id="ComposeMultipleContentEmitters">
-       <option name="allowed-composition-locals" value="CustomEmitter,AnotherEmitter" />
+       <option name="content-emitters" value="CustomEmitter,AnotherEmitter" />
     </issue>
     ```
 
