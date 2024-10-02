@@ -4,6 +4,10 @@ Changelog
 **Unreleased**
 --------------
 
+- **Fix**: Fix false positives reported by `ComposeContentEmitterReturningValues`.
+- **Fix**: Fix `content-emitters` configuration in docs.
+- **Fix**: Fix link to multipreview annotations in docs.
+
 1.4.0
 -----
 

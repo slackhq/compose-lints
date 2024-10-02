@@ -176,4 +176,23 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
+
+  // https://github.com/slackhq/compose-lints/issues/419
+  @Test
+  fun `ensure happy path returning is valid`() {
+    @Language("kotlin")
+    val code =
+      """
+        import androidx.compose.runtime.Composable
+
+        @Composable
+        fun rememberInsetsController(): WindowInsetsControllerCompat? {
+            val view = LocalView.current
+            val window = remember { view.context.findActivity()?.window } ?: return null
+            return remember { WindowCompat.getInsetsController(window, view) }
+        }
+      """
+        .trimIndent()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
 }
