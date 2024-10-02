@@ -4,10 +4,27 @@ Changelog
 **Unreleased**
 --------------
 
-- **Fix**: Don't report duplicate errors about multiple content emitters.
+1.4.0
+-----
+
+_2024-01-25_
+
+- **New**: Implement `SlotReused` lint.  See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information.
 - **Enhancement**: Report the function name for readability in `ComposeContentEmitterReturningValues`.
 - **Enhancement**: Check for inherited `@Preview` annotations up to four levels.
-- **Enhancement**: Allow `@VisibleForTestin`/`@TestOnly`-annotated preview composables to be public.
+- **Enhancement**: Allow `@VisibleForTesting`/`@TestOnly`-annotated preview composables to be public.
+- **Fix**: Don't report duplicate errors about multiple content emitters.
+- **Fix**: Normalize lint option loading to match with individual issues.
+- **Fix**: Use name of parameter if text is not available.
+- **Removed**: Delete obsolete `ComposeComposableModifier` lint check.
+- Various docs fixes.
+- Build against Lint `8.7.0`.
+- Update `api` and `minApi` to `16` (i.e. lint 8.7.0+). It's possible this may work with API 15 but we have not tested it.
+- Test against Lint `8.8.0-alpha04`.
+- Test against K2 UAST.
+- Build against Kotlin `2.0.20`.
+
+Special thanks to [@alexvanyo](https://github.com/alexvanyo), [@seve-andre](https://github.com/seve-andre), [@svenjacobs](https://github.com/svenjacobs), [@ychescale9](https://github.com/ychescale9), [@shahzadansari](https://github.com/shahzadansari), [@kozaxinan](https://github.com/kozaxinan), for contributing to this release!
 
 1.3.1
 -----
