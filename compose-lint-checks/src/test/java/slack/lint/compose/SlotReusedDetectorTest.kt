@@ -290,4 +290,46 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
 
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
+
+  @Test
+  fun `passes with multiple slot parameters`() {
+    @Language("kotlin")
+    val code =
+      """
+        @Composable
+        fun SplitLayoutVerticalSimple(
+            first: @Composable () -> Unit,
+            modifier: Modifier = Modifier,
+            second: @Composable () -> Unit
+        ) {
+          Layout(
+            modifier = modifier.clipToBounds(),
+            content = {
+              Box(
+                  Modifier
+                      .layoutId("first")
+                      .consumeWindowInsets(
+                          WindowInsets.safeDrawing.only(WindowInsetsSides.End)
+                      )
+              ) {
+                  first()
+              }
+              Box(
+                  Modifier
+                      .layoutId("second")
+                      .consumeWindowInsets(
+                          WindowInsets.safeDrawing.only(WindowInsetsSides.Start)
+                      )
+              ) {
+                  second()
+              }
+            }
+          ) { measurable, constraints ->
+            layout(constraints.maxWidth, constraints.maxHeight) {}
+          }
+        }
+        """.trimIndent()
+
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
 }
