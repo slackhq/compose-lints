@@ -296,6 +296,9 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier        
+
         @Composable
         fun SplitLayoutVerticalSimple(
             first: @Composable () -> Unit,
@@ -312,7 +315,7 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
                           WindowInsets.safeDrawing.only(WindowInsetsSides.End)
                       )
               ) {
-                  first()
+                first()
               }
               Box(
                   Modifier
@@ -321,7 +324,7 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
                           WindowInsets.safeDrawing.only(WindowInsetsSides.Start)
                       )
               ) {
-                  second()
+                second()
               }
             }
           ) { measurable, constraints ->
