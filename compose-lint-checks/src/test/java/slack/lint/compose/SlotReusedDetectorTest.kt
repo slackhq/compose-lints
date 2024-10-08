@@ -297,7 +297,7 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
     val code =
       """
         import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier        
+        import androidx.compose.ui.Modifier
 
         @Composable
         fun SplitLayoutVerticalSimple(
@@ -331,7 +331,8 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
             layout(constraints.maxWidth, constraints.maxHeight) {}
           }
         }
-        """.trimIndent()
+        """
+        .trimIndent()
 
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
