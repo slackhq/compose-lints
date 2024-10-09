@@ -282,6 +282,7 @@ By default, this rule will only check for modifiers in public methods. However, 
     ```
 
 Possible values are:
+
 * `only_public`: (default) Will check for missing modifiers only for public composables.
 * `public_and_internal`: Will check for missing modifiers in both public and internal composables.
 * `all`: Will check for missing modifiers in all composables.
