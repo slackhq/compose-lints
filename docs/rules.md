@@ -273,7 +273,7 @@ More info: [Always provide a Modifier parameter](https://chrisbanes.me/posts/alw
 Related rule: [`ComposeModifierMissing`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierMissingDetector.kt)
 
 !!! note "Configuration"
-By default, this rule will only check for modifiers in public methods. However, you can configure the threshold via using `visibility-threshold` option in `lint.xml`.
+    By default, this rule will only check for modifiers in public methods. However, you can configure the threshold via using `visibility-threshold` option in `lint.xml`.
 
     ```xml
     <issue id="ComposeModifierMissing">
