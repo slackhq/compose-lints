@@ -290,4 +290,60 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
 
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
+
+  @Test
+  fun `passes when using same name is used as a different function`() {
+    @Language("kotlin")
+    val code =
+      """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
+
+        @Composable
+        fun Something(
+          modifier: Modifier = Modifier,
+          first: @Composable () -> Unit,
+        ) {
+          Box(modifier) {
+            first()
+            listOf("1").first { it == "2" }
+          }
+        }
+
+      """
+        .trimIndent()
+
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `passes when using same slot name is used with a different receiver`() {
+    @Language("kotlin")
+    val code =
+      """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
+
+        class Section(
+          // other stuff
+          val content: @Composable () -> Unit,
+        )
+
+        @Composable
+        fun Something(
+          modifier: Modifier = Modifier,
+          section: Section? = null,
+          content: @Composable () -> Unit,
+        ) {
+          Box(modifier) {
+            content()
+            section?.content()
+          }
+        }
+
+      """
+        .trimIndent()
+
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
 }
