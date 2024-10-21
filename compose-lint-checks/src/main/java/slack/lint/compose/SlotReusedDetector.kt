@@ -8,13 +8,13 @@ import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
+import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.toUElement
+import org.jetbrains.uast.tryResolve
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.slotParameters
@@ -46,37 +46,21 @@ class SlotReusedDetector : ComposableFunctionDetector(), SourceCodeScanner {
     val slotParameters = method.slotParameters(context.evaluator)
 
     val callExpressions = composableBlockExpression.findChildrenByClass<KtCallExpression>().toList()
-    val innerLambdas = composableBlockExpression.findChildrenByClass<KtLambdaExpression>().toList()
+
+    val psiManager = PsiManager.getInstance(context.project.ideaProject)
 
     slotParameters.forEach { slotParameter ->
-      // Find lambdas that shadow this parameter name, to make sure that they aren't shadowing
-      // the references we are looking through
-      val lambdasWithMatchingParameterName =
-        innerLambdas.filter { innerLambda ->
-          // Otherwise look to see if any of the parameters on the inner lambda have the
-          // same name
-          innerLambda.valueParameters
-            // Ignore parameters with a destructuring declaration instead of a named
-            // parameter
-            .filter { it.destructuringDeclaration == null }
-            .any { it.name == slotParameter.name }
-        }
-
       // Count all direct calls of the slot parameter.
       // NOTE: this misses cases where the slot parameter is passed as an argument to another
       // method, which may or may not invoke the slot parameter, but there are cases where that is
       // valid, like using the slot parameter as the key for a remember
       val slotParameterCallCount =
-        callExpressions
-          .filter { reference ->
-            // The parameter is referenced if there is at least one reference that isn't shadowed by
-            // an inner lambda
-            lambdasWithMatchingParameterName.none { it.isAncestor(reference) }
-          }
-          .count { reference ->
-            (reference.calleeExpression as? KtNameReferenceExpression)?.getReferencedName() ==
-              slotParameter.name
-          }
+        callExpressions.count { callExpression ->
+          psiManager.areElementsEquivalent(
+            callExpression.calleeExpression?.toUElement()?.tryResolve(),
+            slotParameter,
+          )
+        }
 
       // Report an issue if the slot parameter was invoked in multiple places
       if (slotParameterCallCount > 1) {
