@@ -8,7 +8,8 @@ import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
-import com.intellij.psi.PsiManager
+import com.intellij.codeInsight.PsiEquivalenceUtil
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.uast.UElement
@@ -47,8 +48,6 @@ class SlotReusedDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
     val callExpressions = composableBlockExpression.findChildrenByClass<KtCallExpression>().toList()
 
-    val psiManager = PsiManager.getInstance(context.project.ideaProject)
-
     slotParameters.forEach { slotParameter ->
       // Count all direct calls of the slot parameter.
       // NOTE: this misses cases where the slot parameter is passed as an argument to another
@@ -56,10 +55,13 @@ class SlotReusedDetector : ComposableFunctionDetector(), SourceCodeScanner {
       // valid, like using the slot parameter as the key for a remember
       val slotParameterCallCount =
         callExpressions.count { callExpression ->
-          psiManager.areElementsEquivalent(
-            callExpression.calleeExpression?.toUElement()?.tryResolve(),
-            slotParameter,
-          )
+          val calleeElement: PsiElement? =
+            callExpression.calleeExpression?.toUElement()?.tryResolve()
+          val slotElement: PsiElement? = slotParameter.sourceElement
+
+          calleeElement != null &&
+            slotElement != null &&
+            PsiEquivalenceUtil.areElementsEquivalent(calleeElement, slotElement)
         }
 
       // Report an issue if the slot parameter was invoked in multiple places
