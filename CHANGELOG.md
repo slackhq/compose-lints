@@ -4,6 +4,14 @@ Changelog
 **Unreleased**
 --------------
 
+- **Enhancement**: Better handle name shadowing in `SlotReused` lint and reduce false positives.
+- Test against lint `31.8.0-alpha07`.
+- Various doc fixes.
+- Build against lint `31.7.1`.
+- Build against Kotlin `2.0.21`. Still targeting Kotlin 1.9 language version (lint 31.7.x's language version).
+
+Special thanks to [@SimonMarquis](https://github.com/SimonMarquis) and [@AlexVanyo](https://github.com/AlexVanyo) for contributing to this release!
+
 1.4.1
 -----
 
