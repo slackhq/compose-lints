@@ -1130,19 +1130,18 @@ Be sure to set Detekt&rsquo;s <a href="https://detekt.dev/docs/introduction/comp
 <p>Related rule: <a href="https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierMissingDetector.kt"><code>ComposeModifierMissing</code></a></p>
 <div class="admonition note">
 <p class="admonition-title">Configuration</p>
-</div>
 <p>By default, this rule will only check for modifiers in public methods. However, you can configure the threshold via using <code>visibility-threshold</code> option in <code>lint.xml</code>.</p>
-<div class="codehilite"><pre><span></span><code>```xml
-&lt;issue id=&quot;ComposeModifierMissing&quot;&gt;
-   &lt;option name=&quot;visibility-threshold&quot; value=&quot;only_public&quot; /&gt;
-&lt;/issue&gt;
-```
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;issue</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;ComposeModifierMissing&quot;</span><span class="nt">&gt;</span>
+<span class="w">   </span><span class="nt">&lt;option</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;visibility-threshold&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;only_public&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/issue&gt;</span>
 </code></pre></div>
-
-<p>Possible values are:
-* <code>only_public</code>: (default) Will check for missing modifiers only for public composables.
-* <code>public_and_internal</code>: Will check for missing modifiers in both public and internal composables.
-* <code>all</code>: Will check for missing modifiers in all composables.</p>
+</div>
+<p>Possible values are:</p>
+<ul>
+<li><code>only_public</code>: (default) Will check for missing modifiers only for public composables.</li>
+<li><code>public_and_internal</code>: Will check for missing modifiers in both public and internal composables.</li>
+<li><code>all</code>: Will check for missing modifiers in all composables.</li>
+</ul>
 <h3 id="dont-re-use-modifiers">Don&rsquo;t re-use modifiers<a class="headerlink" href="#dont-re-use-modifiers" title="Permanent link">&para;</a></h3>
 <p>Modifiers which are passed in are designed so that they should be used by a single layout node in the composable function. If the provided modifier is used by multiple composables at different levels, unwanted behaviour can happen.</p>
 <p>In the following example we&rsquo;ve exposed a public modifier parameter, and then passed it to the root Column, but we&rsquo;ve also passed it to each of the descendant calls, with some extra modifiers on top:</p>

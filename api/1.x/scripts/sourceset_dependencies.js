@@ -1,0 +1,1 @@
+sourceset_dependencies = '{":compose-lint-checks/main":[]}'

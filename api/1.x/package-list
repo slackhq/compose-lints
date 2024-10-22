@@ -1,0 +1,6 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+module:compose-lint-checks
+slack.lint.compose
+slack.lint.compose.util
