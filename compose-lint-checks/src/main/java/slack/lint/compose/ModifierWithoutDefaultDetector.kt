@@ -56,13 +56,12 @@ class ModifierWithoutDefaultDetector : ComposableFunctionDetector(), SourceCodeS
     // Look for modifier params in the composable signature, and if any without a default value is
     // found, error out.
     method.uastParameters
-      .withIndex()
-      .filter { (_, param) -> param.isModifier(context.evaluator) }
-      .filterNot { (_, param) ->
+      .filter { param -> param.isModifier(context.evaluator) }
+      .filterNot { param ->
         param.sourcePsi is KtParameter && (param.sourcePsi as KtParameter).hasDefaultValue()
       }
-      .forEach { (i, _) ->
-        val modifierParameter = function.valueParameters[i]
+      .forEach { param ->
+        val modifierParameter = param.sourcePsi as KtParameter
 
         // This error is easily auto fixable, we just inject ` = Modifier` to the param
         val lastToken = modifierParameter.node.lastChildLeafOrSelf() as LeafPsiElement

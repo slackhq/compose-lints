@@ -148,4 +148,32 @@ class ModifierWithoutDefaultDetectorTest : BaseComposeLintTest() {
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
+
+  // https://github.com/slackhq/compose-lints/issues/423
+  @Test
+  fun `Modifier receiver params don't count`() {
+    @Language("kotlin")
+    val code =
+      """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
+
+        /**
+         * Automatically requests focus after initial composition.
+         */
+        @Suppress("ModifierComposable") // Comment
+        @Composable
+        fun Modifier.focusAutoRequester(): Modifier {
+            val focusRequester = remember { FocusRequester() }
+
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+            }
+
+            return focusRequester(focusRequester)
+        }
+      """
+        .trimIndent()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
 }
