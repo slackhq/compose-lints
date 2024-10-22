@@ -8,7 +8,6 @@ import com.google.devtools.ksp.gradle.KspTask
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.dokka.gradle.DokkaExtension
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -116,9 +115,7 @@ dokka {
   }
 }
 
-dependencies {
-  dokka(project(":compose-lint-checks"))
-}
+dependencies { dokka(project(":compose-lint-checks")) }
 
 subprojects {
   pluginManager.withPlugin("java") {
