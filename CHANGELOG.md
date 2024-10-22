@@ -4,6 +4,11 @@ Changelog
 **Unreleased**
 --------------
 
+1.4.2
+-----
+
+_2024-10-22_
+
 - **Enhancement**: Better handle name shadowing in `SlotReused` lint and reduce false positives.
 - Test against lint `31.8.0-alpha07`.
 - Various doc fixes.

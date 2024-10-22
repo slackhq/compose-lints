@@ -7,6 +7,7 @@ import com.diffplug.gradle.spotless.SpotlessExtension
 import com.google.devtools.ksp.gradle.KspTask
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.dokka.gradle.DokkaExtension
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -15,7 +16,7 @@ plugins {
   alias(libs.plugins.kotlin.jvm) apply false
   alias(libs.plugins.spotless) apply false
   alias(libs.plugins.mavenPublish) apply false
-  alias(libs.plugins.dokka) apply false
+  alias(libs.plugins.dokka)
   alias(libs.plugins.detekt)
   alias(libs.plugins.lint) apply false
   alias(libs.plugins.ksp) apply false
@@ -108,6 +109,17 @@ allprojects {
   }
 }
 
+dokka {
+  dokkaPublications.html {
+    outputDirectory.set(rootDir.resolve("docs/api/1.x"))
+    includes.from(project.layout.projectDirectory.file("docs/index.md"))
+  }
+}
+
+dependencies {
+  dokka(project(":compose-lint-checks"))
+}
+
 subprojects {
   pluginManager.withPlugin("java") {
     configure<JavaPluginExtension> {
@@ -135,8 +147,8 @@ subprojects {
   pluginManager.withPlugin("com.vanniktech.maven.publish") {
     apply(plugin = "org.jetbrains.dokka")
 
-    tasks.withType<DokkaTask>().configureEach {
-      outputDirectory.set(rootDir.resolve("docs/api/0.x"))
+    configure<DokkaExtension> {
+      dokkaPublicationDirectory.set(layout.buildDirectory.dir("dokkaDir"))
       dokkaSourceSets.configureEach { skipDeprecated.set(true) }
     }
 
