@@ -8,8 +8,10 @@ import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
+import com.android.tools.lint.detector.api.asCall
 import com.intellij.codeInsight.PsiEquivalenceUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiTypes
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.uast.UElement
@@ -49,23 +51,47 @@ class SlotReusedDetector : ComposableFunctionDetector(), SourceCodeScanner {
     val callExpressions = composableBlockExpression.findChildrenByClass<KtCallExpression>().toList()
 
     slotParameters.forEach { slotParameter ->
+      val slotElement: PsiElement? = slotParameter.sourceElement
+
       // Count all direct calls of the slot parameter.
-      // NOTE: this misses cases where the slot parameter is passed as an argument to another
-      // method, which may or may not invoke the slot parameter, but there are cases where that is
-      // valid, like using the slot parameter as the key for a remember
       val slotParameterCallCount =
         callExpressions.count { callExpression ->
           val calleeElement: PsiElement? =
             callExpression.calleeExpression?.toUElement()?.tryResolve()
-          val slotElement: PsiElement? = slotParameter.sourceElement
 
           calleeElement != null &&
             slotElement != null &&
             PsiEquivalenceUtil.areElementsEquivalent(calleeElement, slotElement)
         }
 
-      // Report an issue if the slot parameter was invoked in multiple places
-      if (slotParameterCallCount > 1) {
+      // Count all instances where the slot parameter is passed to a slot argument for another
+      // composable function. We make the assumption that any composable function that has a slot
+      // and returns Unit will call the slot at least once (perhaps conditionally) because if it
+      // didn't, what's the point of having the parameter?
+      val slotParameterPassedAsSlotParameterCount =
+        callExpressions.sumOf { callExpression ->
+          val uCallExpression = callExpression.toUElement()?.asCall() ?: return@sumOf 0
+          val psiMethod = uCallExpression.resolve() ?: return@sumOf 0
+
+          val argumentMapping = context.evaluator.computeArgumentMapping(uCallExpression, psiMethod)
+
+          argumentMapping.count { (expression, parameter) ->
+            val argumentElement = expression.tryResolve()
+
+            argumentElement != null &&
+              slotElement != null &&
+              // Called method is composable
+              psiMethod.hasAnnotation("androidx.compose.runtime.Composable") &&
+              // Called method returns Unit
+              psiMethod.returnType?.isAssignableFrom(PsiTypes.voidType()) == true &&
+              // Parameter is composable
+              parameter.type.hasAnnotation("androidx.compose.runtime.Composable") &&
+              PsiEquivalenceUtil.areElementsEquivalent(argumentElement, slotElement)
+          }
+        }
+
+      // Report an issue if the slot parameter was used in multiple places
+      if (slotParameterCallCount + slotParameterPassedAsSlotParameterCount > 1) {
         context.report(
           ISSUE,
           slotParameter as UElement,
