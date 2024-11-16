@@ -9,14 +9,20 @@ import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
+import com.android.tools.lint.detector.api.isReceiver
+import com.intellij.psi.util.firstLeaf
+import com.intellij.psi.util.siblings
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionType
 import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParameter
 import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.isComposable
 import slack.lint.compose.util.isFunctionalInterface
 import slack.lint.compose.util.isModifier
 import slack.lint.compose.util.runIf
@@ -63,10 +69,10 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
     // 4. optional: function that might have no default
 
     // Let's try to build the ideal ordering first, and compare against that.
-    val currentOrder = method.uastParameters
+    val currentOrder = method.uastParameters.filter { !it.isReceiver() }
 
     // We look in the original params without defaults and see if the last one is a function.
-    val hasTrailingFunction = function.hasTrailingFunction(context.evaluator)
+    val hasTrailingFunction = function.hasTrailingContentLambda(context.evaluator)
     val trailingLambda =
       if (hasTrailingFunction) {
         listOf(method.uastParameters.last())
@@ -76,7 +82,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
     // We extract the params without with and without defaults, and keep the order between them
     val (withDefaults, withoutDefaults) =
-      method.uastParameters
+      currentOrder
         .runIf(hasTrailingFunction) { dropLast(1) }
         .partition { (it.sourcePsi as? KtParameter)?.hasDefaultValue() == true }
 
@@ -94,35 +100,62 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
     // If it's not the same as the current order, we show the rule violation.
     if (currentOrder != properOrder) {
-      val errorLocation = context.getLocation(function.valueParameterList)
+      val valueParameterList = function.valueParameterList ?: return
+      val errorLocation = context.getLocation(valueParameterList)
       context.report(
         ISSUE,
         function,
         errorLocation,
         createErrorMessage(currentOrder, properOrder),
         fix()
+          .name("Reorder parameters")
           .replace()
-          .range(errorLocation)
-          .with(properOrder.joinToString(prefix = "(", postfix = ")") { getText(it) })
-          .reformat(true)
+          .with(buildNewText(valueParameterList, properOrder))
           .build(),
       )
     }
   }
 
-  private fun KtFunction.hasTrailingFunction(evaluator: JavaEvaluator): Boolean {
-    val shallowCheck =
-      when (val outerType = valueParameters.lastOrNull()?.typeReference?.typeElement) {
-        is KtFunctionType -> true
-        is KtNullableType -> outerType.innerType is KtFunctionType
-        else -> false
+  private fun buildNewText(
+    valueParameterList: KtParameterList,
+    parameters: List<UParameter>,
+  ): String {
+    return buildString {
+      var parameterIndex = 0
+      for (element in valueParameterList.firstLeaf().siblings()) {
+        if (element is KtParameter) {
+          append(parameters[parameterIndex++].sourcePsi!!.text)
+        } else {
+          append(element.text)
+        }
       }
-    if (shallowCheck) return true
+    }
+  }
 
-    // Fall back to thorough check in case of aliases
-    val resolved =
-      evaluator.getTypeClass(valueParameters.lastOrNull()?.toUElementOfType<UParameter>()?.type)
-        ?: return false
-    return resolved.isFunctionalInterface
+  // Checks if given function has a trailing lambda that can emit UI
+  private fun KtFunction.hasTrailingContentLambda(evaluator: JavaEvaluator): Boolean {
+    val lastParameter = valueParameters.lastOrNull()?.toUElementOfType<UParameter>() ?: return false
+    val resolved = evaluator.getTypeClass(lastParameter.type) ?: return false
+    if (!resolved.isFunctionalInterface) return false
+
+    val functionType: KtFunctionType? =
+      when (val outerType = valueParameters.lastOrNull()?.typeReference?.typeElement) {
+        is KtFunctionType -> outerType
+        is KtNullableType -> outerType.innerType as? KtFunctionType
+        else -> null
+      }
+    // Ok if trailing lambda is composable
+    if (lastParameter.type.isComposable) return true
+    // Inline functions lambdas can emit content even if they aren't composable
+    if (hasModifier(KtTokens.INLINE_KEYWORD)) return true
+    // If type is aliased, type resolution may be incomplete without KaSession
+    // (unstable in lint 8.7), so treat such parameters as valid trailing content lambdas
+    if (functionType == null) return true
+    // Lambdas with receivers (e.g., `LazyColumn`) are valid
+    // even if they are not explicitly composable
+    if (functionType.receiverTypeReference != null) return true
+    // Any other trailing lambda is treated as a simple callback
+    // and should not qualify as a content lambda
+    return false
   }
 }
