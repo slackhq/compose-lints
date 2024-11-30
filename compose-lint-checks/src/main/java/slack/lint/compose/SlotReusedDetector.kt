@@ -20,6 +20,7 @@ import org.jetbrains.uast.toUElement
 import org.jetbrains.uast.tryResolve
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.findChildrenByClass
+import slack.lint.compose.util.isComposable
 import slack.lint.compose.util.slotParameters
 import slack.lint.compose.util.sourceImplementation
 
@@ -85,7 +86,7 @@ class SlotReusedDetector : ComposableFunctionDetector(), SourceCodeScanner {
               // Called method returns Unit
               psiMethod.returnType?.isAssignableFrom(PsiTypes.voidType()) == true &&
               // Parameter is composable
-              parameter.type.hasAnnotation("androidx.compose.runtime.Composable") &&
+              parameter.type.isComposable &&
               PsiEquivalenceUtil.areElementsEquivalent(argumentElement, slotElement)
           }
         }
