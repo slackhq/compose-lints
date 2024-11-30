@@ -23,6 +23,7 @@ abstract class BaseComposeLintTest : LintDetectorTest() {
 
           @Composable
           interface Modifier {
+            infix fun then(other: Modifier): Modifier = other
             companion object : Modifier
           }
       """
