@@ -11,7 +11,7 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.7" }
 dokka = { id = "org.jetbrains.dokka", version = "2.0.0-Beta" }
 lint = { id = "com.android.lint", version = "8.7.2" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version = "2.0.21-1.0.27" }
+ksp = { id = "com.google.devtools.ksp", version = "2.1.10-1.0.29" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.30.0" }
 spotless = { id = "com.diffplug.spotless", version = "7.0.0.BETA4" }
 
