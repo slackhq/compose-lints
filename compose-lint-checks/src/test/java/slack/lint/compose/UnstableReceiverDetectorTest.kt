@@ -43,9 +43,6 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
         @Composable
         fun Example.OtherContent() {}
 
-        @get:Composable
-        val Example.OtherContentProperty get() {}
-
         @Stable
         enum class EnumExample {
           TEST;
@@ -108,16 +105,13 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
         @Composable
         fun Example.OtherContent() {}
 
-        @get:Composable
-        val Example.OtherContentProperty get() {}
-
         // Supertypes
-        interface Presenter<T> {
-          @Composable fun present(): T
+        interface Presenter {
+          @Composable fun present()
         }
 
-        class HomePresenter : Presenter<String> {
-          @Composable override fun present(): String { return "hi" }
+        class HomePresenter : Presenter {
+          @Composable override fun present() { println("hi") }
         }
       """
         .trimIndent()
@@ -135,18 +129,49 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
           src/ExampleInterface.kt:12: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible. See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
           fun Example.OtherContent() {}
               ~~~~~~~
-          src/ExampleInterface.kt:15: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible. See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
-          val Example.OtherContentProperty get() {}
-              ~~~~~~~
-          src/ExampleInterface.kt:19: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible. See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
-            @Composable fun present(): T
+          src/ExampleInterface.kt:16: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible. See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
+            @Composable fun present()
                             ~~~~~~~
-          src/ExampleInterface.kt:23: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible. See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
-            @Composable override fun present(): String { return "hi" }
+          src/ExampleInterface.kt:20: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible. See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
+            @Composable override fun present() { println("hi") }
                                      ~~~~~~~
-          0 errors, 6 warnings
+          0 errors, 5 warnings
         """
           .trimIndent()
       )
   }
+
+    @Test
+    fun `unstable receiver types with non-Unit return type report no errors`() {
+        @Language("kotlin")
+        val code =
+            """
+        import androidx.compose.runtime.Composable
+
+        interface ExampleInterface {
+          @Composable fun Content(): String
+        }
+
+        class Example {
+          @Composable fun Content(): String { return "hi" }
+        }
+
+        @Composable
+        fun Example.OtherContent(): String { return "hi" }
+
+        @get:Composable
+        val Example.OtherContentProperty get() {}
+
+        // Supertypes
+        interface Presenter<T> {
+          @Composable fun present(): T
+        }
+
+        class HomePresenter : Presenter<String> {
+          @Composable override fun present(): String { return "hi" }
+        }
+      """
+                .trimIndent()
+        lint().files(*commonStubs, kotlin(code)).run().expectClean()
+    }
 }
