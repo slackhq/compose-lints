@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isTopLevelKtOrJavaMember
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.getContainingUClass
 import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.returnsUnitOrVoid
 import slack.lint.compose.util.isStable
 import slack.lint.compose.util.sourceImplementation
 
@@ -65,30 +66,34 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
         else -> null
       }
 
-    if (receiverType?.isStable(context.evaluator) == false) {
-      context.report(
-        ISSUE,
-        nodeToReport,
-        context.getLocation(nodeToReport),
-        ISSUE.getExplanation(TextFormat.TEXT),
-      )
-    } else if (!method.isTopLevelKtOrJavaMember() && !method.isStatic) {
-      // We check both the receiver and the containing class, as classes could have
-      // extension functions in their declarations too.
-      val containingClass = method.getContainingUClass()
-      val containingClassType =
-        containingClass
-          // If the containing class is an object, it will never be passed as a receiver arg
-          ?.takeUnless { it.sourcePsi is KtObjectDeclaration }
-          ?.let(context.evaluator::getClassType) ?: return
-
-      if (!containingClassType.isStable(context.evaluator, resolveUClass = { containingClass })) {
+    // Only non-Unit returning functions can be skippable.
+    // Non-skippable functions will always be recomposed regardless of the receiver type.
+    if (method.returnsUnitOrVoid(context.evaluator)) {
+      if (receiverType?.isStable(context.evaluator) == false) {
         context.report(
           ISSUE,
-          method,
-          context.getNameLocation(method),
+          nodeToReport,
+          context.getLocation(nodeToReport),
           ISSUE.getExplanation(TextFormat.TEXT),
         )
+      } else if (!method.isTopLevelKtOrJavaMember() && !method.isStatic) {
+        // We check both the receiver and the containing class, as classes could have
+        // extension functions in their declarations too.
+        val containingClass = method.getContainingUClass()
+        val containingClassType =
+          containingClass
+            // If the containing class is an object, it will never be passed as a receiver arg
+            ?.takeUnless { it.sourcePsi is KtObjectDeclaration }
+            ?.let(context.evaluator::getClassType) ?: return
+
+        if (!containingClassType.isStable(context.evaluator, resolveUClass = { containingClass })) {
+          context.report(
+            ISSUE,
+            method,
+            context.getNameLocation(method),
+            ISSUE.getExplanation(TextFormat.TEXT),
+          )
+        }
       }
     }
   }
