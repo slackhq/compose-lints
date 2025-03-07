@@ -260,6 +260,12 @@ Related rule: [`ComposePreviewPublic`](https://github.com/slackhq/compose-lints/
 > **Note**: If you are using Detekt, this may conflict with Detekt's [UnusedPrivateMember rule](https://detekt.dev/docs/rules/style/#unusedprivatemember).
 Be sure to set Detekt's [ignoreAnnotated configuration](https://detekt.dev/docs/introduction/compose/#unusedprivatemember) to ['Preview'] for compatibility with this rule.
 
+### `Locale.getDefault()` should not be used in in composable functions
+
+Using `Locale.getDefault()` in a composable function does not trigger recomposition when the locale changes (e.g., during a Configuration change). Instead, use `LocalConfiguration.current.locales`, which correctly updates UI and works better for previews and tests.
+
+Related rule: [`ComposePreviewNaming`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/LocaleGetDefaultDetector.kt)
+
 ## Modifiers
 
 ### When should I expose modifier parameters?

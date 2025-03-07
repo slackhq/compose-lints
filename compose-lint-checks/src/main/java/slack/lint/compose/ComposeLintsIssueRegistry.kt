@@ -43,5 +43,6 @@ class ComposeLintsIssueRegistry : IssueRegistry() {
       ViewModelInjectionDetector.ISSUE,
       ModifierComposedDetector.ISSUE,
       UnstableReceiverDetector.ISSUE,
+      LocaleGetDefaultDetector.ISSUE
     )
 }
