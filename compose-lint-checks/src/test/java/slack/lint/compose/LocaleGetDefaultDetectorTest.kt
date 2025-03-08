@@ -31,11 +31,11 @@ class LocaleGetDefaultDetectorTest : BaseComposeLintTest() {
             .run()
             .expect(
                 """
-                    src/test.kt:6: Error: Don't use Locale.getDefault() in a @Composable function.
-                    Use LocalConfiguration.current.locales instead to properly handle locale changes." [LocaleGetDefaultDetector]
-                        val locale = Locale.getDefault()
-                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    1 errors, 0 warnings
+                src/test.kt:6: Error: Don't use Locale.getDefault() in a @Composable function.
+                Use LocalConfiguration.current.locales instead to properly handle locale changes." [LocaleGetDefaultDetector]
+                    val locale = Locale.getDefault()
+                                 ~~~~~~~~~~~~~~~~~~~
+                1 errors, 0 warnings
                 """.trimIndent()
             )
     }

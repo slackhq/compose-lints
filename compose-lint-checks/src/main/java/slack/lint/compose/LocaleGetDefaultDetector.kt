@@ -5,20 +5,23 @@ import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtProperty
+import com.intellij.psi.PsiMethod
+import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.getParentOfType
 import slack.lint.compose.util.Priorities
-import slack.lint.compose.util.findChildrenByClass
+import slack.lint.compose.util.isComposable
 import slack.lint.compose.util.sourceImplementation
 
 class LocaleGetDefaultDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
     companion object {
+        const val JAVA_UTIL_LOCALE ="java.util.Locale"
+
         val ISSUE =
             Issue.create(
                 id = "LocaleGetDefaultDetector",
-                briefDescription = "Avoid using Locale.getDefault() in Composable functions",
+                briefDescription = "Avoid using `Locale.getDefault()` in Composable functions",
                 explanation =
                 """
                     Using `Locale.getDefault()` in a @Composable function does not trigger recomposition when the locale changes (e.g., during a Configuration change). \  
@@ -31,23 +34,28 @@ class LocaleGetDefaultDetector : ComposableFunctionDetector(), SourceCodeScanner
             )
     }
 
-    override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
+    override fun getApplicableMethodNames(): List<String> = listOf("getDefault")
 
-        function
-            .findChildrenByClass<KtProperty>()
-            .filter {
-                val property = it.initializer?.text ?: return@filter false
-                property.contains("Locale.getDefault()")
-            }.forEach { property ->
-                context.report(
-                    ISSUE,
-                    property,
-                    context.getLocation(property),
-                    """
+
+    override fun visitMethodCall(context: JavaContext, node: UCallExpression, method: PsiMethod) {
+
+        if (!context.evaluator.isMemberInClass(method, JAVA_UTIL_LOCALE)) return
+
+        val parentFunction = node.getParentOfType(UMethod::class.java) ?: return
+
+        if (parentFunction.isComposable) {
+            context.report(
+                ISSUE,
+                node,
+                context.getLocation(node),
+                """
                         Don't use `Locale.getDefault()` in a @Composable function.
                         Use `LocalConfiguration.current.locales` instead to properly handle locale changes."
                      """
-                )
-            }
+            )
+        }
+
     }
+
+
 }
