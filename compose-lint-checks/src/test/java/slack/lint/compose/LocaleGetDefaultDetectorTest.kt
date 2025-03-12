@@ -19,14 +19,20 @@ class LocaleGetDefaultDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-                import java.util.Locale
-                import androidx.compose.runtime.Composable
+        import java.util.Locale
+        import androidx.compose.runtime.Composable
 
-                @Composable
-                fun Something() {
-                    val locale = Locale.getDefault()
-                }
-            """
+        @Composable
+        fun Something() {
+
+            val locale = Locale.getDefault()
+
+           SideEffect {
+                Locale.getDefault()
+           }
+
+        }
+    """
         .trimIndent()
     lint()
       .skipTestModes(TestMode.WHITESPACE, TestMode.IMPORT_ALIAS)
@@ -34,12 +40,12 @@ class LocaleGetDefaultDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-                src/test.kt:6: Error: Don't use Locale.getDefault() in a @Composable function.
-                Use LocalConfiguration.current.locales instead to properly handle locale changes." [LocaleGetDefaultDetector]
-                    val locale = Locale.getDefault()
-                                 ~~~~~~~~~~~~~~~~~~~
-                1 errors, 0 warnings
-                """
+            src/test.kt:7: Error: Don't use Locale.getDefault() in a @Composable function.
+            Use LocalConfiguration.current.locales instead to properly handle locale changes." [LocaleGetDefaultDetector]
+                val locale = Locale.getDefault()
+                             ~~~~~~~~~~~~~~~~~~~
+            1 errors, 0 warnings
+        """
           .trimIndent()
       )
   }

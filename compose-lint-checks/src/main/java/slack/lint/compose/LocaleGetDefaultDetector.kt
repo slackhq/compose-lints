@@ -9,6 +9,7 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.intellij.psi.PsiMethod
 import org.jetbrains.uast.UCallExpression
+import org.jetbrains.uast.ULambdaExpression
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.getParentOfType
 import slack.lint.compose.util.Priorities
@@ -42,8 +43,9 @@ class LocaleGetDefaultDetector : ComposableFunctionDetector(), SourceCodeScanner
 
     if (!context.evaluator.isMemberInClass(method, JAVA_UTIL_LOCALE)) return
 
-    val parentFunction = node.getParentOfType(UMethod::class.java) ?: return
+    if (node.isInLambdaBlock()) return
 
+    val parentFunction = node.getParentOfType(UMethod::class.java) ?: return
     if (parentFunction.isComposable) {
       context.report(
         ISSUE,
@@ -55,5 +57,9 @@ class LocaleGetDefaultDetector : ComposableFunctionDetector(), SourceCodeScanner
                      """,
       )
     }
+  }
+
+  private fun UCallExpression.isInLambdaBlock(): Boolean {
+    return this.getParentOfType(ULambdaExpression::class.java) != null
   }
 }
