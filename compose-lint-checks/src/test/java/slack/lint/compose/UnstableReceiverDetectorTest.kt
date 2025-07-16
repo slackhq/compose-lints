@@ -141,11 +141,11 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
       )
   }
 
-    @Test
-    fun `unstable receiver types with non-Unit return type report no errors`() {
-        @Language("kotlin")
-        val code =
-            """
+  @Test
+  fun `unstable receiver types with non-Unit return type report no errors`() {
+    @Language("kotlin")
+    val code =
+      """
         import androidx.compose.runtime.Composable
 
         interface ExampleInterface {
@@ -171,7 +171,7 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
           @Composable override fun present(): String { return "hi" }
         }
       """
-                .trimIndent()
-        lint().files(*commonStubs, kotlin(code)).run().expectClean()
-    }
+        .trimIndent()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
 }

@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.psi.psiUtil.isTopLevelKtOrJavaMember
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.getContainingUClass
 import slack.lint.compose.util.Priorities
-import slack.lint.compose.util.returnsUnitOrVoid
 import slack.lint.compose.util.isStable
+import slack.lint.compose.util.returnsUnitOrVoid
 import slack.lint.compose.util.sourceImplementation
 
 class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner {
