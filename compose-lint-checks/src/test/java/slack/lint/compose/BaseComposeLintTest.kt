@@ -112,7 +112,7 @@ abstract class BaseComposeLintTest : LintDetectorTest() {
 
   override fun lint(): TestLintTask {
     val lintTask = super.lint()
-    lintTask.allowCompilationErrors(false)
+    lintTask.allowCompilationErrors(false).allowMissingSdk(true)
 
     skipTestModes?.let { testModesToSkip -> lintTask.skipTestModes(*testModesToSkip) }
     return lintTask
