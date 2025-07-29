@@ -5,7 +5,7 @@
 Check out this repo with Android Studio or IntelliJ. It's a standard gradle project and
 conventional to check out.
 
-The primary project is `slack-lint`.
+The primary project is `compose-lint-checks`.
 
 Kotlin should be used for more idiomatic use with lint APIs.
 
