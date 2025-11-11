@@ -3,7 +3,7 @@ kotlin = "2.0.21"
 ktfmt = "0.56"
 jdk = "21"
 jvmTarget = "17"
-lint = "31.9.2"
+lint = "31.13.1"
 lint-latest = "31.8.0-alpha07"
 
 [plugins]
