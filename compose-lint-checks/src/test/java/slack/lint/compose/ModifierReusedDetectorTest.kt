@@ -302,6 +302,24 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
+  fun `passes when modifier is reused before returning early from a branch`() {
+    @Language("kotlin")
+    val code =
+      """
+        @Composable
+        fun Something(modifier: Modifier = Modifier) {
+            if (someCondition) {
+                Case1RootLevelComposable(modifier = modifier)
+                return
+            }
+            Case2RootLevelComposable(modifier = modifier)
+        }
+      """
+        .trimIndent()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
   fun `passes when used on vals with lambdas`() {
     @Language("kotlin")
     val code =
