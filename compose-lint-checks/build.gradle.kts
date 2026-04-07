@@ -30,6 +30,7 @@ tasks.test {
 
 dependencies {
   compileOnly(libs.lint.api)
+  compileOnly(libs.lint.checks)
   ksp(libs.autoService.ksp)
   implementation(libs.autoService.annotations)
   testImplementation(libs.bundles.lintTest)
