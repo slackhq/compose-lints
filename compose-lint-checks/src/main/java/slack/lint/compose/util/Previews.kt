@@ -10,7 +10,12 @@ import org.jetbrains.uast.toUElementOfType
 private const val COMPOSE_PREVIEW = "androidx.compose.ui.tooling.preview.Preview"
 private const val COMPOSE_DESKTOP_PREVIEW = "androidx.compose.desktop.ui.tooling.preview.Preview"
 
-val PREVIEW_ANNOTATIONS = setOf(COMPOSE_PREVIEW, COMPOSE_DESKTOP_PREVIEW)
+val PREVIEW_ANNOTATIONS =
+  listOf(COMPOSE_PREVIEW, COMPOSE_DESKTOP_PREVIEW)
+    // Because @Preview is repeatable, Kotlin uses a `Container` wrapper class
+    // when applying this to custom preview annotations so that needs to be detected too
+    .flatMap { listOf(it, "$it.Container") }
+    .toSet()
 val TEST_ANNOTATIONS =
   setOf(
     "org.jetbrains.annotations.TestOnly",
