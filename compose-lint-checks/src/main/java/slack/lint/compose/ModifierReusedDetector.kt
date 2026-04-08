@@ -15,9 +15,13 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.KtReturnExpression
+import org.jetbrains.kotlin.psi.KtThrowExpression
 import org.jetbrains.kotlin.psi.KtValueArgumentName
+import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
@@ -83,13 +87,15 @@ constructor(
             }
             // If any of the siblings also use any of these, we also log them.
             // This is for the special case where only sibling composables reuse modifiers
-            addAll(
-              current
-                .siblings()
-                .mapNotNull { it.unwrapParenthesis() }
-                .filterIsInstance<KtCallExpression>()
-                .filter { it.isUsingModifiers(modifierNames) }
-            )
+            if (callExpression.canReachFollowingSiblingsOf(current)) {
+              addAll(
+                current
+                  .siblings()
+                  .mapNotNull { it.unwrapParenthesis() }
+                  .filterIsInstance<KtCallExpression>()
+                  .filter { it.isUsingModifiers(modifierNames) }
+              )
+            }
             current = current.parent
           }
         }
@@ -111,6 +117,75 @@ constructor(
           ISSUE.getExplanation(TextFormat.TEXT),
         )
       }
+  }
+
+  private fun KtCallExpression.canReachFollowingSiblingsOf(element: PsiElement): Boolean =
+    when (element) {
+      is KtReturnExpression,
+      is KtThrowExpression -> false
+
+      is KtBlockExpression -> element.canCompleteAfter(this)
+      is KtIfExpression -> element.branchContaining(this)?.canCompleteAfter(this) ?: true
+      is KtWhenExpression -> element.branchContaining(this)?.canCompleteAfter(this) ?: true
+      else -> true
+    }
+
+  private fun KtExpression.canCompleteAfter(descendant: PsiElement): Boolean =
+    when (this) {
+      is KtReturnExpression,
+      is KtThrowExpression -> false
+
+      is KtBlockExpression -> {
+        val statementIndex = statements.indexOfFirst { it.isAncestorOf(descendant) }
+        if (statementIndex == -1) {
+          canCompleteNormally()
+        } else {
+          statements[statementIndex].canCompleteAfter(descendant) &&
+            statements.drop(statementIndex + 1).all { it.canCompleteNormally() }
+        }
+      }
+
+      is KtIfExpression -> branchContaining(descendant)?.canCompleteAfter(descendant) ?: true
+      is KtWhenExpression -> branchContaining(descendant)?.canCompleteAfter(descendant) ?: true
+      else -> true
+    }
+
+  private fun KtExpression.canCompleteNormally(): Boolean =
+    when (this) {
+      is KtReturnExpression,
+      is KtThrowExpression -> false
+
+      is KtBlockExpression -> statements.all { it.canCompleteNormally() }
+      is KtIfExpression ->
+        then?.canCompleteNormally() == true || `else`?.canCompleteNormally() == true
+      is KtWhenExpression -> {
+        entries.none { it.isElse } ||
+          entries.any { entry -> entry.expression?.canCompleteNormally() == true }
+      }
+
+      else -> true
+    }
+
+  private fun KtIfExpression.branchContaining(descendant: PsiElement): KtExpression? =
+    when {
+      then?.isAncestorOf(descendant) == true -> then
+      `else`?.isAncestorOf(descendant) == true -> `else`
+      else -> null
+    }
+
+  private fun KtWhenExpression.branchContaining(descendant: PsiElement): KtExpression? {
+    return entries.firstNotNullOfOrNull { entry ->
+      entry.expression?.takeIf { expression -> expression.isAncestorOf(descendant) }
+    }
+  }
+
+  private fun PsiElement.isAncestorOf(descendant: PsiElement): Boolean {
+    var current: PsiElement? = descendant
+    while (current != null) {
+      if (current.isEquivalentTo(this)) return true
+      current = current.parent
+    }
+    return false
   }
 
   private fun KtCallExpression.isUsingModifiers(modifierNames: List<String>): Boolean =
