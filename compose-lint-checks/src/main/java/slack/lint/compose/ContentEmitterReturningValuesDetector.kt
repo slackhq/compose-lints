@@ -11,12 +11,15 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.uast.UFile
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.kotlin.isKotlin
+import org.jetbrains.uast.toUElement
 import org.jetbrains.uast.toUElementOfType
+import org.jetbrains.uast.tryResolve
 import slack.lint.compose.util.OptionLoadingDetector
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.emitsContent
@@ -61,7 +64,7 @@ constructor(
       bodyBlockExpression?.let { block ->
         block.statements
           .mapNotNull { it.unwrapParenthesis() }
-          .filterIsInstance<KtCallExpression>()
+          .asCallExpressions()
           .count { it.emitsContent(contentEmitterOption.value) }
       } ?: 0
 
@@ -69,12 +72,17 @@ constructor(
     val bodyBlock = bodyBlockExpression ?: return 0
     return bodyBlock.statements
       .mapNotNull { it.unwrapParenthesis() }
-      .filterIsInstance<KtCallExpression>()
+      .asCallExpressions()
       .count { callExpression ->
         // If it's a direct hit on our list, it should count directly
         if (callExpression.emitsContent(contentEmitterOption.value)) return@count true
 
-        val name = callExpression.calleeExpression?.text ?: return@count false
+        // Resolve the callee to its declaration to handle import aliases
+        val resolved =
+          callExpression.calleeExpression
+            ?.toUElement()
+            ?.tryResolve() as? com.intellij.psi.PsiNamedElement
+        val name = resolved?.name ?: callExpression.calleeExpression?.text ?: return@count false
         // If the hit is in the provided mapping, it means it is using a composable that we know
         // emits
         // UI, that we inferred from previous passes
@@ -178,3 +186,18 @@ constructor(
     }
   }
 }
+
+/**
+ * Extracts [KtCallExpression]s from a list of PSI elements, handling both direct call expressions
+ * and calls wrapped in [KtDotQualifiedExpression] (e.g., fully qualified calls like
+ * `androidx.compose.ui.Text("Hi")`).
+ */
+private fun List<org.jetbrains.kotlin.psi.KtExpression>.asCallExpressions():
+  List<KtCallExpression> =
+  mapNotNull { expression ->
+    when (expression) {
+      is KtCallExpression -> expression
+      is KtDotQualifiedExpression -> expression.selectorExpression as? KtCallExpression
+      else -> null
+    }
+  }
