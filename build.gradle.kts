@@ -145,7 +145,7 @@ subprojects {
     apply(plugin = "org.jetbrains.dokka")
 
     configure<DokkaExtension> {
-      dokkaPublicationDirectory.set(layout.buildDirectory.dir("dokkaDir"))
+      basePublicationsDirectory.set(layout.buildDirectory.dir("dokkaDir"))
       dokkaSourceSets.configureEach { skipDeprecated.set(true) }
     }
 
