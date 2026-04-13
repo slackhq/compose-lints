@@ -25,7 +25,7 @@ jobs:
         useK2Uast: [ true, false ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install JDK
         uses: actions/setup-java@v4
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install JDK
         uses: actions/setup-java@v4
