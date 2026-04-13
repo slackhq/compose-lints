@@ -66,8 +66,7 @@ private val KtCallExpression.resolvedSimpleName: String?
     // If it's a plain identifier without dots or import alias prefix, use directly
     if ('.' !in text && !text.startsWith("IMPORT_ALIAS")) return text
     // For fully qualified names, try UAST resolution first
-    val resolved =
-      calleeExpression?.toUElement()?.tryResolve() as? com.intellij.psi.PsiNamedElement
+    val resolved = calleeExpression?.toUElement()?.tryResolve() as? com.intellij.psi.PsiNamedElement
     if (resolved != null) return resolved.name
     // Fallback: take the last segment of the dot-qualified name
     if ('.' in text) return text.substringAfterLast('.')

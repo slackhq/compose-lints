@@ -79,9 +79,8 @@ constructor(
 
         // Resolve the callee to its declaration to handle import aliases
         val resolved =
-          callExpression.calleeExpression
-            ?.toUElement()
-            ?.tryResolve() as? com.intellij.psi.PsiNamedElement
+          callExpression.calleeExpression?.toUElement()?.tryResolve()
+            as? com.intellij.psi.PsiNamedElement
         val name = resolved?.name ?: callExpression.calleeExpression?.text ?: return@count false
         // If the hit is in the provided mapping, it means it is using a composable that we know
         // emits
@@ -193,11 +192,10 @@ constructor(
  * `androidx.compose.ui.Text("Hi")`).
  */
 private fun List<org.jetbrains.kotlin.psi.KtExpression>.asCallExpressions():
-  List<KtCallExpression> =
-  mapNotNull { expression ->
-    when (expression) {
-      is KtCallExpression -> expression
-      is KtDotQualifiedExpression -> expression.selectorExpression as? KtCallExpression
-      else -> null
-    }
+  List<KtCallExpression> = mapNotNull { expression ->
+  when (expression) {
+    is KtCallExpression -> expression
+    is KtDotQualifiedExpression -> expression.selectorExpression as? KtCallExpression
+    else -> null
   }
+}

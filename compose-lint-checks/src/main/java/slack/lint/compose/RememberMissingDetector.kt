@@ -31,10 +31,7 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
 
     private val MethodsThatNeedRemembering = setOf("derivedStateOf", "mutableStateOf")
     private val QualifiedMethodsThatNeedRemembering =
-      setOf(
-        "androidx.compose.runtime.mutableStateOf",
-        "androidx.compose.runtime.derivedStateOf",
-      )
+      setOf("androidx.compose.runtime.mutableStateOf", "androidx.compose.runtime.derivedStateOf")
     val DerivedStateOfNotRemembered = errorMessage("derivedStateOf")
     val MutableStateOfNotRemembered = errorMessage("mutableStateOf")
 
@@ -71,11 +68,13 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
     val qualifiedName = resolvedQualifiedName() ?: return null
     return when {
       qualifiedName.endsWith(".mutableStateOf") &&
-        QualifiedMethodsThatNeedRemembering.any { qualifiedName.endsWith(it.substringAfterLast(".")) } ->
-        "mutableStateOf"
+        QualifiedMethodsThatNeedRemembering.any {
+          qualifiedName.endsWith(it.substringAfterLast("."))
+        } -> "mutableStateOf"
       qualifiedName.endsWith(".derivedStateOf") &&
-        QualifiedMethodsThatNeedRemembering.any { qualifiedName.endsWith(it.substringAfterLast(".")) } ->
-        "derivedStateOf"
+        QualifiedMethodsThatNeedRemembering.any {
+          qualifiedName.endsWith(it.substringAfterLast("."))
+        } -> "derivedStateOf"
       else -> null
     }
   }
