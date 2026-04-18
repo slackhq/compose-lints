@@ -12,7 +12,7 @@ dokka = { id = "org.jetbrains.dokka", version = "2.2.0" }
 lint = { id = "com.android.lint", version = "9.1.1" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version = "2.2.0-2.0.2" }
-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.30.0" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.36.0" }
 spotless = { id = "com.diffplug.spotless", version = "8.4.0" }
 
 [libraries]
