@@ -3,26 +3,26 @@ Changelog
 
 **Unreleased**
 --------------
-1.4.3
+1.5.0
 -----
 
 _2026-05-06_
 
-- **New**: Add slot parameter passing detection to `SlotReusedDetector`.                                                                                                                                                      
+- **New**: Add slot parameter passing detection to `SlotReusedDetector`.
 - **Enhancement**: `ComposeUnstableReceiver` only for non-Unit returning functions.
-- **Fix**: Fix a false positive for `ModifierReused`.                                                                                                                                                                         
-- **Fix**: Fix a false positive when using custom preview annotations.                                                                                                                                                        
-- Build against Kotlin `2.3.21`.                                                                                                                                                                                              
-- Build against lint `32.2.0`.                                                                                                                                                                                                
-- Build against AGP lint plugin `9.2.0`.                                                                                                                                                                                      
-- Build against Gradle `9.5.0`.                                                                                                                                                                                               
-- Update KSP to `2.3.7`.                                                                                                                                                                                                      
-- Update ktfmt to `0.56`.                                                                                                                                                                                                     
-- Update detekt to `1.23.8`.                                                                                                                                                                                                  
-- Update spotless to `8.4.0`.                                                                                                                                                                                                 
-- Update dokka to `2.2.0`.                                                                                                                                                                                                    
-- Update mavenPublish to `0.36.0`.                                                                                                                                                                                            
-                                      
+- **Fix**: Fix a false positive for `ModifierReused`.
+- **Fix**: Fix a false positive when using custom preview annotations.
+- Build against Kotlin `2.3.21`.
+- Build against lint `32.2.0`.
+- Build against AGP lint plugin `9.2.0`.
+- Build against Gradle `9.5.0`.
+- Update KSP to `2.3.7`.
+- Update ktfmt to `0.56`.
+- Update detekt to `1.23.8`.
+- Update spotless to `8.4.0`.
+- Update dokka to `2.2.0`.
+- Update mavenPublish to `0.36.0`.
+
 1.4.2
 -----
 
