@@ -11,9 +11,6 @@ pluginManagement {
   }
 }
 
-// Apply the foojay-resolver plugin to allow automatic download of JDKs
-plugins { id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0" }
-
 dependencyResolutionManagement {
   versionCatalogs {
     if (System.getenv("DEP_OVERRIDES") == "true") {
