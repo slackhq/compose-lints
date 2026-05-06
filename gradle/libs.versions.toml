@@ -4,7 +4,7 @@ ktfmt = "0.56"
 jdk = "21"
 jvmTarget = "17"
 lint = "32.2.0"
-lint-latest = "32.1.1"
+lint-latest = "32.2.0"
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.8" }
