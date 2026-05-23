@@ -363,17 +363,41 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
+
         @Composable
         fun Something(modifier: Modifier = Modifier) {
             if (someCondition) {
-                Case1RootLevelComposable(modifier = modifier)
+                OtherComposable(modifier)
                 return
             }
-            Case2RootLevelComposable(modifier = modifier)
+            OtherComposable(modifier)
         }
       """
         .trimIndent()
-    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+    lint().files(*commonStubs, *specificStubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `passes when modifier is reused before throwing early from a branch`() {
+    @Language("kotlin")
+    val code =
+      """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
+
+        @Composable
+        fun Something(modifier: Modifier = Modifier) {
+            if (someCondition) {
+                OtherComposable(modifier)
+                throw RuntimeException()
+            }
+            OtherComposable(modifier)
+        }
+      """
+        .trimIndent()
+    lint().files(*commonStubs, *specificStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -797,9 +821,7 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
     ModifierReusedDetector.codeFlowGraph.assertEqualTo("Node start" to setOf("Node end"))
   }
 
-  fun Map<ModifierReusedDetector.GraphNode, Set<ModifierReusedDetector.GraphNode>>.assertEqualTo(
-    vararg list: Pair<String, Set<String>>
-  ) {
+  fun Map<GraphNode, Set<GraphNode>>.assertEqualTo(vararg list: Pair<String, Set<String>>) {
     val graph: SortedMap<String, java.util.HashSet<String>> =
       this.map { (node, links) -> node.toString() to links.mapTo(HashSet()) { it.toString() } }
         .associateTo(sortedMapOf()) { it }
