@@ -42,11 +42,10 @@ private fun UAnnotated.checkIsPreview(depth: Int, maxDepth: Int): Boolean {
 }
 
 val UAnnotated.isVisibleForTesting: Boolean
-  get() =
-    uAnnotations.any {
-      // Is it itself a preview annotation?
-      it.resolve()?.let { cls -> cls.qualifiedName in TEST_ANNOTATIONS } ?: false
-    }
+  get() = uAnnotations.any {
+    // Is it itself a preview annotation?
+    it.resolve()?.let { cls -> cls.qualifiedName in TEST_ANNOTATIONS } ?: false
+  }
 
 val UParameter.isPreviewParameter: Boolean
   get() = findAnnotation("androidx.compose.ui.tooling.preview.PreviewParameter") != null

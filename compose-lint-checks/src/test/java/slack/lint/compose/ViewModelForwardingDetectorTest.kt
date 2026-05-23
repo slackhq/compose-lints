@@ -19,14 +19,14 @@ class ViewModelForwardingDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        override fun Content() {
-            val viewModel = weaverViewModel<MyVM>()
-            AnotherComposable(viewModel)
-        }
-        """
+      @Composable
+      override fun Content() {
+          val viewModel = weaverViewModel<MyVM>()
+          AnotherComposable(viewModel)
+      }
+      """
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
@@ -55,14 +55,14 @@ class ViewModelForwardingDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        fun MyComposable(viewModel: MyViewModel = weaverViewModel()) {
-            val state by viewModel.watchAsState()
-            AnotherComposable(state, onAvatarClicked = { viewModel(AvatarClickedIntent) })
-        }
-        """
+      @Composable
+      fun MyComposable(viewModel: MyViewModel = weaverViewModel()) {
+          val state by viewModel.watchAsState()
+          AnotherComposable(state, onAvatarClicked = { viewModel(AvatarClickedIntent) })
+      }
+      """
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
@@ -72,14 +72,14 @@ class ViewModelForwardingDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        class MyViewModel
+      class MyViewModel
 
-        @Composable
-        fun MyComposable(viewModel: MyViewModel) {
-            AnotherComposable(viewModel)
-        }
+      @Composable
+      fun MyComposable(viewModel: MyViewModel) {
+          AnotherComposable(viewModel)
+      }
       """
         .trimIndent()
     lint()
@@ -87,10 +87,10 @@ class ViewModelForwardingDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/MyViewModel.kt:7: Error: Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting.See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information. [ComposeViewModelForwarding]
-              AnotherComposable(viewModel)
-              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          1 errors, 0 warnings
+        src/MyViewModel.kt:7: Error: Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting.See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information. [ComposeViewModelForwarding]
+            AnotherComposable(viewModel)
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        1 errors, 0 warnings
         """
           .trimIndent()
       )

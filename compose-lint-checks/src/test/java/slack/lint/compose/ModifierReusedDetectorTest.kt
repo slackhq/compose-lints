@@ -28,50 +28,50 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
 
-        @Composable
-        fun Something(modifier: Modifier) {
-            Row(modifier) {
-                OtherComposable(modifier)
-            }
-        }
-        @Composable
-        fun Something(modifier: Modifier): Int {
-            Column(modifier = modifier) {
-                OtherComposable(modifier = Modifier)
-                OtherComposable(modifier = modifier)
-            }
-        }
-        @Composable
-        fun BoxScope.Something(modifier: Modifier) {
-            Column(modifier = modifier) {
-                OtherComposable()
-            }
-            OtherComposable(modifier = modifier)
-            OtherComposable(modifier = modifier.padding())
-        }
-        @Composable
-        fun Something(myMod: Modifier) {
-            Column {
-                OtherComposable(myMod)
-                OtherComposable(myMod)
-            }
-        }
-        @Composable
-        fun FoundThisOneInTheWild(modifier: Modifier = Modifier) {
-            Box(
-                modifier = modifier
-                    .size(10)
-                    .then(Modifier)
-            ) {
-                Box(
-                    modifier = modifier.padding()
-                )
-            }
-        }
-        private fun Modifier.size(int: Int): Modifier = this
+      @Composable
+      fun Something(modifier: Modifier) {
+          Row(modifier) {
+              OtherComposable(modifier)
+          }
+      }
+      @Composable
+      fun Something(modifier: Modifier): Int {
+          Column(modifier = modifier) {
+              OtherComposable(modifier = Modifier)
+              OtherComposable(modifier = modifier)
+          }
+      }
+      @Composable
+      fun BoxScope.Something(modifier: Modifier) {
+          Column(modifier = modifier) {
+              OtherComposable()
+          }
+          OtherComposable(modifier = modifier)
+          OtherComposable(modifier = modifier.padding())
+      }
+      @Composable
+      fun Something(myMod: Modifier) {
+          Column {
+              OtherComposable(myMod)
+              OtherComposable(myMod)
+          }
+      }
+      @Composable
+      fun FoundThisOneInTheWild(modifier: Modifier = Modifier) {
+          Box(
+              modifier = modifier
+                  .size(10)
+                  .then(Modifier)
+          ) {
+              Box(
+                  modifier = modifier.padding()
+              )
+          }
+      }
+      private fun Modifier.size(int: Int): Modifier = this
       """
         .trimIndent()
 
@@ -80,40 +80,40 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:6: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-              Row(modifier) {
-                  ~~~~~~~~
-          src/test.kt:7: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  OtherComposable(modifier)
-                                  ~~~~~~~~
-          src/test.kt:12: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-              Column(modifier = modifier) {
+        src/test.kt:6: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+            Row(modifier) {
+                ~~~~~~~~
+        src/test.kt:7: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(modifier)
                                 ~~~~~~~~
-          src/test.kt:14: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  OtherComposable(modifier = modifier)
-                                             ~~~~~~~~
-          src/test.kt:19: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-              Column(modifier = modifier) {
-                                ~~~~~~~~
-          src/test.kt:22: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-              OtherComposable(modifier = modifier)
-                                         ~~~~~~~~
-          src/test.kt:23: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-              OtherComposable(modifier = modifier.padding())
-                                         ~~~~~~~~
-          src/test.kt:28: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  OtherComposable(myMod)
-                                  ~~~~~
-          src/test.kt:29: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  OtherComposable(myMod)
-                                  ~~~~~
-          src/test.kt:35: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  modifier = modifier
-                             ~~~~~~~~
-          src/test.kt:40: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                      modifier = modifier.padding()
-                                 ~~~~~~~~
-          11 errors, 0 warnings
+        src/test.kt:12: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+            Column(modifier = modifier) {
+                              ~~~~~~~~
+        src/test.kt:14: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(modifier = modifier)
+                                           ~~~~~~~~
+        src/test.kt:19: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+            Column(modifier = modifier) {
+                              ~~~~~~~~
+        src/test.kt:22: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+            OtherComposable(modifier = modifier)
+                                       ~~~~~~~~
+        src/test.kt:23: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+            OtherComposable(modifier = modifier.padding())
+                                       ~~~~~~~~
+        src/test.kt:28: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(myMod)
+                                ~~~~~
+        src/test.kt:29: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(myMod)
+                                ~~~~~
+        src/test.kt:35: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                modifier = modifier
+                           ~~~~~~~~
+        src/test.kt:40: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                    modifier = modifier.padding()
+                               ~~~~~~~~
+        11 errors, 0 warnings
         """
           .trimIndent()
       )
@@ -124,43 +124,43 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
-        import androidx.compose.foundation.layout.fillMaxWidth
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+      import androidx.compose.foundation.layout.fillMaxWidth
 
-        @Composable
-        fun Something1(modifier: Modifier) {
-            Column(modifier = modifier) {
-                OtherComposable(modifier = modifier.fillMaxWidth())
-            }
-        }
-        @Composable
-        fun Something(modifier: Modifier) {
-            Column(modifier = modifier) {
-                val newModifier = modifier.fillMaxWidth()
-                OtherComposable(modifier = newModifier)
-            }
-        }
-        @Composable
-        fun Something(modifier: Modifier) {
-            val newModifier = modifier.fillMaxWidth()
-            Column(modifier = modifier) {
-                OtherComposable(modifier = newModifier)
-            }
-        }
-        @Composable
-        fun Something(modifier: Modifier) {
-            Column(modifier = modifier) {
-                OtherComposable(modifier = Modifier.then(modifier))
-            }
-        }
-        @Composable
-        fun Something(modifier: Modifier) {
-            Column(modifier = modifier) {
-                OtherComposable(modifier = Modifier.then(modifier).fillMaxWidth())
-                OtherComposable(modifier = Modifier.fillMaxWidth().then(modifier))
-            }
-        }
+      @Composable
+      fun Something1(modifier: Modifier) {
+          Column(modifier = modifier) {
+              OtherComposable(modifier = modifier.fillMaxWidth())
+          }
+      }
+      @Composable
+      fun Something(modifier: Modifier) {
+          Column(modifier = modifier) {
+              val newModifier = modifier.fillMaxWidth()
+              OtherComposable(modifier = newModifier)
+          }
+      }
+      @Composable
+      fun Something(modifier: Modifier) {
+          val newModifier = modifier.fillMaxWidth()
+          Column(modifier = modifier) {
+              OtherComposable(modifier = newModifier)
+          }
+      }
+      @Composable
+      fun Something(modifier: Modifier) {
+          Column(modifier = modifier) {
+              OtherComposable(modifier = Modifier.then(modifier))
+          }
+      }
+      @Composable
+      fun Something(modifier: Modifier) {
+          Column(modifier = modifier) {
+              OtherComposable(modifier = Modifier.then(modifier).fillMaxWidth())
+              OtherComposable(modifier = Modifier.fillMaxWidth().then(modifier))
+          }
+      }
       """
         .trimIndent()
 
@@ -169,40 +169,40 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:7: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-              Column(modifier = modifier) {
-                                ~~~~~~~~
-          src/test.kt:8: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  OtherComposable(modifier = modifier.fillMaxWidth())
-                                             ~~~~~~~~
-          src/test.kt:13: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-              Column(modifier = modifier) {
-                                ~~~~~~~~
-          src/test.kt:15: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  OtherComposable(modifier = newModifier)
-                                             ~~~~~~~~~~~
-          src/test.kt:21: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-              Column(modifier = modifier) {
-                                ~~~~~~~~
-          src/test.kt:22: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  OtherComposable(modifier = newModifier)
-                                             ~~~~~~~~~~~
-          src/test.kt:27: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-              Column(modifier = modifier) {
-                                ~~~~~~~~
-          src/test.kt:28: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  OtherComposable(modifier = Modifier.then(modifier))
-                                                           ~~~~~~~~
-          src/test.kt:33: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-              Column(modifier = modifier) {
-                                ~~~~~~~~
-          src/test.kt:34: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  OtherComposable(modifier = Modifier.then(modifier).fillMaxWidth())
-                                                           ~~~~~~~~
-          src/test.kt:35: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  OtherComposable(modifier = Modifier.fillMaxWidth().then(modifier))
-                                                                          ~~~~~~~~
-          11 errors, 0 warnings
+        src/test.kt:7: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+            Column(modifier = modifier) {
+                              ~~~~~~~~
+        src/test.kt:8: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(modifier = modifier.fillMaxWidth())
+                                           ~~~~~~~~
+        src/test.kt:13: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+            Column(modifier = modifier) {
+                              ~~~~~~~~
+        src/test.kt:15: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(modifier = newModifier)
+                                           ~~~~~~~~~~~
+        src/test.kt:21: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+            Column(modifier = modifier) {
+                              ~~~~~~~~
+        src/test.kt:22: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(modifier = newModifier)
+                                           ~~~~~~~~~~~
+        src/test.kt:27: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+            Column(modifier = modifier) {
+                              ~~~~~~~~
+        src/test.kt:28: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(modifier = Modifier.then(modifier))
+                                                         ~~~~~~~~
+        src/test.kt:33: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+            Column(modifier = modifier) {
+                              ~~~~~~~~
+        src/test.kt:34: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(modifier = Modifier.then(modifier).fillMaxWidth())
+                                                         ~~~~~~~~
+        src/test.kt:35: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(modifier = Modifier.fillMaxWidth().then(modifier))
+                                                                        ~~~~~~~~
+        11 errors, 0 warnings
         """
           .trimIndent()
       )
@@ -213,35 +213,35 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
-        import androidx.compose.foundation.layout.fillMaxWidth
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+      import androidx.compose.foundation.layout.fillMaxWidth
 
-        @Composable
-        fun Something(modifier: Modifier) {
-            val tweakedModifier = Modifier.then(modifier).fillMaxWidth()
-            val reassignedModifier = modifier
-            val modifier3 = Modifier.fillMaxWidth()
-            Column(modifier = modifier) {
-                OtherComposable(modifier = newModifier)
-                OtherComposable(modifier = tweakedModifier)
-                OtherComposable(modifier = reassignedModifier)
-                OtherComposable(modifier = modifier3) // ok
-            }
-            OtherComposable(modifier = tweakedModifier)
-        }
-        @Composable
-        fun Something(modifier: Modifier) {
-            Column(modifier = modifier) {
-                val tweakedModifier = Modifier.then(modifier).fillMaxWidth()
-                val reassignedModifier = modifier
-                OtherComposable(modifier = newModifier)
-                OtherComposable(modifier = tweakedModifier)
-                OtherComposable(modifier = reassignedModifier)
-            }
-        }
+      @Composable
+      fun Something(modifier: Modifier) {
+          val tweakedModifier = Modifier.then(modifier).fillMaxWidth()
+          val reassignedModifier = modifier
+          val modifier3 = Modifier.fillMaxWidth()
+          Column(modifier = modifier) {
+              OtherComposable(modifier = newModifier)
+              OtherComposable(modifier = tweakedModifier)
+              OtherComposable(modifier = reassignedModifier)
+              OtherComposable(modifier = modifier3) // ok
+          }
+          OtherComposable(modifier = tweakedModifier)
+      }
+      @Composable
+      fun Something(modifier: Modifier) {
+          Column(modifier = modifier) {
+              val tweakedModifier = Modifier.then(modifier).fillMaxWidth()
+              val reassignedModifier = modifier
+              OtherComposable(modifier = newModifier)
+              OtherComposable(modifier = tweakedModifier)
+              OtherComposable(modifier = reassignedModifier)
+          }
+      }
 
-        val newModifier = Modifier
+      val newModifier = Modifier
       """
         .trimIndent()
 
@@ -250,28 +250,28 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:10: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-              Column(modifier = modifier) {
-                                ~~~~~~~~
-          src/test.kt:12: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  OtherComposable(modifier = tweakedModifier)
-                                             ~~~~~~~~~~~~~~~
-          src/test.kt:13: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  OtherComposable(modifier = reassignedModifier)
-                                             ~~~~~~~~~~~~~~~~~~
-          src/test.kt:16: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-              OtherComposable(modifier = tweakedModifier)
-                                         ~~~~~~~~~~~~~~~
-          src/test.kt:20: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-              Column(modifier = modifier) {
-                                ~~~~~~~~
-          src/test.kt:24: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  OtherComposable(modifier = tweakedModifier)
-                                             ~~~~~~~~~~~~~~~
-          src/test.kt:25: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
-                  OtherComposable(modifier = reassignedModifier)
-                                             ~~~~~~~~~~~~~~~~~~
-          7 errors, 0 warnings
+        src/test.kt:10: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+            Column(modifier = modifier) {
+                              ~~~~~~~~
+        src/test.kt:12: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(modifier = tweakedModifier)
+                                           ~~~~~~~~~~~~~~~
+        src/test.kt:13: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(modifier = reassignedModifier)
+                                           ~~~~~~~~~~~~~~~~~~
+        src/test.kt:16: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+            OtherComposable(modifier = tweakedModifier)
+                                       ~~~~~~~~~~~~~~~
+        src/test.kt:20: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+            Column(modifier = modifier) {
+                              ~~~~~~~~
+        src/test.kt:24: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(modifier = tweakedModifier)
+                                           ~~~~~~~~~~~~~~~
+        src/test.kt:25: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables. See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(modifier = reassignedModifier)
+                                           ~~~~~~~~~~~~~~~~~~
+        7 errors, 0 warnings
         """
           .trimIndent()
       )
@@ -282,44 +282,44 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.foundation.layout.fillMaxWidth
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
-        import androidx.compose.ui.Text
+      import androidx.compose.foundation.layout.fillMaxWidth
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+      import androidx.compose.ui.Text
 
-        @Composable
-        fun Something(modifier: Modifier) {
-            Column(modifier) {
-                OtherComposable()
-                Text("Hi")
-            }
-        }
-        @Composable
-        fun Something(modifier: Modifier) {
-            Column(modifier) {
-                OtherComposable(Modifier.fillMaxWidth())
-                Text("Hi", modifier = Modifier.padding())
-            }
-        }
-        @Composable
-        fun Something(modifier: Modifier) {
-            Column(modifier) {
-                val newModifier = Modifier.weight(1f)
-                OtherComposable(newModifier)
-                Text("Hi")
-            }
-        }
-        @Composable
-        fun Something(modifier: Modifier) {
-            Column(modifier) {
-                val newModifier = Modifier.weight(1f)
-                if (someCondition) {
-                    OtherComposable(newModifier)
-                } else {
-                    OtherComposable(newModifier)
-                }
-            }
-        }
+      @Composable
+      fun Something(modifier: Modifier) {
+          Column(modifier) {
+              OtherComposable()
+              Text("Hi")
+          }
+      }
+      @Composable
+      fun Something(modifier: Modifier) {
+          Column(modifier) {
+              OtherComposable(Modifier.fillMaxWidth())
+              Text("Hi", modifier = Modifier.padding())
+          }
+      }
+      @Composable
+      fun Something(modifier: Modifier) {
+          Column(modifier) {
+              val newModifier = Modifier.weight(1f)
+              OtherComposable(newModifier)
+              Text("Hi")
+          }
+      }
+      @Composable
+      fun Something(modifier: Modifier) {
+          Column(modifier) {
+              val newModifier = Modifier.weight(1f)
+              if (someCondition) {
+                  OtherComposable(newModifier)
+              } else {
+                  OtherComposable(newModifier)
+              }
+          }
+      }
       """
         .trimIndent()
     lint().files(*commonStubs, *specificStubs, kotlin(code)).run().expectClean()
@@ -330,30 +330,30 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
 
-        @Composable
-        fun Something(modifier: Modifier = Modifier) {
-            if (someCondition) {
-                OtherComposable(modifier = modifier.fillMaxWidth())
-            } else {
-                OtherComposable(modifier)
-            }
-        }
-        @Composable
-        fun Something(modifier: Modifier = Modifier) {
-            if (someCondition) {
-                OtherComposable(modifier = modifier.fillMaxWidth())
-                return
-            }
-            OtherComposable(modifier)
-        }
-        @Composable
-        fun Something(modifier: Modifier = Modifier) {
-            if (someCondition) OtherComposable(modifier = modifier.fillMaxWidth())
-            else OtherComposable(modifier)
-        }
+      @Composable
+      fun Something(modifier: Modifier = Modifier) {
+          if (someCondition) {
+              OtherComposable(modifier = modifier.fillMaxWidth())
+          } else {
+              OtherComposable(modifier)
+          }
+      }
+      @Composable
+      fun Something(modifier: Modifier = Modifier) {
+          if (someCondition) {
+              OtherComposable(modifier = modifier.fillMaxWidth())
+              return
+          }
+          OtherComposable(modifier)
+      }
+      @Composable
+      fun Something(modifier: Modifier = Modifier) {
+          if (someCondition) OtherComposable(modifier = modifier.fillMaxWidth())
+          else OtherComposable(modifier)
+      }
       """
         .trimIndent()
     lint().files(*commonStubs, *specificStubs, kotlin(code)).run().expectClean()
@@ -367,21 +367,21 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
 
-        sealed interface SomeViewState {
-            object Loading : SomeViewState
-            object Loaded : SomeViewState
-        }
+      sealed interface SomeViewState {
+          object Loading : SomeViewState
+          object Loaded : SomeViewState
+      }
 
-        @Composable
-        fun SomeScreenContent(state: SomeViewState, modifier: Modifier = Modifier) {
-            when (state) {
-                is SomeViewState.Loading -> OtherComposable(modifier)
-                is SomeViewState.Loaded -> OtherComposable(modifier.fillMaxWidth())
-            }
-        }
+      @Composable
+      fun SomeScreenContent(state: SomeViewState, modifier: Modifier = Modifier) {
+          when (state) {
+              is SomeViewState.Loading -> OtherComposable(modifier)
+              is SomeViewState.Loaded -> OtherComposable(modifier.fillMaxWidth())
+          }
+      }
       """
         .trimIndent()
     lint().files(*commonStubs, *specificStubs, kotlin(code)).run().expectClean()
@@ -392,17 +392,17 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
 
-        @Composable
-        fun Something(modifier: Modifier = Modifier) {
-            if (someCondition) {
-                OtherComposable(modifier)
-                return
-            }
-            OtherComposable(modifier)
-        }
+      @Composable
+      fun Something(modifier: Modifier = Modifier) {
+          if (someCondition) {
+              OtherComposable(modifier)
+              return
+          }
+          OtherComposable(modifier)
+      }
       """
         .trimIndent()
     lint().files(*commonStubs, *specificStubs, kotlin(code)).run().expectClean()
@@ -413,17 +413,17 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
 
-        @Composable
-        fun Something(modifier: Modifier = Modifier) {
-            if (someCondition) {
-                OtherComposable(modifier)
-                throw RuntimeException()
-            }
-            OtherComposable(modifier)
-        }
+      @Composable
+      fun Something(modifier: Modifier = Modifier) {
+          if (someCondition) {
+              OtherComposable(modifier)
+              throw RuntimeException()
+          }
+          OtherComposable(modifier)
+      }
       """
         .trimIndent()
     lint().files(*commonStubs, *specificStubs, kotlin(code)).run().expectClean()
@@ -434,34 +434,34 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
 
-        @Composable
-        private fun TrustedFriendsMembersAppBar(
-            onBackClicked: () -> Unit,
-            onDoneClicked: () -> Unit,
-        ) = Unit
+      @Composable
+      private fun TrustedFriendsMembersAppBar(
+          onBackClicked: () -> Unit,
+          onDoneClicked: () -> Unit,
+      ) = Unit
 
-        @Composable
-        fun Something(modifier: Modifier) {
-            Column(modifier = modifier) {
-                TrustedFriendsMembersAppBar(
-                    onBackClicked = { println("viewModel.processUserIntent(BackClicked)") },
-                    onDoneClicked = { println("viewModel.processUserIntent(DoneClicked)") }
-                )
+      @Composable
+      fun Something(modifier: Modifier) {
+          Column(modifier = modifier) {
+              TrustedFriendsMembersAppBar(
+                  onBackClicked = { println("viewModel.processUserIntent(BackClicked)") },
+                  onDoneClicked = { println("viewModel.processUserIntent(DoneClicked)") }
+              )
 
-                val recommendedEmptyUsersContent: @Composable ((Modifier) -> Unit)? = when {
-                    false -> null
-                    true -> { localModifier: Modifier ->
-                        Box(modifier = localModifier)
-                    }
-                    else -> { localModifier ->
-                        Box(modifier = localModifier)
-                    }
-                }
-            }
-        }
+              val recommendedEmptyUsersContent: @Composable ((Modifier) -> Unit)? = when {
+                  false -> null
+                  true -> { localModifier: Modifier ->
+                      Box(modifier = localModifier)
+                  }
+                  else -> { localModifier ->
+                      Box(modifier = localModifier)
+                  }
+              }
+          }
+      }
       """
         .trimIndent()
     lint().files(*commonStubs, *specificStubs, kotlin(code)).run().expectClean()
@@ -475,29 +475,29 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
         import androidx.compose.ui.Modifier
         fun Modifier.fillMaxWidth(): Modifier = this
         fun Modifier.padding(): Modifier = this
-      """
+        """
           .trimIndent()
       ),
       kotlin(
         """
-          import androidx.compose.ui.Modifier
-          import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
+        import androidx.compose.runtime.Composable
 
-          object BoxScope
+        object BoxScope
 
-          @Composable
-          fun Box(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) { }
+        @Composable
+        fun Box(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) { }
 
-          @Composable
-          fun Column(modifier: Modifier = Modifier, content: @Composable () -> Unit) { }
+        @Composable
+        fun Column(modifier: Modifier = Modifier, content: @Composable () -> Unit) { }
 
-          @Composable
-          fun Row(modifier: Modifier = Modifier, content: @Composable () -> Unit) { }
+        @Composable
+        fun Row(modifier: Modifier = Modifier, content: @Composable () -> Unit) { }
 
-          @Composable
-          fun OtherComposable(modifier: Modifier = Modifier, content: @Composable () -> Unit) { }
+        @Composable
+        fun OtherComposable(modifier: Modifier = Modifier, content: @Composable () -> Unit) { }
 
-          val someCondition: Boolean get() = TODO()
+        val someCondition: Boolean get() = TODO()
         """
           .trimIndent()
       ),
@@ -513,16 +513,16 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
         *specificStubs,
         kotlin(
           """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+          import androidx.compose.runtime.Composable
+          import androidx.compose.ui.Modifier
 
-        @Composable
-        fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
-            val irrelevantCalculation = 123 + 456
-            run { "Hello".let { it + it } }
-            OtherComposable(modifier) // Node 8
-        }
-      """
+          @Composable
+          fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
+              val irrelevantCalculation = 123 + 456
+              run { "Hello".let { it + it } }
+              OtherComposable(modifier) // Node 8
+          }
+          """
             .trimIndent()
         ),
       )
@@ -546,18 +546,18 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
         *specificStubs,
         kotlin(
           """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+          import androidx.compose.runtime.Composable
+          import androidx.compose.ui.Modifier
 
-        @Composable
-        fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
-            if (true) { // Switch 6
-                OtherComposable(modifier) // Node 7
-            } else {
-                OtherComposable(modifier) // Node 9
-            }
-        }
-      """
+          @Composable
+          fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
+              if (true) { // Switch 6
+                  OtherComposable(modifier) // Node 7
+              } else {
+                  OtherComposable(modifier) // Node 9
+              }
+          }
+          """
             .trimIndent()
         ),
       )
@@ -583,18 +583,18 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
         *specificStubs,
         kotlin(
           """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+          import androidx.compose.runtime.Composable
+          import androidx.compose.ui.Modifier
 
-        @Composable
-        fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
-            if (true) { // Switch 6
-                println("true")
-            } else {
-                OtherComposable(modifier) // Node 9
-            }
-        }
-      """
+          @Composable
+          fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
+              if (true) { // Switch 6
+                  println("true")
+              } else {
+                  OtherComposable(modifier) // Node 9
+              }
+          }
+          """
             .trimIndent()
         ),
       )
@@ -619,18 +619,18 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
         *specificStubs,
         kotlin(
           """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+          import androidx.compose.runtime.Composable
+          import androidx.compose.ui.Modifier
 
-        @Composable
-        fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
-            if (someCondition) { // Switch 6
-                OtherComposable(modifier) // Node 7
-                return
-            }
-            OtherComposable(modifier) // Node 10
-        }
-      """
+          @Composable
+          fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
+              if (someCondition) { // Switch 6
+                  OtherComposable(modifier) // Node 7
+                  return
+              }
+              OtherComposable(modifier) // Node 10
+          }
+          """
             .trimIndent()
         ),
       )
@@ -655,19 +655,19 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
         *specificStubs,
         kotlin(
           """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+          import androidx.compose.runtime.Composable
+          import androidx.compose.ui.Modifier
 
-        @Composable
-        fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
-            if (someCondition)  // Switch 6
-                OtherComposable(modifier) // Node 7
-            else if (someCondition) // Switch 8
-                OtherComposable(modifier) // Node 9
-            else
-                OtherComposable(modifier) // Node 11
-        }
-      """
+          @Composable
+          fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
+              if (someCondition)  // Switch 6
+                  OtherComposable(modifier) // Node 7
+              else if (someCondition) // Switch 8
+                  OtherComposable(modifier) // Node 9
+              else
+                  OtherComposable(modifier) // Node 11
+          }
+          """
             .trimIndent()
         ),
       )
@@ -695,24 +695,24 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
         *specificStubs,
         kotlin(
           """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+          import androidx.compose.runtime.Composable
+          import androidx.compose.ui.Modifier
 
-        @Composable
-        fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
-            when (true) { // Switch 6
-                true -> when { // Switch 7
-                    123 == 456 -> OtherComposable(modifier) // Node 8
-                    false -> OtherComposable(modifier) // Node 9
-                }
-                false -> when { // Switch 11
-                    2 + 2 == 5 -> OtherComposable(modifier) // Node 12
-                    else -> OtherComposable(modifier) // Node 13
-                }
-            }
-            OtherComposable(modifier) // Node 16
-        }
-      """
+          @Composable
+          fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
+              when (true) { // Switch 6
+                  true -> when { // Switch 7
+                      123 == 456 -> OtherComposable(modifier) // Node 8
+                      false -> OtherComposable(modifier) // Node 9
+                  }
+                  false -> when { // Switch 11
+                      2 + 2 == 5 -> OtherComposable(modifier) // Node 12
+                      else -> OtherComposable(modifier) // Node 13
+                  }
+              }
+              OtherComposable(modifier) // Node 16
+          }
+          """
             .trimIndent()
         ),
       )
@@ -743,27 +743,27 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
         *specificStubs,
         kotlin(
           """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+          import androidx.compose.runtime.Composable
+          import androidx.compose.ui.Modifier
 
-        private fun Modifier.background() = this
+          private fun Modifier.background() = this
 
-        @Composable
-        fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
-            val modifier1 = modifier
-            val modifier2 = modifier.background()
-            val modifier3 = Modifier.then(modifier)
-            val modifier4 = Modifier.background().then(modifier2)
+          @Composable
+          fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
+              val modifier1 = modifier
+              val modifier2 = modifier.background()
+              val modifier3 = Modifier.then(modifier)
+              val modifier4 = Modifier.background().then(modifier2)
 
-            OtherComposable(modifier1) // Node 13
-            OtherComposable(modifier2) // Node 14
-            OtherComposable(modifier3) // Node 15
-            OtherComposable(modifier4) // Node 16
-            OtherComposable(modifier.background())  // Node 17
-            OtherComposable(Modifier.then(modifier)) // Node 18
-            OtherComposable(Modifier.background().then(modifier)) // Node 19
-        }
-      """
+              OtherComposable(modifier1) // Node 13
+              OtherComposable(modifier2) // Node 14
+              OtherComposable(modifier3) // Node 15
+              OtherComposable(modifier4) // Node 16
+              OtherComposable(modifier.background())  // Node 17
+              OtherComposable(Modifier.then(modifier)) // Node 18
+              OtherComposable(Modifier.background().then(modifier)) // Node 19
+          }
+          """
             .trimIndent()
         ),
       )
@@ -786,22 +786,22 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
         *specificStubs,
         kotlin(
           """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+          import androidx.compose.runtime.Composable
+          import androidx.compose.ui.Modifier
 
-        @Composable
-        private fun Wrapper(modifier: Modifier = Modifier, content: @Composable () -> Unit) = Unit
+          @Composable
+          private fun Wrapper(modifier: Modifier = Modifier, content: @Composable () -> Unit) = Unit
 
-        @Composable
-        fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
-            Wrapper {
-                OtherComposable(modifier) // Node 10
-            }
-            Wrapper(content = {
-                OtherComposable(modifier)  // Node 13
-            })
-        }
-      """
+          @Composable
+          fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
+              Wrapper {
+                  OtherComposable(modifier) // Node 10
+              }
+              Wrapper(content = {
+                  OtherComposable(modifier)  // Node 13
+              })
+          }
+          """
             .trimIndent()
         ),
       )
@@ -824,24 +824,24 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
         *specificStubs,
         kotlin(
           """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+          import androidx.compose.runtime.Composable
+          import androidx.compose.ui.Modifier
 
-        interface LayoutParams {
-            fun measure()
-        }
-        class View {
-            var layoutParams: LayoutParams? = null
-        }
+          interface LayoutParams {
+              fun measure()
+          }
+          class View {
+              var layoutParams: LayoutParams? = null
+          }
 
-        @Composable
-        fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
-            val view = View()
-            view.layoutParams = object: LayoutParams {
-                override fun measure() = Unit
-            }
-        }
-      """
+          @Composable
+          fun CodeFlowAnalysisTest(modifier: Modifier = Modifier) {
+              val view = View()
+              view.layoutParams = object: LayoutParams {
+                  override fun measure() = Unit
+              }
+          }
+          """
             .trimIndent()
         ),
       )

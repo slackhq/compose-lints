@@ -25,16 +25,16 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        @Composable
-        fun Something() {
-            val something = rememberWhatever()
-            Column {
-                Text("Hi")
-                Text("Hola")
-            }
-            LaunchedEffect(Unit) {
-            }
-        }
+      @Composable
+      fun Something() {
+          val something = rememberWhatever()
+          Column {
+              Text("Hi")
+              Text("Hola")
+          }
+          LaunchedEffect(Unit) {
+          }
+      }
       """
         .trimIndent()
     lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
@@ -45,16 +45,16 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        @Composable
-        fun ColumnScope.Something() {
-            Text("Hi")
-            Text("Hola")
-        }
-        @Composable
-        fun RowScope.Something() {
-            Spacer16()
-            Text("Hola")
-        }
+      @Composable
+      fun ColumnScope.Something() {
+          Text("Hi")
+          Text("Hola")
+      }
+      @Composable
+      fun RowScope.Something() {
+          Spacer16()
+          Text("Hola")
+      }
       """
         .trimIndent()
     lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
@@ -65,18 +65,18 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        context(ColumnScope)
-        @Composable
-        fun Something() {
-            Text("Hi")
-            Text("Hola")
-        }
-        context(RowScope)
-        @Composable
-        fun Something() {
-            Spacer16()
-            Text("Hola")
-        }
+      context(ColumnScope)
+      @Composable
+      fun Something() {
+          Text("Hi")
+          Text("Hola")
+      }
+      context(RowScope)
+      @Composable
+      fun Something() {
+          Spacer16()
+          Text("Hola")
+      }
       """
         .trimIndent()
     lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
@@ -87,18 +87,18 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        fun Something() {
-            Text("Hi")
-            Text("Hola")
-        }
-        @Composable
-        fun Something() {
-            Spacer16()
-            Text("Hola")
-        }
+      @Composable
+      fun Something() {
+          Text("Hi")
+          Text("Hola")
+      }
+      @Composable
+      fun Something() {
+          Spacer16()
+          Text("Hola")
+      }
       """
         .trimIndent()
     lint()
@@ -106,17 +106,17 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:3: Error: Composable functions should only be emitting content into the composition from one source at their top level.
+        src/test.kt:3: Error: Composable functions should only be emitting content into the composition from one source at their top level.
 
-          See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
-          @Composable
-          ^
-          src/test.kt:8: Error: Composable functions should only be emitting content into the composition from one source at their top level.
+        See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+        @Composable
+        ^
+        src/test.kt:8: Error: Composable functions should only be emitting content into the composition from one source at their top level.
 
-          See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
-          @Composable
-          ^
-          2 errors, 0 warnings
+        See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+        @Composable
+        ^
+        2 errors, 0 warnings
         """
           .trimIndent()
       )
@@ -127,30 +127,30 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        fun Something1() {
-            Something2()
-        }
-        @Composable
-        fun Something2() {
-            Text("Hola")
-            Something3()
-        }
-        @Composable
-        fun Something3() {
-            Potato()
-        }
-        @Composable
-        fun Something4() {
-            Banana()
-        }
-        @Composable
-        fun Something5() {
-            Something3()
-            Something4()
-        }
+      @Composable
+      fun Something1() {
+          Something2()
+      }
+      @Composable
+      fun Something2() {
+          Text("Hola")
+          Something3()
+      }
+      @Composable
+      fun Something3() {
+          Potato()
+      }
+      @Composable
+      fun Something4() {
+          Banana()
+      }
+      @Composable
+      fun Something5() {
+          Something3()
+          Something4()
+      }
       """
         .trimIndent()
     lint()
@@ -158,17 +158,17 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:7: Error: Composable functions should only be emitting content into the composition from one source at their top level.
+        src/test.kt:7: Error: Composable functions should only be emitting content into the composition from one source at their top level.
 
-          See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
-          @Composable
-          ^
-          src/test.kt:20: Error: Composable functions should only be emitting content into the composition from one source at their top level.
+        See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+        @Composable
+        ^
+        src/test.kt:20: Error: Composable functions should only be emitting content into the composition from one source at their top level.
 
-          See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
-          @Composable
-          ^
-          2 errors, 0 warnings
+        See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+        @Composable
+        ^
+        2 errors, 0 warnings
         """
           .trimIndent()
       )
@@ -179,18 +179,18 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        fun Something() {
-            Text("Hi")
-            Text("Hola")
-            Something2()
-        }
-        @Composable
-        fun Something2() {
-            Text("Alo")
-        }
+      @Composable
+      fun Something() {
+          Text("Hi")
+          Text("Hola")
+          Something2()
+      }
+      @Composable
+      fun Something2() {
+          Text("Alo")
+      }
       """
         .trimIndent()
     lint()
@@ -198,12 +198,12 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:3: Error: Composable functions should only be emitting content into the composition from one source at their top level.
+        src/test.kt:3: Error: Composable functions should only be emitting content into the composition from one source at their top level.
 
-          See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
-          @Composable
-          ^
-          1 errors, 0 warnings
+        See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+        @Composable
+        ^
+        1 errors, 0 warnings
         """
           .trimIndent()
       )
@@ -214,22 +214,22 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Modifier
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
 
-        @Composable
-        fun MultipleContent(texts: List<String>, modifier: Modifier = Modifier) {
-            for (text in texts) {
-                Text(text)
-            }
-        }
-        @Composable
-        fun MultipleContent(otherTexts: List<String>, modifier: Modifier = Modifier) {
-            Text("text 1")
-            for (otherText in otherTexts) {
-                Text(otherText)
-            }
-        }
+      @Composable
+      fun MultipleContent(texts: List<String>, modifier: Modifier = Modifier) {
+          for (text in texts) {
+              Text(text)
+          }
+      }
+      @Composable
+      fun MultipleContent(otherTexts: List<String>, modifier: Modifier = Modifier) {
+          Text("text 1")
+          for (otherText in otherTexts) {
+              Text(otherText)
+          }
+      }
       """
         .trimIndent()
     lint()
@@ -237,17 +237,17 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:4: Error: Composable functions should only be emitting content into the composition from one source at their top level.
+        src/test.kt:4: Error: Composable functions should only be emitting content into the composition from one source at their top level.
 
-          See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
-          @Composable
-          ^
-          src/test.kt:10: Error: Composable functions should only be emitting content into the composition from one source at their top level.
+        See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+        @Composable
+        ^
+        src/test.kt:10: Error: Composable functions should only be emitting content into the composition from one source at their top level.
 
-          See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
-          @Composable
-          ^
-          2 errors, 0 warnings
+        See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+        @Composable
+        ^
+        2 errors, 0 warnings
         """
           .trimIndent()
       )

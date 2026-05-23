@@ -46,7 +46,7 @@ class SlotReusedDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
   override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     val composableBlockExpression = function.bodyBlockExpression ?: return
-    val slotParameters = method.slotParameters(context.evaluator)
+    val slotParameters = method.slotParameters()
 
     val callExpressions = composableBlockExpression.findChildrenByClass<KtCallExpression>().toList()
 
@@ -54,43 +54,40 @@ class SlotReusedDetector : ComposableFunctionDetector(), SourceCodeScanner {
       val slotElement: PsiElement? = slotParameter.sourcePsi
 
       // Count all direct calls of the slot parameter.
-      val slotParameterCallCount =
-        callExpressions.count { callExpression ->
-          val calleeElement: PsiElement? =
-            callExpression.calleeExpression?.toUElement()?.tryResolve()
+      val slotParameterCallCount = callExpressions.count { callExpression ->
+        val calleeElement: PsiElement? = callExpression.calleeExpression?.toUElement()?.tryResolve()
 
-          calleeElement != null &&
-            slotElement != null &&
-            (calleeElement.isEquivalentTo(slotElement) ||
-              PsiEquivalenceUtil.areElementsEquivalent(calleeElement, slotElement))
-        }
+        calleeElement != null &&
+          slotElement != null &&
+          (calleeElement.isEquivalentTo(slotElement) ||
+            PsiEquivalenceUtil.areElementsEquivalent(calleeElement, slotElement))
+      }
 
       // Count all instances where the slot parameter is passed to a slot argument for another
       // composable function. We make the assumption that any composable function that has a slot
       // and returns Unit will call the slot at least once (perhaps conditionally) because if it
       // didn't, what's the point of having the parameter?
-      val slotParameterPassedAsSlotParameterCount =
-        callExpressions.sumOf { callExpression ->
-          val uCallExpression = callExpression.toUElement()?.asCall() ?: return@sumOf 0
-          val psiMethod = uCallExpression.resolve() ?: return@sumOf 0
+      val slotParameterPassedAsSlotParameterCount = callExpressions.sumOf { callExpression ->
+        val uCallExpression = callExpression.toUElement()?.asCall() ?: return@sumOf 0
+        val psiMethod = uCallExpression.resolve() ?: return@sumOf 0
 
-          val argumentMapping = context.evaluator.computeArgumentMapping(uCallExpression, psiMethod)
+        val argumentMapping = context.evaluator.computeArgumentMapping(uCallExpression, psiMethod)
 
-          argumentMapping.count { (expression, parameter) ->
-            val argumentElement = expression.tryResolve()
+        argumentMapping.count { (expression, parameter) ->
+          val argumentElement = expression.tryResolve()
 
-            argumentElement != null &&
-              slotElement != null &&
-              // Called method is composable
-              psiMethod.hasAnnotation("androidx.compose.runtime.Composable") &&
-              // Called method returns Unit
-              psiMethod.returnType?.isAssignableFrom(PsiTypes.voidType()) == true &&
-              // Parameter is composable
-              parameter.type.hasAnnotation("androidx.compose.runtime.Composable") &&
-              (argumentElement.isEquivalentTo(slotElement) ||
-                PsiEquivalenceUtil.areElementsEquivalent(argumentElement, slotElement))
-          }
+          argumentElement != null &&
+            slotElement != null &&
+            // Called method is composable
+            psiMethod.hasAnnotation("androidx.compose.runtime.Composable") &&
+            // Called method returns Unit
+            psiMethod.returnType?.isAssignableFrom(PsiTypes.voidType()) == true &&
+            // Parameter is composable
+            parameter.type.hasAnnotation("androidx.compose.runtime.Composable") &&
+            (argumentElement.isEquivalentTo(slotElement) ||
+              PsiEquivalenceUtil.areElementsEquivalent(argumentElement, slotElement))
         }
+      }
 
       // Report an issue if the slot parameter was used in multiple places
       if (slotParameterCallCount + slotParameterPassedAsSlotParameterCount > 1) {

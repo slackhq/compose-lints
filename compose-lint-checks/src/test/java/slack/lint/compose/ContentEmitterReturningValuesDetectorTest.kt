@@ -28,18 +28,18 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        fun Something() {
-            val something = rememberWhatever()
-            Column {
-                Text("Hi")
-                Text("Hola")
-            }
-            LaunchedEffect(Unit) {
-            }
-        }
+      @Composable
+      fun Something() {
+          val something = rememberWhatever()
+          Column {
+              Text("Hi")
+              Text("Hola")
+          }
+          LaunchedEffect(Unit) {
+          }
+      }
       """
         .trimIndent()
     lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
@@ -50,18 +50,18 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        fun ColumnScope.Something() {
-            Text("Hi")
-            Text("Hola")
-        }
-        @Composable
-        fun RowScope.Something() {
-            Spacer16()
-            Text("Hola")
-        }
+      @Composable
+      fun ColumnScope.Something() {
+          Text("Hi")
+          Text("Hola")
+      }
+      @Composable
+      fun RowScope.Something() {
+          Spacer16()
+          Text("Hola")
+      }
       """
         .trimIndent()
     lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
@@ -72,39 +72,39 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Text
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Text
 
-        @Composable
-        fun Something1() {
-            Something2()
-        }
-        @Composable
-        fun Something2(): String {
-            Text("Hola")
-            Something3()
-        }
-        @Composable
-        fun Something3() {
-            Potato()
-        }
-        @Composable
-        fun Something4() {
-            Banana()
-        }
-        @Composable
-        fun Something5(): String {
-            Something3()
-            Something4()
-        }
-        @Composable
-        fun Potato() {
-            Text("Potato")
-        }
-        @Composable
-        fun Banana() {
-            Text("Banana")
-        }
+      @Composable
+      fun Something1() {
+          Something2()
+      }
+      @Composable
+      fun Something2(): String {
+          Text("Hola")
+          Something3()
+      }
+      @Composable
+      fun Something3() {
+          Potato()
+      }
+      @Composable
+      fun Something4() {
+          Banana()
+      }
+      @Composable
+      fun Something5(): String {
+          Something3()
+          Something4()
+      }
+      @Composable
+      fun Potato() {
+          Text("Potato")
+      }
+      @Composable
+      fun Banana() {
+          Text("Banana")
+      }
       """
         .trimIndent()
     lint()
@@ -112,13 +112,13 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:9: Error: Composable functions should either emit content into the composition or return a value, but not both. If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller. See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
-          fun Something2(): String {
-              ~~~~~~~~~~
-          src/test.kt:22: Error: Composable functions should either emit content into the composition or return a value, but not both. If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller. See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
-          fun Something5(): String {
-              ~~~~~~~~~~
-          2 errors, 0 warnings
+        src/test.kt:9: Error: Composable functions should either emit content into the composition or return a value, but not both. If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller. See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
+        fun Something2(): String {
+            ~~~~~~~~~~
+        src/test.kt:22: Error: Composable functions should either emit content into the composition or return a value, but not both. If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller. See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
+        fun Something5(): String {
+            ~~~~~~~~~~
+        2 errors, 0 warnings
         """
           .trimIndent()
       )
@@ -129,20 +129,20 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
-        import androidx.compose.ui.Text
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Text
 
-        @Composable
-        fun Something(): String {
-            Text("Hi")
-            Text("Hola")
-            Something2()
-            return "hi"
-        }
-        @Composable
-        fun Something2() {
-            Text("Alo")
-        }
+      @Composable
+      fun Something(): String {
+          Text("Hi")
+          Text("Hola")
+          Something2()
+          return "hi"
+      }
+      @Composable
+      fun Something2() {
+          Text("Alo")
+      }
       """
         .trimIndent()
     lint()
@@ -150,10 +150,10 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:5: Error: Composable functions should either emit content into the composition or return a value, but not both. If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller. See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
-          fun Something(): String {
-              ~~~~~~~~~
-          1 errors, 0 warnings
+        src/test.kt:5: Error: Composable functions should either emit content into the composition or return a value, but not both. If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller. See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
+        fun Something(): String {
+            ~~~~~~~~~
+        1 errors, 0 warnings
         """
           .trimIndent()
       )
@@ -165,13 +165,13 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        fun Test(modifier: Modifier = Modifier) {
-            Text(text = "TextOne")
-            Text(text = "TextTwo")
-        }
+      @Composable
+      fun Test(modifier: Modifier = Modifier) {
+          Text(text = "TextOne")
+          Text(text = "TextTwo")
+      }
       """
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
@@ -183,14 +183,14 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        fun rememberInsetsController(): WindowInsetsControllerCompat? {
-            val view = LocalView.current
-            val window = remember { view.context.findActivity()?.window } ?: return null
-            return remember { WindowCompat.getInsetsController(window, view) }
-        }
+      @Composable
+      fun rememberInsetsController(): WindowInsetsControllerCompat? {
+          val view = LocalView.current
+          val window = remember { view.context.findActivity()?.window } ?: return null
+          return remember { WindowCompat.getInsetsController(window, view) }
+      }
       """
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()

@@ -28,13 +28,13 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        fun myComposable() { }
+      @Composable
+      fun myComposable() { }
 
-        @Composable
-        fun myComposable(): Unit { }
+      @Composable
+      fun myComposable(): Unit { }
       """
         .trimIndent()
 
@@ -43,13 +43,13 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:4: Error: Composable functions that return Unit should start with an uppercase letter.They are considered declarative entities that can be either present or absent in a composition and therefore follow the naming rules for classes.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingUppercase]
-          fun myComposable() { }
-              ~~~~~~~~~~~~
-          src/test.kt:7: Error: Composable functions that return Unit should start with an uppercase letter.They are considered declarative entities that can be either present or absent in a composition and therefore follow the naming rules for classes.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingUppercase]
-          fun myComposable(): Unit { }
-              ~~~~~~~~~~~~
-          2 errors, 0 warnings
+        src/test.kt:4: Error: Composable functions that return Unit should start with an uppercase letter.They are considered declarative entities that can be either present or absent in a composition and therefore follow the naming rules for classes.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingUppercase]
+        fun myComposable() { }
+            ~~~~~~~~~~~~
+        src/test.kt:7: Error: Composable functions that return Unit should start with an uppercase letter.They are considered declarative entities that can be either present or absent in a composition and therefore follow the naming rules for classes.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingUppercase]
+        fun myComposable(): Unit { }
+            ~~~~~~~~~~~~
+        2 errors, 0 warnings
         """
           .trimIndent()
       )
@@ -60,10 +60,10 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        fun MyComposable(): Something { }
+      @Composable
+      fun MyComposable(): Something { }
       """
         .trimIndent()
     lint()
@@ -71,10 +71,10 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:4: Error: Composable functions that return a value should start with a lowercase letter.While useful and accepted outside of @Composable functions, this factory function convention has drawbacks that set inappropriate expectations for callers when used with @Composable functions.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingLowercase]
-          fun MyComposable(): Something { }
-              ~~~~~~~~~~~~
-          1 errors, 0 warnings
+        src/test.kt:4: Error: Composable functions that return a value should start with a lowercase letter.While useful and accepted outside of @Composable functions, this factory function convention has drawbacks that set inappropriate expectations for callers when used with @Composable functions.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingLowercase]
+        fun MyComposable(): Something { }
+            ~~~~~~~~~~~~
+        1 errors, 0 warnings
         """
           .trimIndent()
       )
@@ -85,11 +85,11 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        @Composable
-        fun Potato.myComposable() { }
+      @Composable
+      fun Potato.myComposable() { }
 
-        @Composable
-        fun Banana.myComposable(): Unit { }
+      @Composable
+      fun Banana.myComposable(): Unit { }
       """
         .trimIndent()
 
@@ -101,8 +101,8 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        @Composable
-        fun myComposable(): Something { }
+      @Composable
+      fun myComposable(): Something { }
       """
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
@@ -113,8 +113,8 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        @Composable
-        fun ProfilePresenter(): Something { }
+      @Composable
+      fun ProfilePresenter(): Something { }
       """
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
@@ -125,10 +125,10 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        @Composable
-        fun MyComposable() { }
-        @Composable
-        fun MyComposable(): Unit { }
+      @Composable
+      fun MyComposable() { }
+      @Composable
+      fun MyComposable(): Unit { }
       """
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
@@ -139,10 +139,10 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        @Composable
-        fun myPresenter() { }
-        @Composable
-        fun myPresenter(): Unit { }
+      @Composable
+      fun myPresenter() { }
+      @Composable
+      fun myPresenter(): Unit { }
       """
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
@@ -153,16 +153,16 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        @Composable
-        fun MyComposable() = Text("bleh")
+      @Composable
+      fun MyComposable() = Text("bleh")
 
-        val composable: Something
-            @Composable get() { }
+      val composable: Something
+          @Composable get() { }
 
-        val composable: Something
-            @Composable get() = OtherComposable()
+      val composable: Something
+          @Composable get() = OtherComposable()
 
-        val whatever = @Composable { }
+      val whatever = @Composable { }
       """
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
@@ -173,10 +173,10 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        fun MyComposable(): Something { }
+      @Composable
+      fun MyComposable(): Something { }
       """
         .trimIndent()
     lint()
@@ -184,10 +184,10 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:4: Error: Composable functions that return a value should start with a lowercase letter.While useful and accepted outside of @Composable functions, this factory function convention has drawbacks that set inappropriate expectations for callers when used with @Composable functions.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingLowercase]
-          fun MyComposable(): Something { }
-              ~~~~~~~~~~~~
-          1 errors, 0 warnings
+        src/test.kt:4: Error: Composable functions that return a value should start with a lowercase letter.While useful and accepted outside of @Composable functions, this factory function convention has drawbacks that set inappropriate expectations for callers when used with @Composable functions.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingLowercase]
+        fun MyComposable(): Something { }
+            ~~~~~~~~~~~~
+        1 errors, 0 warnings
         """
           .trimIndent()
       )
@@ -198,13 +198,13 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        fun myComposable() { }
+      @Composable
+      fun myComposable() { }
 
-        @Composable
-        fun myComposable(): Unit { }
+      @Composable
+      fun myComposable(): Unit { }
       """
         .trimIndent()
 
@@ -213,13 +213,13 @@ class ComposableFunctionNamingDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:4: Error: Composable functions that return Unit should start with an uppercase letter.They are considered declarative entities that can be either present or absent in a composition and therefore follow the naming rules for classes.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingUppercase]
-          fun myComposable() { }
-              ~~~~~~~~~~~~
-          src/test.kt:7: Error: Composable functions that return Unit should start with an uppercase letter.They are considered declarative entities that can be either present or absent in a composition and therefore follow the naming rules for classes.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingUppercase]
-          fun myComposable(): Unit { }
-              ~~~~~~~~~~~~
-          2 errors, 0 warnings
+        src/test.kt:4: Error: Composable functions that return Unit should start with an uppercase letter.They are considered declarative entities that can be either present or absent in a composition and therefore follow the naming rules for classes.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingUppercase]
+        fun myComposable() { }
+            ~~~~~~~~~~~~
+        src/test.kt:7: Error: Composable functions that return Unit should start with an uppercase letter.They are considered declarative entities that can be either present or absent in a composition and therefore follow the naming rules for classes.See https://slackhq.github.io/compose-lints/rules/#naming-composable-functions-properly for more information. [ComposeNamingUppercase]
+        fun myComposable(): Unit { }
+            ~~~~~~~~~~~~
+        2 errors, 0 warnings
         """
           .trimIndent()
       )

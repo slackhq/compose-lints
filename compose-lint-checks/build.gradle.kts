@@ -37,13 +37,13 @@ dependencies {
   testImplementation(libs.junit)
 }
 
-val kgpKotlinVersion = KotlinVersion.KOTLIN_1_9
+val kgpKotlinVersion = KotlinVersion.KOTLIN_2_2
 
 tasks.withType<KotlinCompile>().configureEach {
   compilerOptions {
     // Lint forces Kotlin (regardless of what version the project uses), so this
     // forces a matching language level for now. Similar to `targetCompatibility` for Java.
-    // This should match the value in LintKotlinVersionCheckTest.kt
+    // Check with kotlin-for-lint.sh
     apiVersion.set(kgpKotlinVersion)
     languageVersion.set(kgpKotlinVersion)
   }

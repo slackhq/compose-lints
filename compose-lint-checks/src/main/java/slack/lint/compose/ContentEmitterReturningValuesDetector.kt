@@ -153,10 +153,9 @@ constructor(
 
         var shouldMakeAnotherPass = true
         while (shouldMakeAnotherPass) {
-          val updatedMapping =
-            currentMapping.mapValues { (functionNode, _) ->
-              functionNode.indirectUiEmitterCount(currentMapping)
-            }
+          val updatedMapping = currentMapping.mapValues { (functionNode, _) ->
+            functionNode.indirectUiEmitterCount(currentMapping)
+          }
           when {
             updatedMapping != currentMapping -> currentMapping = updatedMapping
             else -> shouldMakeAnotherPass = false

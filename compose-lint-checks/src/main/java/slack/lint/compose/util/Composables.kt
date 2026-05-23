@@ -203,19 +203,12 @@ fun UParameter.isSlotParameter(): Boolean {
 val KtCallableDeclaration.isModifierReceiver: Boolean
   get() = ModifierNames.contains(receiverTypeReference?.text)
 
-val KtFunction.modifierParameter: KtParameter?
-  get() {
-    val modifiers = valueParameters.filter { it.isModifier }
-    return modifiers.firstOrNull { it.name == "modifier" } ?: modifiers.firstOrNull()
-  }
-
 fun UMethod.modifierParameter(evaluator: JavaEvaluator): UParameter? {
   val modifiers = uastParameters.filter { it.isModifier(evaluator) }
   return modifiers.firstOrNull { it.name == "modifier" } ?: modifiers.firstOrNull()
 }
 
-fun UMethod.slotParameters(evaluator: JavaEvaluator): List<UParameter> =
-  uastParameters.filter { it.isSlotParameter() }
+fun UMethod.slotParameters(): List<UParameter> = uastParameters.filter { it.isSlotParameter() }
 
 val KtProperty.declaresCompositionLocal: Boolean
   get() {

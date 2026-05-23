@@ -16,40 +16,40 @@ class M2ApiDetectorTest : BaseComposeLintTest() {
     arrayOf(
       kotlin(
         """
-          package androidx.compose.material
+        package androidx.compose.material
 
-          import androidx.compose.runtime.Composable
+        import androidx.compose.runtime.Composable
 
-          @Composable
-          fun Text(text: String) {
-            // no-op
-          }
+        @Composable
+        fun Text(text: String) {
+          // no-op
+        }
 
-          @Composable
-          fun Surface(content: @Composable () -> Unit) {
-            // no-op
-          }
+        @Composable
+        fun Surface(content: @Composable () -> Unit) {
+          // no-op
+        }
 
-          object BottomNavigationDefaults {
-              val Elevation = 8.dp
-          }
+        object BottomNavigationDefaults {
+            val Elevation = 8.dp
+        }
 
-          enum class BottomDrawerValue {
-              Closed,
-              Open,
-              Expanded
-          }
+        enum class BottomDrawerValue {
+            Closed,
+            Open,
+            Expanded
+        }
         """
           .trimIndent()
       ),
       kotlin(
         """
-          package androidx.compose.material.ripple
+        package androidx.compose.material.ripple
 
-          import androidx.compose.runtime.Composable
+        import androidx.compose.runtime.Composable
 
-          @Composable
-          fun rememberRipple()
+        @Composable
+        fun rememberRipple()
         """
           .trimIndent()
       ),
@@ -98,19 +98,19 @@ class M2ApiDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:9: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
+        src/test.kt:9: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
+          Text("Hello, world!")
+          ~~~~~~~~~~~~~~~~~~~~~
+        src/test.kt:23: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
             Text("Hello, world!")
             ~~~~~~~~~~~~~~~~~~~~~
-          src/test.kt:23: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
-              Text("Hello, world!")
-              ~~~~~~~~~~~~~~~~~~~~~
-          src/test.kt:24: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
-              val elevation = BottomNavigationDefaults.Elevation
-                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          src/test.kt:25: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
-              val drawerValue = BottomDrawerValue.Closed
-                                ~~~~~~~~~~~~~~~~~~~~~~~~
-          4 errors, 0 warnings
+        src/test.kt:24: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
+            val elevation = BottomNavigationDefaults.Elevation
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        src/test.kt:25: Error: Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information. [ComposeM2Api]
+            val drawerValue = BottomDrawerValue.Closed
+                              ~~~~~~~~~~~~~~~~~~~~~~~~
+        4 errors, 0 warnings
         """
           .trimIndent()
       )
