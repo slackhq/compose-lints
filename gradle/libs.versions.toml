@@ -3,17 +3,17 @@ kotlin = "2.3.21"
 ktfmt = "0.62"
 jdk = "23"
 jvmTarget = "17"
-lint = "32.2.0"
-lint-latest = "32.2.0"
+lint = "32.2.1"
+lint-latest = "32.2.1"
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.8" }
 dokka = { id = "org.jetbrains.dokka", version = "2.2.0" }
-lint = { id = "com.android.lint", version = "9.2.0" }
+lint = { id = "com.android.lint", version = "9.2.1" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version = "2.3.7" }
+ksp = { id = "com.google.devtools.ksp", version = "2.3.8" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.36.0" }
-spotless = { id = "com.diffplug.spotless", version = "8.4.0" }
+spotless = { id = "com.diffplug.spotless", version = "8.5.1" }
 
 [libraries]
 autoService-annotations = "com.google.auto.service:auto-service-annotations:1.1.1"
@@ -21,6 +21,7 @@ autoService-ksp = "dev.zacsweers.autoservice:auto-service-ksp:1.2.0"
 junit = "junit:junit:4.13.2"
 ktfmt = { module = "com.facebook:ktfmt", version.ref = "ktfmt" }
 lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "lint" }
+lint-checks = { module = "com.android.tools.lint:lint-checks", version.ref = "lint" }
 lint = { module = "com.android.tools.lint:lint", version.ref = "lint-latest" }
 lint-tests = { module = "com.android.tools.lint:lint-tests", version.ref = "lint-latest" }
 lint-testUtils = { module = "com.android.tools:testutils", version.ref = "lint-latest" }
