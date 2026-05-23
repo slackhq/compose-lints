@@ -184,7 +184,7 @@ fun UParameter.isModifier(evaluator: JavaEvaluator): Boolean {
   return ModifierQualifiedNames.any { evaluator.typeMatches(type, it) }
 }
 
-fun UParameter.isSlotParameter(evaluator: JavaEvaluator): Boolean {
+fun UParameter.isSlotParameter(): Boolean {
   // Check if the parameter type has a @Composable annotation
   val ktParam = sourcePsi as? KtParameter ?: return false
   val typeRef = ktParam.typeReference ?: return false
@@ -215,7 +215,7 @@ fun UMethod.modifierParameter(evaluator: JavaEvaluator): UParameter? {
 }
 
 fun UMethod.slotParameters(evaluator: JavaEvaluator): List<UParameter> =
-  uastParameters.filter { it.isSlotParameter(evaluator) }
+  uastParameters.filter { it.isSlotParameter() }
 
 val KtProperty.declaresCompositionLocal: Boolean
   get() {

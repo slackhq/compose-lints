@@ -1,5 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="6" by="lint 8.4.0-alpha12" type="baseline" client="gradle" dependencies="false" name="AGP (8.4.0-alpha12)" variant="all" version="8.4.0-alpha12">
+<issues format="6" by="lint 9.2.1" type="baseline" client="gradle" dependencies="false" name="AGP (9.2.1)" variant="all" version="9.2.1">
+
+    <issue
+        id="CheckResult"
+        message="The result of `run` is not used"
+        errorLine1="    lint()"
+        errorLine2="    ^">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="480"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `run` is not used"
+        errorLine1="    lint()"
+        errorLine2="    ^">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="513"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `run` is not used"
+        errorLine1="    lint()"
+        errorLine2="    ^">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="550"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `run` is not used"
+        errorLine1="    lint()"
+        errorLine2="    ^">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="586"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `run` is not used"
+        errorLine1="    lint()"
+        errorLine2="    ^">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="622"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `run` is not used"
+        errorLine1="    lint()"
+        errorLine2="    ^">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="662"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `run` is not used"
+        errorLine1="    lint()"
+        errorLine2="    ^">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="710"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `run` is not used"
+        errorLine1="    lint()"
+        errorLine2="    ^">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="753"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `run` is not used"
+        errorLine1="    lint()"
+        errorLine2="    ^">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="791"
+            column="5"/>
+    </issue>
 
     <issue
         id="LintImplTextFormat"
@@ -47,28 +146,6 @@
 
     <issue
         id="LintImplTextFormat"
-        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;bothIf&quot;, not &quot;both If&quot;"
-        errorLine1="            Composable functions should either emit content into the composition or return a value, but not both.\"
-        errorLine2="                                                                                                                ~~">
-        <location
-            file="src/main/java/slack/lint/compose/ContentEmitterReturningValuesDetector.kt"
-            line="46"
-            column="113"/>
-    </issue>
-
-    <issue
-        id="LintImplTextFormat"
-        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;callerSee&quot;, not &quot;caller See&quot;"
-        errorLine1="            If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller.\"
-        errorLine2="                                                                                                                                                                                                 ~~">
-        <location
-            file="src/main/java/slack/lint/compose/ContentEmitterReturningValuesDetector.kt"
-            line="47"
-            column="194"/>
-    </issue>
-
-    <issue
-        id="LintImplTextFormat"
         message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;APIsSee&quot;, not &quot;APIs See&quot;"
         errorLine1="              Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.\"
         errorLine2="                                                                                         ~~">
@@ -76,28 +153,6 @@
             file="src/main/java/slack/lint/compose/M2ApiDetector.kt"
             line="57"
             column="90"/>
-    </issue>
-
-    <issue
-        id="LintImplTextFormat"
-        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;recompositionsYou&quot;, not &quot;recompositions You&quot;"
-        errorLine1="          Using @Composable builder functions for modifiers is not recommended, as they cause unnecessary recompositions.\"
-        errorLine2="                                                                                                                        ~~">
-        <location
-            file="src/main/java/slack/lint/compose/ModifierComposableDetector.kt"
-            line="26"
-            column="121"/>
-    </issue>
-
-    <issue
-        id="LintImplTextFormat"
-        message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;treeSee&quot;, not &quot;tree See&quot;"
-        errorLine1="          You should use the Modifier.Node API instead, as it limits recomposition to just the modifier instance, rather than the whole function tree.\"
-        errorLine2="                                                                                                                                                     ~~">
-        <location
-            file="src/main/java/slack/lint/compose/ModifierComposableDetector.kt"
-            line="27"
-            column="150"/>
     </issue>
 
     <issue
@@ -118,8 +173,217 @@
         errorLine2="                                                                                                    ~~">
         <location
             file="src/main/java/slack/lint/compose/ModifierWithoutDefaultDetector.kt"
-            line="34"
+            line="35"
             column="101"/>
+    </issue>
+
+    <issue
+        id="LintImplTrimIndent"
+        message="No need to call `.trimIndent()` in issue registration strings; they are already trimmed by indent by lint when displaying to users. Instead, call `.indented()` on the surrounding `kotlin()` test file construction"
+        errorLine1="            .trimIndent()"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="497"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="LintImplTrimIndent"
+        message="No need to call `.trimIndent()` in issue registration strings; they are already trimmed by indent by lint when displaying to users. Instead, call `.indented()` on the surrounding `kotlin()` test file construction"
+        errorLine1="            .trimIndent()"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="532"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="LintImplTrimIndent"
+        message="No need to call `.trimIndent()` in issue registration strings; they are already trimmed by indent by lint when displaying to users. Instead, call `.indented()` on the surrounding `kotlin()` test file construction"
+        errorLine1="            .trimIndent()"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="569"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="LintImplTrimIndent"
+        message="No need to call `.trimIndent()` in issue registration strings; they are already trimmed by indent by lint when displaying to users. Instead, call `.indented()` on the surrounding `kotlin()` test file construction"
+        errorLine1="            .trimIndent()"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="605"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="LintImplTrimIndent"
+        message="No need to call `.trimIndent()` in issue registration strings; they are already trimmed by indent by lint when displaying to users. Instead, call `.indented()` on the surrounding `kotlin()` test file construction"
+        errorLine1="            .trimIndent()"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="642"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="LintImplTrimIndent"
+        message="No need to call `.trimIndent()` in issue registration strings; they are already trimmed by indent by lint when displaying to users. Instead, call `.indented()` on the surrounding `kotlin()` test file construction"
+        errorLine1="            .trimIndent()"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="687"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="LintImplTrimIndent"
+        message="No need to call `.trimIndent()` in issue registration strings; they are already trimmed by indent by lint when displaying to users. Instead, call `.indented()` on the surrounding `kotlin()` test file construction"
+        errorLine1="            .trimIndent()"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="738"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="LintImplTrimIndent"
+        message="No need to call `.trimIndent()` in issue registration strings; they are already trimmed by indent by lint when displaying to users. Instead, call `.indented()` on the surrounding `kotlin()` test file construction"
+        errorLine1="            .trimIndent()"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="776"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="LintImplTrimIndent"
+        message="No need to call `.trimIndent()` in issue registration strings; they are already trimmed by indent by lint when displaying to users. Instead, call `.indented()` on the surrounding `kotlin()` test file construction"
+        errorLine1="            .trimIndent()"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
+            line="816"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="UElementAsPsi"
+        message="Do not use `UElement` as `PsiElement`"
+        errorLine1="  return modifiers.firstOrNull { it.name == &quot;modifier&quot; } ?: modifiers.firstOrNull()"
+        errorLine2="                                 ~~~~~~~">
+        <location
+            file="src/main/java/slack/lint/compose/util/Composables.kt"
+            line="214"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="UElementAsPsi"
+        message="Do not use `UElement` as `PsiElement`"
+        errorLine1="  return uParamClass.name in KnownMutableCommonTypesSimpleNames"
+        errorLine2="         ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/slack/lint/compose/util/KtCallableDeclarations.kt"
+            line="29"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UElementAsPsi"
+        message="Do not use `UElement` as `PsiElement`"
+        errorLine1="      return uParameter.sourcePsi?.text ?: &quot;${uParameter.name}: ${uParameter.type.presentableText}&quot;"
+        errorLine2="                                              ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/slack/lint/compose/ParameterOrderDetector.kt"
+            line="35"
+            column="47"/>
+    </issue>
+
+    <issue
+        id="UElementAsPsi"
+        message="Do not use `UElement` as `PsiElement`"
+        errorLine1="          .thenByDescending { it.name == &quot;modifier&quot; }"
+        errorLine2="                              ~~~~~~~">
+        <location
+            file="src/main/java/slack/lint/compose/ParameterOrderDetector.kt"
+            line="89"
+            column="31"/>
+    </issue>
+
+    <issue
+        id="UElementAsPsi"
+        message="Do not use `UElement` as `PsiElement`"
+        errorLine1="      val variableName = param.name"
+        errorLine2="                         ~~~~~~~~~~">
+        <location
+            file="src/main/java/slack/lint/compose/UnstableCollectionsDetector.kt"
+            line="50"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="UElementAsPsi"
+        message="Do not use `UElement` as `PsiElement`"
+        errorLine1="      } else if (!method.isTopLevelKtOrJavaMember() &amp;&amp; !method.isStatic) {"
+        errorLine2="                  ~~~~~~">
+        <location
+            file="src/main/java/slack/lint/compose/UnstableReceiverDetector.kt"
+            line="79"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="UastImplementation"
+        message="org.jetbrains.uast.kotlin.KotlinLocalFunctionULambdaExpression is UAST implementation. Consider using one of its corresponding UAST interfaces: `UExpression`, `UAnnotated`, `ULambdaExpression`"
+        errorLine1="import org.jetbrains.uast.kotlin.KotlinLocalFunctionULambdaExpression"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/slack/lint/compose/CodeFlowAnalysis.kt"
+            line="24"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UastImplementation"
+        message="org.jetbrains.uast.kotlin.KotlinUReturnExpression is UAST implementation. Consider using one of its corresponding UAST interfaces: `UExpression`, `UAnnotated`, `UReturnExpression`, `UJumpExpression`"
+        errorLine1="import org.jetbrains.uast.kotlin.KotlinUReturnExpression"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/slack/lint/compose/CodeFlowAnalysis.kt"
+            line="25"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UastImplementation"
+        message="org.jetbrains.uast.kotlin.KotlinUReturnExpression is UAST implementation. Consider using one of its corresponding UAST interfaces: `UExpression`, `UAnnotated`, `UReturnExpression`, `UJumpExpression`"
+        errorLine1="    if (this !is KotlinUReturnExpression) return jumpTarget"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/slack/lint/compose/CodeFlowAnalysis.kt"
+            line="458"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="UastImplementation"
+        message="org.jetbrains.uast.kotlin.KotlinLocalFunctionULambdaExpression is UAST implementation. Consider using one of its corresponding UAST interfaces: `UExpression`, `UAnnotated`, `ULambdaExpression`"
+        errorLine1="          (it is UMethod || it is KotlinLocalFunctionULambdaExpression) &amp;&amp; label == null ||"
+        errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/slack/lint/compose/CodeFlowAnalysis.kt"
+            line="463"
+            column="35"/>
     </issue>
 
 </issues>
