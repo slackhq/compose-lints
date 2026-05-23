@@ -359,6 +359,34 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
     lint().files(*commonStubs, *specificStubs, kotlin(code)).run().expectClean()
   }
 
+  // passing the modifier to every branch of a `when` is the recommended pattern,
+  // and must not be flagged as reuse since only one branch runs per execution path.
+  // https://github.com/slackhq/compose-lints/issues/466
+  @Test
+  fun `passes when modifier is passed to mutually exclusive when branches`() {
+    @Language("kotlin")
+    val code =
+      """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
+
+        sealed interface SomeViewState {
+            object Loading : SomeViewState
+            object Loaded : SomeViewState
+        }
+
+        @Composable
+        fun SomeScreenContent(state: SomeViewState, modifier: Modifier = Modifier) {
+            when (state) {
+                is SomeViewState.Loading -> OtherComposable(modifier)
+                is SomeViewState.Loaded -> OtherComposable(modifier.fillMaxWidth())
+            }
+        }
+      """
+        .trimIndent()
+    lint().files(*commonStubs, *specificStubs, kotlin(code)).run().expectClean()
+  }
+
   @Test
   fun `passes when modifier is reused before returning early from a branch`() {
     @Language("kotlin")
