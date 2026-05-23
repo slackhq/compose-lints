@@ -24,16 +24,16 @@ class UnstableCollectionsDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        fun Something(a: Collection<String>) {}
-        @Composable
-        fun Something(a: List<String>) {}
-        @Composable
-        fun Something(a: Set<String>) {}
-        @Composable
-        fun Something(a: Map<String, Int>) {}
+      @Composable
+      fun Something(a: Collection<String>) {}
+      @Composable
+      fun Something(a: List<String>) {}
+      @Composable
+      fun Something(a: Set<String>) {}
+      @Composable
+      fun Something(a: Map<String, Int>) {}
       """
         .trimIndent()
 
@@ -42,27 +42,27 @@ class UnstableCollectionsDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:4: Warning: The Compose Compiler cannot infer the stability of a parameter if a Collection<String> is used in it, even if the item type is stable.
-          You should use Kotlinx Immutable Collections instead: a: ImmutableCollection<String> or create an @Immutable wrapper for this class: @Immutable data class ACollection(val items: Collection<String>)
-          See https://slackhq.github.io/compose-lints/rules/#avoid-using-unstable-collections for more information. [ComposeUnstableCollections]
-          fun Something(a: Collection<String>) {}
-                           ~~~~~~~~~~~~~~~~~~
-          src/test.kt:6: Warning: The Compose Compiler cannot infer the stability of a parameter if a List<String> is used in it, even if the item type is stable.
-          You should use Kotlinx Immutable Collections instead: a: ImmutableList<String> or create an @Immutable wrapper for this class: @Immutable data class AList(val items: List<String>)
-          See https://slackhq.github.io/compose-lints/rules/#avoid-using-unstable-collections for more information. [ComposeUnstableCollections]
-          fun Something(a: List<String>) {}
-                           ~~~~~~~~~~~~
-          src/test.kt:8: Warning: The Compose Compiler cannot infer the stability of a parameter if a Set<String> is used in it, even if the item type is stable.
-          You should use Kotlinx Immutable Collections instead: a: ImmutableSet<String> or create an @Immutable wrapper for this class: @Immutable data class ASet(val items: Set<String>)
-          See https://slackhq.github.io/compose-lints/rules/#avoid-using-unstable-collections for more information. [ComposeUnstableCollections]
-          fun Something(a: Set<String>) {}
-                           ~~~~~~~~~~~
-          src/test.kt:10: Warning: The Compose Compiler cannot infer the stability of a parameter if a Map<String, Int> is used in it, even if the item type is stable.
-          You should use Kotlinx Immutable Collections instead: a: ImmutableMap<String, Int> or create an @Immutable wrapper for this class: @Immutable data class AMap(val items: Map<String, Int>)
-          See https://slackhq.github.io/compose-lints/rules/#avoid-using-unstable-collections for more information. [ComposeUnstableCollections]
-          fun Something(a: Map<String, Int>) {}
-                           ~~~~~~~~~~~~~~~~
-          0 errors, 4 warnings
+        src/test.kt:4: Warning: The Compose Compiler cannot infer the stability of a parameter if a Collection<String> is used in it, even if the item type is stable.
+        You should use Kotlinx Immutable Collections instead: a: ImmutableCollection<String> or create an @Immutable wrapper for this class: @Immutable data class ACollection(val items: Collection<String>)
+        See https://slackhq.github.io/compose-lints/rules/#avoid-using-unstable-collections for more information. [ComposeUnstableCollections]
+        fun Something(a: Collection<String>) {}
+                         ~~~~~~~~~~~~~~~~~~
+        src/test.kt:6: Warning: The Compose Compiler cannot infer the stability of a parameter if a List<String> is used in it, even if the item type is stable.
+        You should use Kotlinx Immutable Collections instead: a: ImmutableList<String> or create an @Immutable wrapper for this class: @Immutable data class AList(val items: List<String>)
+        See https://slackhq.github.io/compose-lints/rules/#avoid-using-unstable-collections for more information. [ComposeUnstableCollections]
+        fun Something(a: List<String>) {}
+                         ~~~~~~~~~~~~
+        src/test.kt:8: Warning: The Compose Compiler cannot infer the stability of a parameter if a Set<String> is used in it, even if the item type is stable.
+        You should use Kotlinx Immutable Collections instead: a: ImmutableSet<String> or create an @Immutable wrapper for this class: @Immutable data class ASet(val items: Set<String>)
+        See https://slackhq.github.io/compose-lints/rules/#avoid-using-unstable-collections for more information. [ComposeUnstableCollections]
+        fun Something(a: Set<String>) {}
+                         ~~~~~~~~~~~
+        src/test.kt:10: Warning: The Compose Compiler cannot infer the stability of a parameter if a Map<String, Int> is used in it, even if the item type is stable.
+        You should use Kotlinx Immutable Collections instead: a: ImmutableMap<String, Int> or create an @Immutable wrapper for this class: @Immutable data class AMap(val items: Map<String, Int>)
+        See https://slackhq.github.io/compose-lints/rules/#avoid-using-unstable-collections for more information. [ComposeUnstableCollections]
+        fun Something(a: Map<String, Int>) {}
+                         ~~~~~~~~~~~~~~~~
+        0 errors, 4 warnings
         """
           .trimIndent()
       )
@@ -73,20 +73,20 @@ class UnstableCollectionsDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.MutableState
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.MutableState
+      import androidx.compose.runtime.Composable
 
-        interface ImmutableList<T>
-        interface ImmutableSet<T>
-        interface ImmutableMap<K, V>
-        class StringList
-        class StringSet
-        class StringToIntMap
+      interface ImmutableList<T>
+      interface ImmutableSet<T>
+      interface ImmutableMap<K, V>
+      class StringList
+      class StringSet
+      class StringToIntMap
 
-        @Composable
-        fun Something(a: ImmutableList<String>, b: ImmutableSet<String>, c: ImmutableMap<String, Int>) {}
-        @Composable
-        fun Something(a: StringList, b: StringSet, c: StringToIntMap) {}
+      @Composable
+      fun Something(a: ImmutableList<String>, b: ImmutableSet<String>, c: ImmutableMap<String, Int>) {}
+      @Composable
+      fun Something(a: StringList, b: StringSet, c: StringToIntMap) {}
       """
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()

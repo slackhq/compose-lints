@@ -17,83 +17,83 @@ abstract class BaseComposeLintTest : LintDetectorTest() {
     arrayOf(
       kotlin(
         """
-          package androidx.compose.ui
+        package androidx.compose.ui
 
-          import androidx.compose.runtime.Composable
+        import androidx.compose.runtime.Composable
 
-          @Composable
-          interface Modifier {
-            infix fun then(other: Modifier): Modifier = other
-            companion object : Modifier
-          }
-      """
+        @Composable
+        interface Modifier {
+          infix fun then(other: Modifier): Modifier = other
+          companion object : Modifier
+        }
+        """
           .trimIndent()
       ),
       kotlin(
         """
-          package androidx.compose.runtime
+        package androidx.compose.runtime
 
-          annotation class Composable
-          @Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
-          annotation class StableMarker
-          @StableMarker
-          annotation class Stable
-          @StableMarker
-          annotation class Immutable
+        annotation class Composable
+        @Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
+        annotation class StableMarker
+        @StableMarker
+        annotation class Stable
+        @StableMarker
+        annotation class Immutable
 
-          interface State<out T> {
-              val value: T
-          }
+        interface State<out T> {
+            val value: T
+        }
 
-          interface MutableState<T> : State<T> {
-              override var value: T
-              operator fun component1(): T
-              operator fun component2(): (T) -> Unit
-          }
+        interface MutableState<T> : State<T> {
+            override var value: T
+            operator fun component1(): T
+            operator fun component2(): (T) -> Unit
+        }
 
-          fun <T> mutableStateOf(value: T): MutableState<T> = TODO()
+        fun <T> mutableStateOf(value: T): MutableState<T> = TODO()
 
-          fun <T> derivedStateOf(
-              calculation: () -> T,
-          ): State<T> = TODO()
+        fun <T> derivedStateOf(
+            calculation: () -> T,
+        ): State<T> = TODO()
 
-          inline fun <T> remember(crossinline calculation: () -> T): T = TODO()
+        inline fun <T> remember(crossinline calculation: () -> T): T = TODO()
 
-          fun movableContentOf(content: @Composable () -> Unit): @Composable () -> Unit = TODO()
-      """
+        fun movableContentOf(content: @Composable () -> Unit): @Composable () -> Unit = TODO()
+        """
           .trimIndent()
       ),
       kotlin(
         """
-          package androidx.compose.ui.tooling.preview
+        package androidx.compose.ui.tooling.preview
 
-          @Repeatable
-          annotation class Preview
+        @Repeatable
+        annotation class Preview
 
-          interface PreviewParameterProvider<T> {
-              val values: Sequence<T>
-              val count get() = values.count()
-          }
+        interface PreviewParameterProvider<T> {
+            val values: Sequence<T>
+            val count get() = values.count()
+        }
 
-          annotation class PreviewParameter(
-              val provider: KClass<out PreviewParameterProvider<*>>,
-              val limit: Int = Int.MAX_VALUE
-          )
-      """
+        annotation class PreviewParameter(
+            val provider: KClass<out PreviewParameterProvider<*>>,
+            val limit: Int = Int.MAX_VALUE
+        )
+        """
           .trimIndent()
       ),
       kotlin(
         """
-          package androidx.compose.ui
+        package androidx.compose.ui
 
-          import androidx.compose.runtime.Composable
-          import androidx.compose.ui.Modifier
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
 
-          @Composable
-          fun Text(text: String, modifier: Modifier = Modifier) {
+        @Composable
+        fun Text(text: String, modifier: Modifier = Modifier) {
 
-          }
-      """
+        }
+        """
           .trimIndent()
       ),
     )

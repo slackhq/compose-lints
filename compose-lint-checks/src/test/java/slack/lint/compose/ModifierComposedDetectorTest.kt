@@ -12,33 +12,33 @@ class ModifierComposedDetectorTest : BaseComposeLintTest() {
   private val modifierStub =
     kotlin(
       """
-        package androidx.compose.ui
+      package androidx.compose.ui
 
-        class InspectorInfo {
-          companion object {
-            val NoInspectorInfo = InspectorInfo()
-          }
+      class InspectorInfo {
+        companion object {
+          val NoInspectorInfo = InspectorInfo()
         }
+      }
 
-        interface Modifier {
-          companion object : Modifier
-        }
-        """
+      interface Modifier {
+        companion object : Modifier
+      }
+      """
         .trimIndent()
     )
   private val composed =
     kotlin(
       "test/androidx/compose/ui/ComposedModifier.kt",
       """
-        package androidx.compose.ui
+      package androidx.compose.ui
 
-        fun Modifier.composed(
-            inspectorInfo: InspectorInfo.() -> Unit = NoInspectorInfo,
-            factory: Modifier.() -> Modifier
-        ): Modifier {
-          TODO()
-        }
-        """
+      fun Modifier.composed(
+          inspectorInfo: InspectorInfo.() -> Unit = NoInspectorInfo,
+          factory: Modifier.() -> Modifier
+      ): Modifier {
+        TODO()
+      }
+      """
         .trimIndent(),
     )
 
@@ -51,14 +51,14 @@ class ModifierComposedDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-          package test
+        package test
 
-        import androidx.compose.ui.composed
-        import androidx.compose.ui.Modifier
+      import androidx.compose.ui.composed
+      import androidx.compose.ui.Modifier
 
-        fun Modifier.something1() = Modifier.composed { }
-        fun Modifier.something2() = composed { }
-        fun Modifier.something3() = somethingElse()
+      fun Modifier.something1() = Modifier.composed { }
+      fun Modifier.something2() = composed { }
+      fun Modifier.something3() = somethingElse()
       """
         .trimIndent()
 
@@ -67,21 +67,21 @@ class ModifierComposedDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test/test.kt:6: Error: Modifier.composed { ... } is no longer recommended due to performance issues.
+        src/test/test.kt:6: Error: Modifier.composed { ... } is no longer recommended due to performance issues.
 
-          You should use the Modifier.Node API instead, as it was designed from the ground up to be far more performant than composed modifiers.
+        You should use the Modifier.Node API instead, as it was designed from the ground up to be far more performant than composed modifiers.
 
-          See https://slackhq.github.io/compose-lints/rules/#migrate-to-modifiernode for more information. [ComposeModifierComposed]
-          fun Modifier.something1() = Modifier.composed { }
-                                      ~~~~~~~~~~~~~~~~~~~~~
-          src/test/test.kt:7: Error: Modifier.composed { ... } is no longer recommended due to performance issues.
+        See https://slackhq.github.io/compose-lints/rules/#migrate-to-modifiernode for more information. [ComposeModifierComposed]
+        fun Modifier.something1() = Modifier.composed { }
+                                    ~~~~~~~~~~~~~~~~~~~~~
+        src/test/test.kt:7: Error: Modifier.composed { ... } is no longer recommended due to performance issues.
 
-          You should use the Modifier.Node API instead, as it was designed from the ground up to be far more performant than composed modifiers.
+        You should use the Modifier.Node API instead, as it was designed from the ground up to be far more performant than composed modifiers.
 
-          See https://slackhq.github.io/compose-lints/rules/#migrate-to-modifiernode for more information. [ComposeModifierComposed]
-          fun Modifier.something2() = composed { }
-                                      ~~~~~~~~~~~~
-          2 errors, 0 warnings
+        See https://slackhq.github.io/compose-lints/rules/#migrate-to-modifiernode for more information. [ComposeModifierComposed]
+        fun Modifier.something2() = composed { }
+                                    ~~~~~~~~~~~~
+        2 errors, 0 warnings
         """
           .trimIndent()
       )
@@ -92,8 +92,8 @@ class ModifierComposedDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        @Composable
-        fun TextHolder(text: String) {}
+      @Composable
+      fun TextHolder(text: String) {}
       """
         .trimIndent()
 

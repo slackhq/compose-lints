@@ -24,17 +24,17 @@ class MutableParametersDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.MutableState
-        import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.MutableState
+      import androidx.compose.runtime.Composable
 
-        @Composable
-        fun Something(a: MutableState<String>) {}
-        @Composable
-        fun Something(a: ArrayList<String>) {}
-        @Composable
-        fun Something(a: HashSet<String>) {}
-        @Composable
-        fun Something(a: MutableMap<String, String>) {}
+      @Composable
+      fun Something(a: MutableState<String>) {}
+      @Composable
+      fun Something(a: ArrayList<String>) {}
+      @Composable
+      fun Something(a: HashSet<String>) {}
+      @Composable
+      fun Something(a: MutableMap<String, String>) {}
       """
         .trimIndent()
     lint()
@@ -42,19 +42,19 @@ class MutableParametersDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-          src/test.kt:5: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
-          fun Something(a: MutableState<String>) {}
-                           ~~~~~~~~~~~~~~~~~~~~
-          src/test.kt:7: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
-          fun Something(a: ArrayList<String>) {}
-                           ~~~~~~~~~~~~~~~~~
-          src/test.kt:9: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
-          fun Something(a: HashSet<String>) {}
-                           ~~~~~~~~~~~~~~~
-          src/test.kt:11: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
-          fun Something(a: MutableMap<String, String>) {}
-                           ~~~~~~~~~~~~~~~~~~~~~~~~~~
-          4 errors, 0 warnings
+        src/test.kt:5: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
+        fun Something(a: MutableState<String>) {}
+                         ~~~~~~~~~~~~~~~~~~~~
+        src/test.kt:7: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
+        fun Something(a: ArrayList<String>) {}
+                         ~~~~~~~~~~~~~~~~~
+        src/test.kt:9: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
+        fun Something(a: HashSet<String>) {}
+                         ~~~~~~~~~~~~~~~
+        src/test.kt:11: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
+        fun Something(a: MutableMap<String, String>) {}
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+        4 errors, 0 warnings
         """
           .trimIndent()
       )
@@ -65,12 +65,12 @@ class MutableParametersDetectorTest : BaseComposeLintTest() {
     @Language("kotlin")
     val code =
       """
-        import androidx.compose.runtime.State
+      import androidx.compose.runtime.State
 
-        @Composable
-        fun Something(a: String, b: (Int) -> Unit) {}
-        @Composable
-        fun Something(a: State<String>) {}
+      @Composable
+      fun Something(a: String, b: (Int) -> Unit) {}
+      @Composable
+      fun Something(a: State<String>) {}
       """
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()

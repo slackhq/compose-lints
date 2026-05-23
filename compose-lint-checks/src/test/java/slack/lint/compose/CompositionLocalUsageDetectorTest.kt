@@ -90,14 +90,14 @@ class CompositionLocalUsageDetectorTest : BaseComposeLintTest() {
       .expect(
         expectedText =
           """
-        src/test.kt:2: Error: `CompositionLocal`s should be singletons and not use getters. Otherwise a new instance will be returned every call. [ComposeCompositionLocalGetter]
-                        val LocalBanana get() = compositionLocalOf { "Prune" }
-                                        ~~~
-        src/test.kt:3: Error: `CompositionLocal`s should be singletons and not use getters. Otherwise a new instance will be returned every call. [ComposeCompositionLocalGetter]
-                        val LocalPotato get() {
-                                        ~~~
-        2 errors, 0 warnings
-        """
+          src/test.kt:2: Error: `CompositionLocal`s should be singletons and not use getters. Otherwise a new instance will be returned every call. [ComposeCompositionLocalGetter]
+                          val LocalBanana get() = compositionLocalOf { "Prune" }
+                                          ~~~
+          src/test.kt:3: Error: `CompositionLocal`s should be singletons and not use getters. Otherwise a new instance will be returned every call. [ComposeCompositionLocalGetter]
+                          val LocalPotato get() {
+                                          ~~~
+          2 errors, 0 warnings
+          """
             .trimIndent()
       )
   }
