@@ -5,6 +5,7 @@ Changelog
 --------------
 
 - **Enhancement**: Improve `ModifierReused` data flow analysis.
+- Build against lint `32.2.1`.
 - Target Kotlin 2.2 (matches lint 32.*).
 
 1.4.3
