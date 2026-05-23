@@ -38,8 +38,7 @@ import slack.lint.compose.util.sourceImplementation
 class ModifierReusedDetector
 @JvmOverloads
 constructor(
-  contentEmitterOption: ContentEmitterLintOption =
-    ContentEmitterLintOption(CONTENT_EMITTER_OPTION)
+  contentEmitterOption: ContentEmitterLintOption = ContentEmitterLintOption(CONTENT_EMITTER_OPTION)
 ) : ComposableFunctionDetector(contentEmitterOption to ISSUE), SourceCodeScanner {
 
   companion object {
