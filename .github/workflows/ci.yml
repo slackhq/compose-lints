@@ -17,12 +17,7 @@ concurrency:
 
 jobs:
   build:
-    name: "K2 UAST = ${{ matrix.useK2Uast }}"
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        useK2Uast: [ true, false ]
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -37,13 +32,13 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Build
-        run: ./gradlew check -Dlint.use.fir.uast=${{ matrix.useK2Uast }}
+        run: ./gradlew check
 
       - name: (Fail-only) Upload build reports
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: reports-useK2Uast=${{ matrix.useK2Uast }}
+          name: reports
           path: |
             **/build/reports/*
 
