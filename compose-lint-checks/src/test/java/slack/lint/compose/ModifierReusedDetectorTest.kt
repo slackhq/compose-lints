@@ -3,10 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
+import com.android.tools.lint.checks.infrastructure.TestLintTask
 import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import java.util.SortedMap
 import org.intellij.lang.annotations.Language
 import org.junit.Test
@@ -497,7 +498,7 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
             .trimIndent()
         ),
       )
-      .run()
+      .runIgnoringResult()
 
     ModifierReusedDetector.codeFlowGraph.assertEqualTo(
       // "Node start" and "Node end" represent method enter and method exit respectively
@@ -532,7 +533,7 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
             .trimIndent()
         ),
       )
-      .run()
+      .runIgnoringResult()
 
     ModifierReusedDetector.codeFlowGraph.assertEqualTo(
       "Node start" to setOf("Switch 6"),
@@ -569,7 +570,7 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
             .trimIndent()
         ),
       )
-      .run()
+      .runIgnoringResult()
 
     ModifierReusedDetector.codeFlowGraph.assertEqualTo(
       "Node start" to setOf("Switch 6"),
@@ -605,7 +606,7 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
             .trimIndent()
         ),
       )
-      .run()
+      .runIgnoringResult()
 
     ModifierReusedDetector.codeFlowGraph.assertEqualTo(
       "Node start" to setOf("Switch 6"),
@@ -642,7 +643,7 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
             .trimIndent()
         ),
       )
-      .run()
+      .runIgnoringResult()
 
     ModifierReusedDetector.codeFlowGraph.assertEqualTo(
       "Node start" to setOf("Switch 6"),
@@ -687,7 +688,7 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
             .trimIndent()
         ),
       )
-      .run()
+      .runIgnoringResult()
 
     ModifierReusedDetector.codeFlowGraph.assertEqualTo(
       "Node start" to setOf("Switch 6"),
@@ -738,7 +739,7 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
             .trimIndent()
         ),
       )
-      .run()
+      .runIgnoringResult()
 
     ModifierReusedDetector.codeFlowGraph.assertEqualTo(
       "Node start" to setOf("Node 13"),
@@ -776,7 +777,7 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
             .trimIndent()
         ),
       )
-      .run()
+      .runIgnoringResult()
 
     ModifierReusedDetector.codeFlowGraph.assertEqualTo(
       "Node start" to setOf("Node 10"),
@@ -816,7 +817,7 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
             .trimIndent()
         ),
       )
-      .run()
+      .runIgnoringResult()
 
     ModifierReusedDetector.codeFlowGraph.assertEqualTo("Node start" to setOf("Node end"))
   }
@@ -825,6 +826,11 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
     val graph: SortedMap<String, java.util.HashSet<String>> =
       this.map { (node, links) -> node.toString() to links.mapTo(HashSet()) { it.toString() } }
         .associateTo(sortedMapOf()) { it }
-    Truth.assertThat(graph).isEqualTo(list.associateTo(sortedMapOf()) { it })
+    assertThat(graph).isEqualTo(list.associateTo(sortedMapOf()) { it })
+  }
+
+  @Suppress("CheckResult")
+  private fun TestLintTask.runIgnoringResult() {
+    run()
   }
 }

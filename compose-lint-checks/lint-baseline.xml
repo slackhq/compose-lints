@@ -2,105 +2,6 @@
 <issues format="6" by="lint 9.2.1" type="baseline" client="gradle" dependencies="false" name="AGP (9.2.1)" variant="all" version="9.2.1">
 
     <issue
-        id="CheckResult"
-        message="The result of `run` is not used"
-        errorLine1="    lint()"
-        errorLine2="    ^">
-        <location
-            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="480"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="CheckResult"
-        message="The result of `run` is not used"
-        errorLine1="    lint()"
-        errorLine2="    ^">
-        <location
-            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="513"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="CheckResult"
-        message="The result of `run` is not used"
-        errorLine1="    lint()"
-        errorLine2="    ^">
-        <location
-            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="550"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="CheckResult"
-        message="The result of `run` is not used"
-        errorLine1="    lint()"
-        errorLine2="    ^">
-        <location
-            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="586"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="CheckResult"
-        message="The result of `run` is not used"
-        errorLine1="    lint()"
-        errorLine2="    ^">
-        <location
-            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="622"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="CheckResult"
-        message="The result of `run` is not used"
-        errorLine1="    lint()"
-        errorLine2="    ^">
-        <location
-            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="662"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="CheckResult"
-        message="The result of `run` is not used"
-        errorLine1="    lint()"
-        errorLine2="    ^">
-        <location
-            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="710"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="CheckResult"
-        message="The result of `run` is not used"
-        errorLine1="    lint()"
-        errorLine2="    ^">
-        <location
-            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="753"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="CheckResult"
-        message="The result of `run` is not used"
-        errorLine1="    lint()"
-        errorLine2="    ^">
-        <location
-            file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="791"
-            column="5"/>
-    </issue>
-
-    <issue
         id="LintImplTextFormat"
         message="This line continuation (**\**) should probably be preceded by a space character, otherwise this will render as a single word &quot;letterThey&quot;, not &quot;letter They&quot;"
         errorLine1="              Composable functions that return Unit should start with an uppercase letter.\"
@@ -184,7 +85,7 @@
         errorLine2="             ~~~~~~~~~~~~">
         <location
             file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="497"
+            line="499"
             column="14"/>
     </issue>
 
@@ -195,7 +96,7 @@
         errorLine2="             ~~~~~~~~~~~~">
         <location
             file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="532"
+            line="534"
             column="14"/>
     </issue>
 
@@ -206,7 +107,7 @@
         errorLine2="             ~~~~~~~~~~~~">
         <location
             file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="569"
+            line="571"
             column="14"/>
     </issue>
 
@@ -217,7 +118,7 @@
         errorLine2="             ~~~~~~~~~~~~">
         <location
             file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="605"
+            line="607"
             column="14"/>
     </issue>
 
@@ -228,7 +129,7 @@
         errorLine2="             ~~~~~~~~~~~~">
         <location
             file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="642"
+            line="644"
             column="14"/>
     </issue>
 
@@ -239,7 +140,7 @@
         errorLine2="             ~~~~~~~~~~~~">
         <location
             file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="687"
+            line="689"
             column="14"/>
     </issue>
 
@@ -250,7 +151,7 @@
         errorLine2="             ~~~~~~~~~~~~">
         <location
             file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="738"
+            line="740"
             column="14"/>
     </issue>
 
@@ -261,7 +162,7 @@
         errorLine2="             ~~~~~~~~~~~~">
         <location
             file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="776"
+            line="778"
             column="14"/>
     </issue>
 
@@ -272,7 +173,7 @@
         errorLine2="             ~~~~~~~~~~~~">
         <location
             file="src/test/java/slack/lint/compose/ModifierReusedDetectorTest.kt"
-            line="816"
+            line="818"
             column="14"/>
     </issue>
 
