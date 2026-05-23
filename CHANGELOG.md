@@ -3,6 +3,9 @@ Changelog
 
 **Unreleased**
 --------------
+
+- **Enhancement**: Improve `ModifierReused` data flow analysis
+
 1.4.3
 -----
 
