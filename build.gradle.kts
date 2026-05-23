@@ -4,7 +4,7 @@ import com.android.build.gradle.internal.lint.AndroidLintAnalysisTask
 import com.android.build.gradle.internal.lint.LintModelWriterTask
 import com.diffplug.gradle.spotless.KotlinExtension
 import com.diffplug.gradle.spotless.SpotlessExtension
-import com.google.devtools.ksp.gradle.KspTask
+import com.google.devtools.ksp.gradle.KspAATask
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.dokka.gradle.DokkaExtension
@@ -145,7 +145,7 @@ subprojects {
     apply(plugin = "org.jetbrains.dokka")
 
     configure<DokkaExtension> {
-      dokkaPublicationDirectory.set(layout.buildDirectory.dir("dokkaDir"))
+      basePublicationsDirectory.set(layout.buildDirectory.dir("dokkaDir"))
       dokkaSourceSets.configureEach { skipDeprecated.set(true) }
     }
 
@@ -158,8 +158,10 @@ subprojects {
   // TODO workaround for https://issuetracker.google.com/issues/269089135
   pluginManager.withPlugin("com.google.devtools.ksp") {
     tasks.withType<AndroidLintAnalysisTask>().configureEach {
-      mustRunAfter(tasks.withType<KspTask>())
+      mustRunAfter(tasks.withType<KspAATask>())
     }
-    tasks.withType<LintModelWriterTask>().configureEach { mustRunAfter(tasks.withType<KspTask>()) }
+    tasks.withType<LintModelWriterTask>().configureEach {
+      mustRunAfter(tasks.withType<KspAATask>())
+    }
   }
 }

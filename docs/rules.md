@@ -71,6 +71,9 @@ Related rule: [`ComposeMutableParameters`](https://github.com/slackhq/compose-li
 In compose, all parameters must be stable or immutable in order for a composable function to be
 _restartable_ or _skippable_. This _includes_ the containing class or receiver, which the compose-compiler will treat as the 0th argument. Using an unstable receiver is usually a bug, so this lint offers a warning to raise this issue.
 
+!!! warning "Use with Strong Skipping"
+If you have Strong Skipping enabled, we recommend disabling this rule to avoid potential false negatives.
+
 More info: [Compose API Stability](https://developer.android.com/jetpack/compose/performance/stability)
 
 Related rule: [`ComposeUnstableReceiver`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/UnstableReceiverDetector.kt)

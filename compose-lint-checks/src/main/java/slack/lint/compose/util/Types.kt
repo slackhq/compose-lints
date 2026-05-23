@@ -8,7 +8,8 @@ val PsiClass.isFunctionalInterface: Boolean
   get() {
     return hasAnnotation("java.lang.FunctionalInterface") ||
       qualifiedName == "kotlin.Function" ||
-      qualifiedName?.startsWith("kotlin.jvm.functions.") == true
+      qualifiedName?.startsWith("kotlin.jvm.functions.") == true ||
+      qualifiedName?.startsWith("kotlin.Function") == true
   }
 
 val PsiClass.allSupertypes: Sequence<PsiClass>

@@ -51,7 +51,7 @@ class SlotReusedDetector : ComposableFunctionDetector(), SourceCodeScanner {
     val callExpressions = composableBlockExpression.findChildrenByClass<KtCallExpression>().toList()
 
     slotParameters.forEach { slotParameter ->
-      val slotElement: PsiElement? = slotParameter.sourceElement
+      val slotElement: PsiElement? = slotParameter.sourcePsi
 
       // Count all direct calls of the slot parameter.
       val slotParameterCallCount =
@@ -61,7 +61,8 @@ class SlotReusedDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
           calleeElement != null &&
             slotElement != null &&
-            PsiEquivalenceUtil.areElementsEquivalent(calleeElement, slotElement)
+            (calleeElement.isEquivalentTo(slotElement) ||
+              PsiEquivalenceUtil.areElementsEquivalent(calleeElement, slotElement))
         }
 
       // Count all instances where the slot parameter is passed to a slot argument for another
@@ -86,7 +87,8 @@ class SlotReusedDetector : ComposableFunctionDetector(), SourceCodeScanner {
               psiMethod.returnType?.isAssignableFrom(PsiTypes.voidType()) == true &&
               // Parameter is composable
               parameter.type.hasAnnotation("androidx.compose.runtime.Composable") &&
-              PsiEquivalenceUtil.areElementsEquivalent(argumentElement, slotElement)
+              (argumentElement.isEquivalentTo(slotElement) ||
+                PsiEquivalenceUtil.areElementsEquivalent(argumentElement, slotElement))
           }
         }
 

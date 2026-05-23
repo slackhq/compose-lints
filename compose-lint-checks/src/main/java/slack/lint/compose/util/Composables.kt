@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParameter
+import org.jetbrains.uast.toUElement
 import org.jetbrains.uast.toUElementOfType
+import org.jetbrains.uast.tryResolve
 
 fun KtFunction.emitsContent(providedContentEmitters: Set<String>): Boolean {
   return if (toUElementOfType<UMethod>()?.isComposable == true) {
@@ -47,15 +49,29 @@ fun KtFunction.emitsContent(providedContentEmitters: Set<String>): Boolean {
 }
 
 private val KtCallExpression.emitExplicitlyNoContent: Boolean
-  get() = calleeExpression?.text in ComposableNonEmittersList
+  get() = resolvedSimpleName in ComposableNonEmittersList
 
 fun KtCallExpression.emitsContent(providedContentEmitters: Set<String>): Boolean {
-  val methodName = calleeExpression?.text ?: return false
+  val methodName = resolvedSimpleName ?: return false
   return ComposableEmittersList.contains(methodName) ||
     ComposableEmittersListRegex.matches(methodName) ||
     providedContentEmitters.contains(methodName) ||
     containsComposablesWithModifiers
 }
+
+/** Resolves the simple name of the callee, handling import aliases and FQNs via UAST. */
+private val KtCallExpression.resolvedSimpleName: String?
+  get() {
+    val text = calleeExpression?.text ?: return null
+    // If it's a plain identifier without dots or import alias prefix, use directly
+    if ('.' !in text && !text.startsWith("IMPORT_ALIAS")) return text
+    // For fully qualified names, try UAST resolution first
+    val resolved = calleeExpression?.toUElement()?.tryResolve() as? com.intellij.psi.PsiNamedElement
+    if (resolved != null) return resolved.name
+    // Fallback: take the last segment of the dot-qualified name
+    if ('.' in text) return text.substringAfterLast('.')
+    return text
+  }
 
 private val KtCallExpression.containsComposablesWithModifiers: Boolean
   get() = valueArguments.filter { it.isNamed() }.any { it.getArgumentName()?.text == "modifier" }
@@ -168,9 +184,21 @@ fun UParameter.isModifier(evaluator: JavaEvaluator): Boolean {
   return ModifierQualifiedNames.any { evaluator.typeMatches(type, it) }
 }
 
-fun UParameter.isSlotParameter(evaluator: JavaEvaluator): Boolean =
-  typeReference?.type?.hasAnnotation("androidx.compose.runtime.Composable") == true &&
-    evaluator.getTypeClass(this.type).let { it != null && it.isFunctionalInterface }
+fun UParameter.isSlotParameter(evaluator: JavaEvaluator): Boolean {
+  // Check if the parameter type has a @Composable annotation
+  val ktParam = sourcePsi as? KtParameter ?: return false
+  val typeRef = ktParam.typeReference ?: return false
+  // Check if any annotation on the type reference is @Composable
+  val hasComposableAnnotation =
+    typeRef.annotationEntries.any { annotation ->
+      annotation.shortName?.asString() == "Composable" ||
+        annotation.text?.contains("Composable") == true
+    }
+  if (!hasComposableAnnotation) return false
+  // Check if the type is a function type (using the KtFunctionType PSI directly)
+  val typeElement = typeRef.typeElement
+  return typeElement is org.jetbrains.kotlin.psi.KtFunctionType
+}
 
 val KtCallableDeclaration.isModifierReceiver: Boolean
   get() = ModifierNames.contains(receiverTypeReference?.text)

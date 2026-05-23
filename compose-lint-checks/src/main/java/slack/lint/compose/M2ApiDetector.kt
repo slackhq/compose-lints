@@ -76,7 +76,14 @@ constructor(
     // Only applicable to Kotlin files
     if (!isKotlin(context.uastFile?.lang)) return null
     return object : UElementHandler() {
-      override fun visitCallExpression(node: UCallExpression) = checkNode(node)
+      override fun visitCallExpression(node: UCallExpression) {
+        // In FULLY_QUALIFIED mode, qualified calls like "androidx.compose.material.Text(...)"
+        // are visited as both a UCallExpression and a UQualifiedReferenceExpression.
+        // Skip the UCallExpression when the parent is a UQualifiedReferenceExpression to
+        // avoid duplicate reports.
+        if (node.uastParent is UQualifiedReferenceExpression) return
+        checkNode(node)
+      }
 
       override fun visitQualifiedReferenceExpression(node: UQualifiedReferenceExpression) {
         val parent = node.uastParent

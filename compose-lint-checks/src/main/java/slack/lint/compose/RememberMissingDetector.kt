@@ -12,6 +12,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.toUElement
+import org.jetbrains.uast.tryResolve
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.sourceImplementation
@@ -28,6 +30,8 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
         .trimIndent()
 
     private val MethodsThatNeedRemembering = setOf("derivedStateOf", "mutableStateOf")
+    private val QualifiedMethodsThatNeedRemembering =
+      setOf("androidx.compose.runtime.mutableStateOf", "androidx.compose.runtime.derivedStateOf")
     val DerivedStateOfNotRemembered = errorMessage("derivedStateOf")
     val MutableStateOfNotRemembered = errorMessage("mutableStateOf")
 
@@ -43,18 +47,50 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
       )
   }
 
+  private fun KtCallExpression.resolvedQualifiedName(): String? {
+    return calleeExpression?.toUElement()?.tryResolve()?.let { resolved ->
+      (resolved as? com.intellij.psi.PsiMethod)?.containingClass?.qualifiedName?.let { className ->
+        "$className.${(resolved as com.intellij.psi.PsiNamedElement).name}"
+      }
+        ?: (resolved as? com.intellij.psi.PsiNamedElement)?.let { named ->
+          (resolved as? com.intellij.psi.PsiMember)?.containingClass?.qualifiedName?.let {
+            "$it.${named.name}"
+          }
+        }
+    }
+  }
+
+  private fun KtCallExpression.matchesNeedRemembering(): String? {
+    // Try simple name first for performance
+    val simpleName = calleeExpression?.text
+    if (simpleName != null && MethodsThatNeedRemembering.contains(simpleName)) return simpleName
+    // Fall back to resolved qualified name for import aliases
+    val qualifiedName = resolvedQualifiedName() ?: return null
+    return when {
+      qualifiedName.endsWith(".mutableStateOf") &&
+        QualifiedMethodsThatNeedRemembering.any {
+          qualifiedName.endsWith(it.substringAfterLast("."))
+        } -> "mutableStateOf"
+      qualifiedName.endsWith(".derivedStateOf") &&
+        QualifiedMethodsThatNeedRemembering.any {
+          qualifiedName.endsWith(it.substringAfterLast("."))
+        } -> "derivedStateOf"
+      else -> null
+    }
+  }
+
   override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
     // To keep memory consumption in check, we first traverse down until we see one of our known
     // functions
     // that need remembering
     function
       .findChildrenByClass<KtCallExpression>()
-      .filter { MethodsThatNeedRemembering.contains(it.calleeExpression?.text) }
+      .mapNotNull { call -> call.matchesNeedRemembering()?.let { call to it } }
       // Only for those, we traverse up to [function], to see if it was actually remembered
-      .filterNot { it.isRemembered(function) }
+      .filterNot { (call, _) -> call.isRemembered(function) }
       // If it wasn't, we show the error
-      .forEach { callExpression ->
-        when (callExpression.calleeExpression!!.text) {
+      .forEach { (callExpression, resolvedName) ->
+        when (resolvedName) {
           "mutableStateOf" -> {
             context.report(
               ISSUE,
@@ -79,7 +115,12 @@ class RememberMissingDetector : ComposableFunctionDetector(), SourceCodeScanner 
     var current: PsiElement = parent
     while (!current.isEquivalentTo(stopAt)) {
       (current as? KtCallExpression)?.let { callExpression ->
-        if (callExpression.calleeExpression?.text?.startsWith("remember") == true) return true
+        val simpleName = callExpression.calleeExpression?.text
+        if (simpleName?.startsWith("remember") == true) return true
+        // Resolve for import aliases
+        val resolved = callExpression.calleeExpression?.toUElement()?.tryResolve()
+        val resolvedName = (resolved as? com.intellij.psi.PsiNamedElement)?.name
+        if (resolvedName?.startsWith("remember") == true) return true
       }
       current = current.parent
     }

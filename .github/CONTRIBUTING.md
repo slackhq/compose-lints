@@ -5,15 +5,9 @@
 Check out this repo with Android Studio or IntelliJ. It's a standard gradle project and
 conventional to check out.
 
-The primary project is `slack-lint`.
+The primary project is `compose-lint-checks`.
 
 Kotlin should be used for more idiomatic use with lint APIs.
-
-## Setup
-
-Be sure your devel environment has `ANDROID_HOME` defined or you'll have trouble running tests
-that require the Android SDK. If you've added it and still seeing the error about not having it
-defined while running tests, try closing and re-opening Android Studio.
 
 ## Lint Documentation
 
