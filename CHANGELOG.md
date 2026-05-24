@@ -5,6 +5,7 @@ Changelog
 --------------
 
 - **Enhancement**: Improve `ModifierReused` data flow analysis.
+- **Removed**: Remove the `ComposeRememberMissing` rule in favor of Compose's own `UnrememberedMutableState` lint, which ships with the Compose runtime, is enabled by default, and covers more state builders without the false positives our rule had. See [#490](https://github.com/slackhq/compose-lints/issues/490).
 - Build against lint `32.2.1`.
 - Target Kotlin 2.2 (matches lint 32.*).
 
