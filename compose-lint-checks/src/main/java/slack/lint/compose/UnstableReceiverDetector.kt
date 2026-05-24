@@ -17,10 +17,13 @@ import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UTypeReferenceExpression
 import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.toUElementOfType
+import slack.lint.compose.util.MetadataJavaEvaluator
 import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.STABILITY_CHECKS_OPTION
 import slack.lint.compose.util.isStable
 import slack.lint.compose.util.returnsUnitOrVoid
 import slack.lint.compose.util.sourceImplementation
+import slack.lint.compose.util.stabilityChecksEnabled
 
 class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner {
   companion object {
@@ -39,6 +42,7 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
         severity = Severity.WARNING,
         implementation = sourceImplementation<UnstableReceiverDetector>(),
       )
+      .setOptions(listOf(STABILITY_CHECKS_OPTION))
   }
 
   override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
@@ -46,9 +50,15 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
   }
 
   override fun visitComposable(context: JavaContext, method: UMethod) {
+    if (!context.stabilityChecksEnabled()) return
+
+    // Use a metadata-aware evaluator so value-class receivers/containers are understood even when
+    // they come from other modules compiled without source (checkDependencies=false).
+    val evaluator = MetadataJavaEvaluator(context.file.name, context.evaluator)
+
     // Only Unit-returning functions can be skippable. Non-skippable functions will always be
     // recomposed regardless of the receiver type, so there's nothing actionable to report.
-    if (!method.returnsUnitOrVoid(context.evaluator)) return
+    if (!method.returnsUnitOrVoid(evaluator)) return
 
     val receiverTypeReference: KtTypeReference? =
       when (val source = method.sourcePsi) {
@@ -64,7 +74,7 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
       val receiverType: PsiType? =
         method.uastParameters.firstOrNull()?.type
           ?: receiverTypeReference.toUElementOfType<UTypeReferenceExpression>()?.type
-      if (receiverType?.isStable(context.evaluator) == false) {
+      if (receiverType?.isStable(evaluator) == false) {
         context.report(
           ISSUE,
           receiverTypeReference,
@@ -85,9 +95,9 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
           // passed as a receiver) and file facades, whose synthetic *Kt class is the "container"
           // of top-level/extension declarations rather than an actual receiver type.
           ?.takeIf { it.sourcePsi is KtClass }
-          ?.let(context.evaluator::getClassType) ?: return
+          ?.let(evaluator::getClassType) ?: return
 
-      if (!containingClassType.isStable(context.evaluator, resolveUClass = { containingClass })) {
+      if (!containingClassType.isStable(evaluator, resolveUClass = { containingClass })) {
         context.report(
           ISSUE,
           method,
