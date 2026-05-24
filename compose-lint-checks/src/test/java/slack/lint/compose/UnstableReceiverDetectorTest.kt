@@ -200,7 +200,8 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
-  // A value/inline class is stable iff its underlying property type is stable, so composable members
+  // A value/inline class is stable iff its underlying property type is stable, so composable
+  // members
   // of one (whose containing class is the receiver) shouldn't be flagged.
   @Test
   fun `composable members of value classes report no errors`() {

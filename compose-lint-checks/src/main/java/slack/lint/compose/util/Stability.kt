@@ -93,7 +93,8 @@ fun PsiType.isStable(
     if (isStableAnnotated) return true
   }
 
-  // A value class is stable iff its single underlying property type is stable, mirroring the Compose
+  // A value class is stable iff its single underlying property type is stable, mirroring the
+  // Compose
   // compiler. Most callers never reach this branch because UAST already inlines a value-class type
   // to its underlying type before stability is checked; this covers the cases where the value-class
   // type itself is resolved (e.g. as a containing class).
@@ -104,8 +105,8 @@ fun PsiType.isStable(
 }
 
 /**
- * The type of a value class's single underlying property, or null if [this] isn't a value class with
- * exactly one underlying property (the only shape we can reason about today).
+ * The type of a value class's single underlying property, or null if [this] isn't a value class
+ * with exactly one underlying property (the only shape we can reason about today).
  */
 private val UClass.valueClassUnderlyingType: PsiType?
   get() {
