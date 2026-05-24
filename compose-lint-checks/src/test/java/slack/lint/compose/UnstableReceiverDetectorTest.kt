@@ -2,16 +2,37 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
+import com.android.tools.lint.checks.infrastructure.TestLintTask
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
+import slack.lint.compose.util.STABILITY_CHECKS_OPTION
 
 class UnstableReceiverDetectorTest : BaseComposeLintTest() {
 
   override fun getDetector(): Detector = UnstableReceiverDetector()
 
   override fun getIssues(): List<Issue> = listOf(UnstableReceiverDetector.ISSUE)
+
+  // Stability checks are off by default; enable them for these tests.
+  override fun lint(): TestLintTask = super.lint().configureOption(STABILITY_CHECKS_OPTION, true)
+
+  @Test
+  fun `stability checks are disabled by default`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      class Example {
+        @Composable fun Content() {}
+      }
+      """
+        .trimIndent()
+    // Note super.lint() to avoid enabling the option.
+    super.lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
 
   @Test
   fun `stable receiver types report no errors`() {

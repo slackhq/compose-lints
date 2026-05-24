@@ -4,7 +4,8 @@ Changelog
 **Unreleased**
 --------------
 
-- **Fix**: Fix `ComposeUnstableReceiver` false positives on Kotlin `value class` receivers and on composable members of `value class` types. Value classes are now treated as stable when their underlying property type is stable.
+- **Behavior change**: The stability checks (`ComposeUnstableReceiver`, `ComposeMutableParameters`, `ComposeUnstableCollections`) are now **disabled by default** as they are significantly less important in the era of Compose strong skipping. Re-enable them via the new `stability-checks` option in `lint.xml`. See https://slackhq.github.io/compose-lints/rules/#stability.
+- **Fix**: Fix `ComposeUnstableReceiver` false positives on Kotlin `value class` receivers and on composable members of `value class` types. Value classes are now treated as stable when their underlying property type is stable, including for compiled cross-module classes (via a metadata-aware evaluator).
 - **Enhancement**: Improve `ModifierReused` data flow analysis.
 - Build against lint `32.2.1`.
 - Target Kotlin 2.2 (matches lint 32.*).

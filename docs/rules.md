@@ -1,3 +1,25 @@
+## Stability
+
+A handful of rules ([`ComposeUnstableReceiver`](#unstable-receivers), [`ComposeMutableParameters`](#do-not-use-inherently-mutable-types-as-parameters), and [`ComposeUnstableCollections`](#avoid-using-unstable-collections)) exist to flag parameters and receivers whose instability would prevent a composable from being skipped during recomposition.
+
+These are **significantly less important in the era of [Compose strong skipping](https://developer.android.com/develop/ui/compose/performance/stability/strongskipping)**, which makes composables skippable regardless of parameter/receiver stability. Because of that, they are **disabled by default**.
+
+To opt back in, enable the `stability-checks` option in `lint.xml`. The option is shared by all three rules, so set it on each rule you want to turn on:
+
+```xml
+<lint>
+   <issue id="ComposeUnstableReceiver">
+      <option name="stability-checks" value="true" />
+   </issue>
+   <issue id="ComposeMutableParameters">
+      <option name="stability-checks" value="true" />
+   </issue>
+   <issue id="ComposeUnstableCollections">
+      <option name="stability-checks" value="true" />
+   </issue>
+</lint>
+```
+
 ## State
 
 ### Hoist all the things
@@ -50,6 +72,9 @@ val list: StringList = StringList(yourList)
 > **Note**: It is preferred to use Kotlinx Immutable Collections for this. As you can see, the wrapped case only includes the immutability promise with the annotation, but the underlying List is still mutable.
 More info: [Jetpack Compose Stability Explained](https://medium.com/androiddevelopers/jetpack-compose-stability-explained-79c10db270c8), [Kotlinx Immutable Collections](https://github.com/Kotlin/kotlinx.collections.immutable)
 
+!!! note "Disabled by default"
+    This is a [stability check](#stability) and is disabled by default. Enable it with the `stability-checks` option.
+
 Related rule: [`ComposeUnstableCollections`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/UnstableCollectionsDetector.kt)
 
 ## Composables
@@ -64,6 +89,9 @@ There are a few reasons for this, but the main one is that it is very easy to us
 
 Passing `ArrayList<T>`, `MutableState<T>`, `ViewModel` are common examples of this (but not limited to those types).
 
+!!! note "Disabled by default"
+    This is a [stability check](#stability) and is disabled by default. Enable it with the `stability-checks` option.
+
 Related rule: [`ComposeMutableParameters`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MutableParametersDetector.kt)
 
 ### Unstable receivers
@@ -71,8 +99,8 @@ Related rule: [`ComposeMutableParameters`](https://github.com/slackhq/compose-li
 In compose, all parameters must be stable or immutable in order for a composable function to be
 _restartable_ or _skippable_. This _includes_ the containing class or receiver, which the compose-compiler will treat as the 0th argument. Using an unstable receiver is usually a bug, so this lint offers a warning to raise this issue.
 
-!!! warning "Use with Strong Skipping"
-If you have Strong Skipping enabled, we recommend disabling this rule to avoid potential false negatives.
+!!! note "Disabled by default"
+    This is a [stability check](#stability) and is disabled by default — it is largely obsoleted by Strong Skipping. Enable it with the `stability-checks` option.
 
 More info: [Compose API Stability](https://developer.android.com/jetpack/compose/performance/stability)
 

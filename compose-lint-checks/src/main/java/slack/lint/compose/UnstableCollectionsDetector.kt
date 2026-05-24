@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.STABILITY_CHECKS_OPTION
 import slack.lint.compose.util.isTypeUnstableCollection
 import slack.lint.compose.util.sourceImplementation
+import slack.lint.compose.util.stabilityChecksEnabled
 
 class UnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
@@ -43,9 +45,12 @@ class UnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScan
         severity = Severity.WARNING,
         implementation = sourceImplementation<UnstableCollectionsDetector>(),
       )
+      .setOptions(listOf(STABILITY_CHECKS_OPTION))
   }
 
   override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
+    if (!context.stabilityChecksEnabled()) return
+
     for (param in method.uastParameters.filter { it.isTypeUnstableCollection(context.evaluator) }) {
       val variableName = param.name
       val type = (param.sourcePsi as? KtParameter)?.typeReference?.text ?: "List/Set/Map"
