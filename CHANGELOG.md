@@ -4,6 +4,7 @@ Changelog
 **Unreleased**
 --------------
 
+- **New**: Add `ComposeItemKeyHashCode` to flag `hashCode()` used in `Lazy*`/`Pager` item keys. Item keys must be unique, but hashCodes are not. See https://slackhq.github.io/compose-lints/rules/#dont-use-hashcode-as-a-key.
 - **Enhancement**: Improve `ModifierReused` data flow analysis.
 - Build against lint `32.2.1`.
 - Target Kotlin 2.2 (matches lint 32.*).
