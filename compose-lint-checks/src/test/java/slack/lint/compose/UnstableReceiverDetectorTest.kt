@@ -141,6 +141,90 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
       )
   }
 
+  // https://github.com/slackhq/compose-lints/issues/326
+  @Test
+  fun `composable property getter with non-Unit return on value class receiver reports no errors`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Immutable
+
+      @Immutable
+      @kotlin.jvm.JvmInline
+      value class Color(val value: ULong) {
+        fun copy(alpha: Float): Color = this
+      }
+
+      public val Color.transparent: Color
+          @Composable get() = this.copy(alpha = 0f)
+      """
+        .trimIndent()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
+
+  // Regression for the value-class receiver path: K2 UAST doesn't surface the receiver of a
+  // value-class extension as a uast parameter, and (for property getters) treats the declaration as
+  // non-top-level so its containing file facade (*Kt) is checked as the "containing class". Neither
+  // the missing receiver param nor the facade should be treated as an unstable receiver. The getter
+  // forms below are the ones that previously false-positived.
+  @Test
+  fun `composable extensions on value class receivers report no errors`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Immutable
+
+      @Immutable
+      @kotlin.jvm.JvmInline
+      value class Color(val value: ULong)
+
+      // Underlying type is stable even without an explicit stability annotation.
+      @kotlin.jvm.JvmInline
+      value class Dollars(val amount: Int)
+
+      @Composable
+      fun Color.Render() {}
+
+      @Composable
+      fun Dollars.Render() {}
+
+      val Color.rendered: Unit
+          @Composable get() {}
+
+      val Dollars.rendered: Unit
+          @Composable get() {}
+      """
+        .trimIndent()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
+
+  // A value/inline class is stable iff its underlying property type is stable, so composable members
+  // of one (whose containing class is the receiver) shouldn't be flagged.
+  @Test
+  fun `composable members of value classes report no errors`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Immutable
+
+      @kotlin.jvm.JvmInline
+      value class Dollars(val amount: Int) {
+        @Composable fun Render() {}
+      }
+
+      @Immutable
+      @kotlin.jvm.JvmInline
+      value class Color(val value: ULong) {
+        @Composable fun Render() {}
+      }
+      """
+        .trimIndent()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
+
   @Test
   fun `unstable receiver types with non-Unit return type report no errors`() {
     @Language("kotlin")
