@@ -4,7 +4,7 @@ Changelog
 **Unreleased**
 --------------
 
-- **Enhancement**: Improve `ModifierReused` data flow analysis.
+- **Enhancement**: Improve `ModifierReused` data flow analysis. This addresses several past issues with modifier parameter use in composables.
 - Build against lint `32.2.1`.
 - Target Kotlin 2.2 (matches lint 32.*).
 
