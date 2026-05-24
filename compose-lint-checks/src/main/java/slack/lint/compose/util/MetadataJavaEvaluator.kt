@@ -1,5 +1,4 @@
 // Copyright (C) 2024 Salesforce, Inc.
-// Copyright (C) 2023 Slack Technologies, LLC
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose.util
 
@@ -251,7 +250,9 @@ class MetadataJavaEvaluator(private val file: String, private val delegate: Java
       }
     return when (parsedMetadata) {
       is KotlinClassMetadata.Class -> {
-        parsedMetadata.kmClass.also { metadataLog("Loaded KmClass for $classNameHint from file $file") }
+        parsedMetadata.kmClass.also {
+          metadataLog("Loaded KmClass for $classNameHint from file $file")
+        }
       }
       else -> {
         metadataLog(

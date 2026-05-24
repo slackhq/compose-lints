@@ -29,20 +29,20 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
   companion object {
     val ISSUE =
       Issue.create(
-        id = "ComposeUnstableReceiver",
-        briefDescription = "Unstable receivers will always be recomposed",
-        explanation =
-          """
+          id = "ComposeUnstableReceiver",
+          briefDescription = "Unstable receivers will always be recomposed",
+          explanation =
+            """
               Instance composable functions on non-stable classes will always be recomposed. \
               If possible, make the receiver type stable or refactor this function if that isn't possible. \
               See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information.
             """,
-        category = Category.PRODUCTIVITY,
-        priority = Priorities.NORMAL,
-        severity = Severity.WARNING,
-        implementation = sourceImplementation<UnstableReceiverDetector>(),
-      )
-      .setOptions(listOf(STABILITY_CHECKS_OPTION))
+          category = Category.PRODUCTIVITY,
+          priority = Priorities.NORMAL,
+          severity = Severity.WARNING,
+          implementation = sourceImplementation<UnstableReceiverDetector>(),
+        )
+        .setOptions(listOf(STABILITY_CHECKS_OPTION))
   }
 
   override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {

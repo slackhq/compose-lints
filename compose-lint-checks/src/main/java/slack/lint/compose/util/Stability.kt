@@ -93,9 +93,12 @@ fun PsiType.isStable(
     if (isStableAnnotated) return true
   }
 
-  // A value class is stable iff its single underlying property type is stable, mirroring the Compose
-  // compiler. Most callers never reach this branch because UAST already inlines a value-class type to
-  // its underlying type before stability is checked; this covers the cases where the value-class type
+  // A value class is stable iff its single underlying property type is stable, mirroring the
+  // Compose
+  // compiler. Most callers never reach this branch because UAST already inlines a value-class type
+  // to
+  // its underlying type before stability is checked; this covers the cases where the value-class
+  // type
   // itself is resolved (e.g. as a containing class), including compiled cross-module classes when a
   // [MetadataJavaEvaluator] is supplied.
   if (evaluator.isValueClass(root)) {

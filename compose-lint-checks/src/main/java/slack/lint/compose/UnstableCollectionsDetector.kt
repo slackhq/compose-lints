@@ -37,15 +37,15 @@ class UnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScan
 
     val ISSUE =
       Issue.create(
-        id = "ComposeUnstableCollections",
-        briefDescription = "Immutable collections should ideally be used in Composables",
-        explanation = "This is replaced when reported",
-        category = Category.PRODUCTIVITY,
-        priority = Priorities.NORMAL,
-        severity = Severity.WARNING,
-        implementation = sourceImplementation<UnstableCollectionsDetector>(),
-      )
-      .setOptions(listOf(STABILITY_CHECKS_OPTION))
+          id = "ComposeUnstableCollections",
+          briefDescription = "Immutable collections should ideally be used in Composables",
+          explanation = "This is replaced when reported",
+          category = Category.PRODUCTIVITY,
+          priority = Priorities.NORMAL,
+          severity = Severity.WARNING,
+          implementation = sourceImplementation<UnstableCollectionsDetector>(),
+        )
+        .setOptions(listOf(STABILITY_CHECKS_OPTION))
   }
 
   override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
