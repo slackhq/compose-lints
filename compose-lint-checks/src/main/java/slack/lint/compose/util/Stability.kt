@@ -5,13 +5,17 @@ package slack.lint.compose.util
 import com.android.tools.lint.client.api.JavaEvaluator
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiTypes
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UClass
+import org.jetbrains.uast.UTypeReferenceExpression
 import org.jetbrains.uast.toUElementOfType
 
 private const val COMPOSE_STABLE = "androidx.compose.runtime.Stable"
 private const val COMPOSE_IMMUTABLE = "androidx.compose.runtime.Immutable"
 private const val COMPOSE_STABLE_MARKER = "androidx.compose.runtime.StableMarker"
+private const val JVM_INLINE = "kotlin.jvm.JvmInline"
 
 val STABILITY_ANNOTATIONS = setOf(COMPOSE_STABLE, COMPOSE_IMMUTABLE)
 
@@ -88,5 +92,30 @@ fun PsiType.isStable(
       }
     if (isStableAnnotated) return true
   }
+
+  // A value class is stable iff its single underlying property type is stable, mirroring the Compose
+  // compiler. Most callers never reach this branch because UAST already inlines a value-class type
+  // to its underlying type before stability is checked; this covers the cases where the value-class
+  // type itself is resolved (e.g. as a containing class).
+  root.valueClassUnderlyingType?.let {
+    return it.isStable(evaluator)
+  }
   return false
 }
+
+/**
+ * The type of a value class's single underlying property, or null if [this] isn't a value class with
+ * exactly one underlying property (the only shape we can reason about today).
+ */
+private val UClass.valueClassUnderlyingType: PsiType?
+  get() {
+    val ktClass = sourcePsi as? KtClass ?: return null
+    val isValueClass = hasAnnotation(JVM_INLINE) || ktClass.hasModifier(KtTokens.VALUE_KEYWORD)
+    if (!isValueClass) return null
+    return ktClass.primaryConstructor
+      ?.valueParameters
+      ?.singleOrNull()
+      ?.typeReference
+      ?.toUElementOfType<UTypeReferenceExpression>()
+      ?.type
+  }
