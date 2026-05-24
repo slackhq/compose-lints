@@ -93,30 +93,33 @@ fun PsiType.isStable(
     if (isStableAnnotated) return true
   }
 
-  // A value class is stable iff its single underlying property type is stable, mirroring the
-  // Compose
-  // compiler. Most callers never reach this branch because UAST already inlines a value-class type
-  // to its underlying type before stability is checked; this covers the cases where the value-class
-  // type itself is resolved (e.g. as a containing class).
-  root.valueClassUnderlyingType?.let {
-    return it.isStable(evaluator)
+  // A value class is stable iff its single underlying property type is stable, mirroring the Compose
+  // compiler. Most callers never reach this branch because UAST already inlines a value-class type to
+  // its underlying type before stability is checked; this covers the cases where the value-class type
+  // itself is resolved (e.g. as a containing class), including compiled cross-module classes when a
+  // [MetadataJavaEvaluator] is supplied.
+  if (evaluator.isValueClass(root)) {
+    // If we can't resolve the underlying type (e.g. a compiled class with no source), assume stable
+    // since value classes overwhelmingly wrap stable primitives.
+    return root.valueClassUnderlyingType?.isStable(evaluator) ?: true
   }
   return false
 }
 
-/**
- * The type of a value class's single underlying property, or null if [this] isn't a value class
- * with exactly one underlying property (the only shape we can reason about today).
- */
+private fun JavaEvaluator.isValueClass(uClass: UClass): Boolean {
+  // @JvmInline is required on (and binary-retained for) all JVM value classes, so this catches both
+  // source and compiled classes. A [MetadataJavaEvaluator] additionally reads the `value` modifier
+  // from Kotlin metadata for compiled cross-module classes (i.e. when checkDependencies=false).
+  return uClass.hasAnnotation(JVM_INLINE) || hasModifier(uClass.javaPsi, KtTokens.VALUE_KEYWORD)
+}
+
+/** The type of a value class's single underlying property, if resolvable from source. */
 private val UClass.valueClassUnderlyingType: PsiType?
-  get() {
-    val ktClass = sourcePsi as? KtClass ?: return null
-    val isValueClass = hasAnnotation(JVM_INLINE) || ktClass.hasModifier(KtTokens.VALUE_KEYWORD)
-    if (!isValueClass) return null
-    return ktClass.primaryConstructor
+  get() =
+    (sourcePsi as? KtClass)
+      ?.primaryConstructor
       ?.valueParameters
       ?.singleOrNull()
       ?.typeReference
       ?.toUElementOfType<UTypeReferenceExpression>()
       ?.type
-  }
