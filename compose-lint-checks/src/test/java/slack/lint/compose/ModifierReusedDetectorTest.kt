@@ -429,6 +429,118 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
     lint().files(*commonStubs, *specificStubs, kotlin(code)).run().expectClean()
   }
 
+  // A local val that shadows the `modifier` parameter name is a distinct instance and must not be
+  // treated as a reuse of the parameter. https://github.com/slackhq/compose-lints/issues/268
+  @Test
+  fun `passes when a local val shadows the modifier parameter name`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.foundation.layout.fillMaxWidth
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+
+      @Composable
+      fun Something(modifier: Modifier = Modifier) {
+          Column(modifier = modifier) {
+              Row {
+                  // shadows the `modifier` parameter, but is a fresh instance
+                  val modifier = Modifier.fillMaxWidth()
+                  OtherComposable(modifier = modifier)
+              }
+          }
+      }
+      """
+        .trimIndent()
+    lint().files(*commonStubs, *specificStubs, kotlin(code)).run().expectClean()
+  }
+
+  // The modifier is captured via rememberUpdatedState and only used once, deep inside nested
+  // lambdas; the sibling DisposableEffect doesn't take a modifier at all. Neither should be
+  // flagged.
+  // https://github.com/slackhq/compose-lints/issues/291
+  @Test
+  fun `passes when modifier is captured via rememberUpdatedState and used in nested lambdas`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.foundation.layout.fillMaxSize
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.DisposableEffect
+      import androidx.compose.runtime.getValue
+      import androidx.compose.runtime.remember
+      import androidx.compose.runtime.rememberUpdatedState
+      import androidx.compose.ui.Modifier
+      import androidx.compose.ui.platform.ComposeView
+
+      @Composable
+      fun Example(
+          modifier: Modifier = Modifier,
+          content: @Composable BoxScope.() -> Unit,
+      ) {
+          val currentContent by rememberUpdatedState(content)
+          val currentModifier by rememberUpdatedState(modifier)
+          val overlayView = remember {
+              ComposeView().apply {
+                  setContent {
+                      Box(currentModifier.fillMaxSize(), content = currentContent)
+                  }
+              }
+          }
+          DisposableEffect(overlayView) {
+              onDispose {}
+          }
+      }
+      """
+        .trimIndent()
+    lint().files(*commonStubs, *specificStubs, *issue291Stubs, kotlin(code)).run().expectClean()
+  }
+
+  // Stubs specific to the issue #291 repro: rememberUpdatedState/State delegation,
+  // DisposableEffect,
+  // ComposeView.setContent, and Modifier.fillMaxSize.
+  private val issue291Stubs =
+    arrayOf(
+      kotlin(
+        """
+        package androidx.compose.runtime
+
+        import kotlin.reflect.KProperty
+
+        @Composable fun <T> rememberUpdatedState(newValue: T): State<T> = TODO()
+
+        operator fun <T> State<T>.getValue(thisObj: Any?, property: KProperty<*>): T = value
+
+        class DisposableEffectScope {
+            fun onDispose(onDisposeEffect: () -> Unit): DisposableEffectResult = TODO()
+        }
+        class DisposableEffectResult
+
+        @Composable
+        fun DisposableEffect(key1: Any?, effect: DisposableEffectScope.() -> DisposableEffectResult) {}
+        """
+          .trimIndent()
+      ),
+      kotlin(
+        """
+        package androidx.compose.foundation.layout
+        import androidx.compose.ui.Modifier
+        fun Modifier.fillMaxSize(): Modifier = this
+        """
+          .trimIndent()
+      ),
+      kotlin(
+        """
+        package androidx.compose.ui.platform
+        import androidx.compose.runtime.Composable
+        class ComposeView {
+            fun setContent(content: @Composable () -> Unit) {}
+        }
+        """
+          .trimIndent()
+      ),
+    )
+
   @Test
   fun `passes when used on vals with lambdas`() {
     @Language("kotlin")
