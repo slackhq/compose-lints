@@ -106,6 +106,23 @@ More info: [Compose API Stability](https://developer.android.com/jetpack/compose
 
 Related rule: [`ComposeUnstableReceiver`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/UnstableReceiverDetector.kt)
 
+### Remove unnecessary @Composable annotations
+
+A function or property annotated with `@Composable` that never calls another `@Composable` function or reads a `@Composable` property (like a `CompositionLocal`'s `current`) doesn't actually need the annotation. This often happens when a composable used to call into the composition but that usage was later removed.
+
+```kotlin
+// The @Composable here does nothing — it can be removed
+@Composable
+fun greeting() = println("hello")
+```
+
+Removing the redundant annotation drops the unneeded composer plumbing and makes intent clearer, and this check ships a quickfix that removes it for you.
+
+!!! note "Library authors"
+    A trivially-bodied public composable can be intentionally `@Composable` as part of your API contract; removing it would be a source/binary-incompatible change. Suppress or disable this rule for such declarations.
+
+Related rule: [`ComposeRedundantComposable`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/RedundantComposableDetector.kt)
+
 ### Do not emit content and return a result
 
 Composable functions should either emit layout content, or return a value, but not both.

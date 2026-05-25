@@ -9,7 +9,6 @@ import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
-import slack.lint.compose.util.STABILITY_CHECKS_OPTION
 
 class MutableParametersDetectorTest : BaseComposeLintTest() {
 
@@ -22,7 +21,8 @@ class MutableParametersDetectorTest : BaseComposeLintTest() {
   override val skipTestModes: Array<TestMode> = arrayOf(TestMode.TYPE_ALIAS)
 
   // Stability checks are off by default; enable them for these tests.
-  override fun lint(): TestLintTask = super.lint().configureOption(STABILITY_CHECKS_OPTION, true)
+  override fun lint(): TestLintTask =
+    super.lint().configureOption(MutableParametersDetector.STABILITY_CHECKS_OPTION, true)
 
   @Test
   fun `stability checks are disabled by default`() {

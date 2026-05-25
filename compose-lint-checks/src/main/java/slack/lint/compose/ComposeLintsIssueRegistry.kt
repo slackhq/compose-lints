@@ -37,6 +37,7 @@ class ComposeLintsIssueRegistry : IssueRegistry() {
       ParameterOrderDetector.ISSUE,
       PreviewNamingDetector.ISSUE,
       PreviewPublicDetector.ISSUE,
+      RedundantComposableDetector.ISSUE,
       SlotReusedDetector.ISSUE,
       UnstableCollectionsDetector.ISSUE,
       ViewModelForwardingDetector.ISSUE,

@@ -12,13 +12,14 @@ import com.android.tools.lint.detector.api.TextFormat
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
-import slack.lint.compose.util.STABILITY_CHECKS_OPTION
 import slack.lint.compose.util.isTypeMutable
 import slack.lint.compose.util.sourceImplementation
-import slack.lint.compose.util.stabilityChecksEnabled
+import slack.lint.compose.util.stabilityChecksOption
 
 class MutableParametersDetector : ComposableFunctionDetector(), SourceCodeScanner {
   companion object {
+    val STABILITY_CHECKS_OPTION = stabilityChecksOption()
+
     val ISSUE =
       Issue.create(
           id = "ComposeMutableParameters",
@@ -38,7 +39,7 @@ class MutableParametersDetector : ComposableFunctionDetector(), SourceCodeScanne
   }
 
   override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
-    if (!context.stabilityChecksEnabled()) return
+    if (!STABILITY_CHECKS_OPTION.getValue(context)) return
 
     method.uastParameters
       .filter { it.isTypeMutable(context.evaluator) }
