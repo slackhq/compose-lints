@@ -4,7 +4,10 @@ Changelog
 **Unreleased**
 --------------
 
-- **Enhancement**: Improve `ModifierReused` data flow analysis.
+- **Behavior change**: The stability checks (`ComposeUnstableReceiver`, `ComposeMutableParameters`, `ComposeUnstableCollections`) are now **disabled by default** as they are significantly less important in the era of Compose strong skipping. Re-enable them via the new `stability-checks` option in `lint.xml`. See https://slackhq.github.io/compose-lints/rules/#stability.
+- **New**: Add `ComposeItemKeyHashCode` to flag `hashCode()` used in `Lazy*`/`Pager` item keys. Item keys must be unique, but hashCodes are not. See https://slackhq.github.io/compose-lints/rules/#dont-use-hashcode-as-a-key.
+- **Enhancement**: Improve `ModifierReused` data flow analysis. This addresses several past issues with modifier parameter use in composables.
+- **Fix**: Fix `ComposeUnstableReceiver` false positives on Kotlin `value class` receivers and on composable members of `value class` types. Value classes are now treated as stable when their underlying property type is stable, including for compiled cross-module classes (via a metadata-aware evaluator).
 - **Removed**: Remove the `ComposeRememberMissing` rule in favor of Compose's own `UnrememberedMutableState` lint, which ships with the Compose runtime, is enabled by default, and covers more state builders without the false positives our rule had. See [#490](https://github.com/slackhq/compose-lints/issues/490).
 - Build against lint `32.2.1`.
 - Target Kotlin 2.2 (matches lint 32.*).
