@@ -9,6 +9,7 @@ pluginManagement {
     // Last because this proxies jcenter!
     gradlePluginPortal()
   }
+  plugins { id("com.gradle.develocity") version "4.4.1" }
 }
 
 dependencyResolutionManagement {
@@ -30,6 +31,23 @@ dependencyResolutionManagement {
   }
 }
 
+plugins { id("com.gradle.develocity") }
+
 rootProject.name = "compose-lints"
 
 include(":compose-lint-checks")
+
+develocity {
+  buildScan {
+    termsOfUseUrl = "https://gradle.com/terms-of-service"
+    termsOfUseAgree = "yes"
+
+    tag(if (System.getenv("CI").isNullOrBlank()) "Local" else "CI")
+
+    obfuscation {
+      username { "Redacted" }
+      hostname { "Redacted" }
+      ipAddresses { addresses -> addresses.map { "0.0.0.0" } }
+    }
+  }
+}
