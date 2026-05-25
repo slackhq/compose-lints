@@ -425,3 +425,34 @@ Material 3 (M3) reached stable in October 2022. In apps that have migrated to M3
 - Guidance: https://developer.android.com/jetpack/compose/themes/material3
 - Reply (primary sample app): https://github.com/android/compose-samples/tree/main/Reply
 - More samples: https://github.com/android/compose-samples
+
+
+## Lazy lists
+
+### Don't use hashCode as a key
+
+`Lazy*` layouts (`LazyColumn`, `LazyRow`, `LazyVerticalGrid`, …) and `Pager` composables let you provide a `key` for each item. [Item keys must be unique](https://developer.android.com/develop/ui/compose/lists#item-keys) — if two items resolve to the same key, the layout throws at runtime.
+
+`hashCode()` is **not** a good key, because hashCodes are not guaranteed to be unique. For example, all of these `String`s share the same hashCode:
+
+```kotlin
+"aaaa", "aabB", "aac#", "bBaa", "bBbB", "c#aa", "c#bB", "c#c#"
+```
+
+It might work fine until some day a server sends data with a colliding hashCode and your app starts crashing. So this rule flags any `hashCode()` call used in a `key`:
+
+```kotlin
+// Don't do this
+LazyColumn {
+    items(people, key = { it.hashCode() }) { /* ... */ }
+}
+
+// Do this instead: use a genuinely unique, stable identifier
+LazyColumn {
+    items(people, key = { it.id }) { /* ... */ }
+}
+```
+
+If you truly need an identity-based key and aren't targeting Kotlin Multiplatform, `java.lang.System.identityHashCode` is allowed.
+
+Related rule: [`ComposeItemKeyHashCode`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ItemKeyHashCodeDetector.kt)
