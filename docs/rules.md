@@ -41,7 +41,7 @@ Related rule: [`ComposeViewModelForwarding`](https://github.com/slackhq/compose-
 
 Be careful when using `mutableStateOf` (or any of the other state builders) to make sure that you `remember` the instance. If you don't `remember` the state instance, a new state instance will be created when the function is recomposed.
 
-Related rule: [`ComposeRememberMissing`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/RememberMissingDetector.kt)
+> **Note**: This used to be enforced by the `ComposeRememberMissing` rule, which was removed in favor of Compose's own [`UnrememberedMutableState`](https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/runtime/runtime-lint/src/main/java/androidx/compose/runtime/lint/UnrememberedStateDetector.kt) lint. The first party check ships with the Compose runtime, is enabled by default, and covers all `@StateFactoryMarker` builders (including `mutableIntStateOf`, `mutableStateListOf`, etc.) without the false positives our rule had (e.g. `retain { ... }` and non-`@Composable` lambdas).
 
 ### Avoid using unstable collections
 

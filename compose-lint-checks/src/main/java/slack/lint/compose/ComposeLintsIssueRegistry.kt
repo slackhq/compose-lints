@@ -37,7 +37,6 @@ class ComposeLintsIssueRegistry : IssueRegistry() {
       ParameterOrderDetector.ISSUE,
       PreviewNamingDetector.ISSUE,
       PreviewPublicDetector.ISSUE,
-      RememberMissingDetector.ISSUE,
       SlotReusedDetector.ISSUE,
       UnstableCollectionsDetector.ISSUE,
       ViewModelForwardingDetector.ISSUE,
@@ -45,4 +44,9 @@ class ComposeLintsIssueRegistry : IssueRegistry() {
       ModifierComposedDetector.ISSUE,
       UnstableReceiverDetector.ISSUE,
     )
+
+  // ComposeRememberMissing was removed in favor of Compose's own UnrememberedMutableState lint
+  // (androidx.compose.runtime.lint.UnrememberedStateDetector), which is more robust and ships with
+  // the Compose runtime. Listing the id here keeps existing suppressions/baselines from erroring.
+  override val deletedIssues: List<String> = listOf("ComposeRememberMissing")
 }
