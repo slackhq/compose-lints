@@ -3,23 +3,17 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
-import com.android.tools.lint.checks.DataFlowAnalyzer
 import com.android.tools.lint.detector.api.Category
 import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
-import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.uast.UCallExpression
-import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UMethod
-import org.jetbrains.uast.UParameter
-import org.jetbrains.uast.skipParenthesizedExprDown
 import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.findAllParameterReferences
 import slack.lint.compose.util.modifierParameter
 import slack.lint.compose.util.sourceImplementation
 
@@ -90,33 +84,5 @@ constructor(
           ISSUE.getExplanation(TextFormat.TEXT),
         )
       }
-  }
-
-  // Finds all references to modifier parameter, even if it is reassigned to other variable
-  private fun findAllParameterReferences(parameter: UParameter, method: UMethod): Set<PsiElement> {
-    val modifierReferences = mutableSetOf<PsiElement>()
-    parameter.sourcePsi?.let { modifierReferences.add(it) }
-    // Analyze data flow to get all possible references of modifier parameter
-    method.accept(
-      object : DataFlowAnalyzer(setOf(parameter)) {
-        override fun receiver(call: UCallExpression) {
-          val reference = call.receiver?.skipParenthesizedExprDown()?.sourcePsi
-          if (reference is KtSimpleNameExpression) {
-            modifierReferences += reference
-          }
-        }
-
-        override fun argument(call: UCallExpression, reference: UElement) {
-          // if modifier is an argument of the call (i.e. Modifier.then(modifier)), then track
-          // that call as if it is returning this modifier
-          track(call)
-          val referenceSource = reference.sourcePsi
-          if (referenceSource is KtSimpleNameExpression) {
-            modifierReferences += referenceSource
-          }
-        }
-      }
-    )
-    return modifierReferences
   }
 }
