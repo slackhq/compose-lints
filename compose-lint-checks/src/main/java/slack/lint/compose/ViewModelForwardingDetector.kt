@@ -17,7 +17,7 @@ import org.jetbrains.uast.UParameter
 import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.definedInInterface
-import slack.lint.compose.util.findDirectChildrenByClass
+import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.isActual
 import slack.lint.compose.util.isOverride
 import slack.lint.compose.util.isRestartableEffect
@@ -63,10 +63,12 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
         .toSet()
 
     // We want now to see if these parameter names are used in any other calls to functions that
-    // start with a capital letter (so, most likely, composables).
+    // start with a capital letter (so, most likely, composables). We search the whole body
+    // recursively so forwarding inside nested blocks (e.g. `Row { Composable(viewModel) }`) is
+    // caught too.
     val forwardingCallExpressions =
       bodyBlock
-        .findDirectChildrenByClass<KtCallExpression>()
+        .findChildrenByClass<KtCallExpression>()
         .filter { callExpression ->
           callExpression.calleeExpression?.unwrapParenthesis()?.text?.first()?.isUpperCase()
             ?: false

@@ -96,6 +96,38 @@ class ViewModelForwardingDetectorTest : BaseComposeLintTest() {
       )
   }
 
+  // https://github.com/slackhq/compose-lints/issues/148
+  @Test
+  fun `errors when a ViewModel is forwarded inside a nested block`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      class MyViewModel
+
+      @Composable
+      fun MyComposable(viewModel: MyViewModel) {
+          Row {
+              AnotherComposable(viewModel)
+          }
+      }
+      """
+        .trimIndent()
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/MyViewModel.kt:8: Error: Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting.See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information. [ComposeViewModelForwarding]
+                AnotherComposable(viewModel)
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        1 errors, 0 warnings
+        """
+          .trimIndent()
+      )
+  }
+
   @Test
   fun `allows the forwarding of ViewModels that are used as keys`() {
     @Language("kotlin")
