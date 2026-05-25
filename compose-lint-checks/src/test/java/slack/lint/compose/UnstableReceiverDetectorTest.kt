@@ -2,16 +2,37 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
+import com.android.tools.lint.checks.infrastructure.TestLintTask
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
+import slack.lint.compose.util.STABILITY_CHECKS_OPTION
 
 class UnstableReceiverDetectorTest : BaseComposeLintTest() {
 
   override fun getDetector(): Detector = UnstableReceiverDetector()
 
   override fun getIssues(): List<Issue> = listOf(UnstableReceiverDetector.ISSUE)
+
+  // Stability checks are off by default; enable them for these tests.
+  override fun lint(): TestLintTask = super.lint().configureOption(STABILITY_CHECKS_OPTION, true)
+
+  @Test
+  fun `stability checks are disabled by default`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      class Example {
+        @Composable fun Content() {}
+      }
+      """
+        .trimIndent()
+    // Note super.lint() to avoid enabling the option.
+    super.lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
 
   @Test
   fun `stable receiver types report no errors`() {
@@ -139,6 +160,91 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
         """
           .trimIndent()
       )
+  }
+
+  // https://github.com/slackhq/compose-lints/issues/326
+  @Test
+  fun `composable property getter with non-Unit return on value class receiver reports no errors`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Immutable
+
+      @Immutable
+      @kotlin.jvm.JvmInline
+      value class Color(val value: ULong) {
+        fun copy(alpha: Float): Color = this
+      }
+
+      public val Color.transparent: Color
+          @Composable get() = this.copy(alpha = 0f)
+      """
+        .trimIndent()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
+
+  // Regression for the value-class receiver path: K2 UAST doesn't surface the receiver of a
+  // value-class extension as a uast parameter, and (for property getters) treats the declaration as
+  // non-top-level so its containing file facade (*Kt) is checked as the "containing class". Neither
+  // the missing receiver param nor the facade should be treated as an unstable receiver. The getter
+  // forms below are the ones that previously false-positived.
+  @Test
+  fun `composable extensions on value class receivers report no errors`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Immutable
+
+      @Immutable
+      @kotlin.jvm.JvmInline
+      value class Color(val value: ULong)
+
+      // Underlying type is stable even without an explicit stability annotation.
+      @kotlin.jvm.JvmInline
+      value class Dollars(val amount: Int)
+
+      @Composable
+      fun Color.Render() {}
+
+      @Composable
+      fun Dollars.Render() {}
+
+      val Color.rendered: Unit
+          @Composable get() {}
+
+      val Dollars.rendered: Unit
+          @Composable get() {}
+      """
+        .trimIndent()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
+
+  // A value/inline class is stable iff its underlying property type is stable, so composable
+  // members
+  // of one (whose containing class is the receiver) shouldn't be flagged.
+  @Test
+  fun `composable members of value classes report no errors`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Immutable
+
+      @kotlin.jvm.JvmInline
+      value class Dollars(val amount: Int) {
+        @Composable fun Render() {}
+      }
+
+      @Immutable
+      @kotlin.jvm.JvmInline
+      value class Color(val value: ULong) {
+        @Composable fun Render() {}
+      }
+      """
+        .trimIndent()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test

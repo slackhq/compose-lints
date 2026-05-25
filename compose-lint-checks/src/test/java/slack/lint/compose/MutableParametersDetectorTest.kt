@@ -3,11 +3,13 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
+import com.android.tools.lint.checks.infrastructure.TestLintTask
 import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
+import slack.lint.compose.util.STABILITY_CHECKS_OPTION
 
 class MutableParametersDetectorTest : BaseComposeLintTest() {
 
@@ -18,6 +20,25 @@ class MutableParametersDetectorTest : BaseComposeLintTest() {
   // Can't get typealias working correctly in this case as the combination of an
   // alias + lint's inability to reach kotlin intrinsic collections defeats it
   override val skipTestModes: Array<TestMode> = arrayOf(TestMode.TYPE_ALIAS)
+
+  // Stability checks are off by default; enable them for these tests.
+  override fun lint(): TestLintTask = super.lint().configureOption(STABILITY_CHECKS_OPTION, true)
+
+  @Test
+  fun `stability checks are disabled by default`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.MutableState
+      import androidx.compose.runtime.Composable
+
+      @Composable
+      fun Something(a: MutableState<String>) {}
+      """
+        .trimIndent()
+    // Note super.lint() to avoid enabling the option.
+    super.lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
 
   @Test
   fun `errors when a Composable has a mutable parameter`() {
