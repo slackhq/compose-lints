@@ -12,9 +12,11 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.psiUtil.isTopLevelKtOrJavaMember
 import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UElement
@@ -117,7 +119,7 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
 
   /** Whether removing `@Composable` here would break inheritance or a platform contract. */
   private fun UMethod.isContractDeclaration(): Boolean {
-    if (findSuperMethods().isNotEmpty()) return true
+    if (unwrapped?.isTopLevelKtOrJavaMember() == true) return false
     if (getContainingUClass()?.isInterface == true) return true
     // Modifiers live on the property for accessors, otherwise on the declaration itself.
     val modifierOwner =
