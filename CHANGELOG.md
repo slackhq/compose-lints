@@ -9,6 +9,7 @@ Changelog
 - **New**: Add `ComposeRedundantComposable` to flag functions/properties annotated `@Composable` that don't use the composition (no `@Composable` calls or property reads), so the annotation can be removed. See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations.
 - **Enhancement**: Improve `ModifierReused` data flow analysis. This addresses several past issues with modifier parameter use in composables.
 - **Fix**: Fix `ComposeUnstableReceiver` false positives on Kotlin `value class` receivers and on composable members of `value class` types. Value classes are now treated as stable when their underlying property type is stable, including for compiled cross-module classes (via a metadata-aware evaluator).
+- **Fix**: Fix the `stability-checks` option being intermittently ignored: each stability check now registers its own option instance, since a single instance shared across issues had its (lint-internal) issue back-reference overwritten depending on class-load order, causing the configured value to resolve against the wrong issue.
 - **Removed**: Remove the `ComposeRememberMissing` rule in favor of Compose's own `UnrememberedMutableState` lint, which ships with the Compose runtime, is enabled by default, and covers more state builders without the false positives our rule had. See [#490](https://github.com/slackhq/compose-lints/issues/490).
 - Build against lint `32.2.1`.
 - Target Kotlin 2.2 (matches lint 32.*).

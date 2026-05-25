@@ -13,14 +13,15 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
-import slack.lint.compose.util.STABILITY_CHECKS_OPTION
 import slack.lint.compose.util.isTypeUnstableCollection
 import slack.lint.compose.util.sourceImplementation
-import slack.lint.compose.util.stabilityChecksEnabled
+import slack.lint.compose.util.stabilityChecksOption
 
 class UnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
   companion object {
+    val STABILITY_CHECKS_OPTION = stabilityChecksOption()
+
     private val DiamondRegex by lazy(LazyThreadSafetyMode.NONE) { Regex("<.*>\\??") }
     private val String.capitalized: String
       get() = replaceFirstChar {
@@ -49,7 +50,7 @@ class UnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScan
   }
 
   override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
-    if (!context.stabilityChecksEnabled()) return
+    if (!STABILITY_CHECKS_OPTION.getValue(context)) return
 
     for (param in method.uastParameters.filter { it.isTypeUnstableCollection(context.evaluator) }) {
       val variableName = param.name

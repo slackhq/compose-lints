@@ -19,14 +19,15 @@ import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.MetadataJavaEvaluator
 import slack.lint.compose.util.Priorities
-import slack.lint.compose.util.STABILITY_CHECKS_OPTION
 import slack.lint.compose.util.isStable
 import slack.lint.compose.util.returnsUnitOrVoid
 import slack.lint.compose.util.sourceImplementation
-import slack.lint.compose.util.stabilityChecksEnabled
+import slack.lint.compose.util.stabilityChecksOption
 
 class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner {
   companion object {
+    val STABILITY_CHECKS_OPTION = stabilityChecksOption()
+
     val ISSUE =
       Issue.create(
           id = "ComposeUnstableReceiver",
@@ -50,7 +51,7 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
   }
 
   override fun visitComposable(context: JavaContext, method: UMethod) {
-    if (!context.stabilityChecksEnabled()) return
+    if (!STABILITY_CHECKS_OPTION.getValue(context)) return
 
     // Use a metadata-aware evaluator so value-class receivers/containers are understood even when
     // they come from other modules compiled without source (checkDependencies=false).
