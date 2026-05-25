@@ -4,6 +4,11 @@ Changelog
 **Unreleased**
 --------------
 
+1.5.0
+-----
+
+_2026-05-26_
+
 - **Behavior change**: The stability checks (`ComposeUnstableReceiver`, `ComposeMutableParameters`, `ComposeUnstableCollections`) are now **disabled by default** as they are significantly less important in the era of Compose strong skipping. Re-enable them via the new `stability-checks` option in `lint.xml`. See https://slackhq.github.io/compose-lints/rules/#stability.
 - **New**: Add `ComposeItemKeyHashCode` to flag `hashCode()` used in `Lazy*`/`Pager` item keys. Item keys must be unique, but hashCodes are not. See https://slackhq.github.io/compose-lints/rules/#dont-use-hashcode-as-a-key.
 - **New**: Add `ComposeRedundantComposable` to flag functions/properties annotated `@Composable` that don't use the composition (no `@Composable` calls or property reads), so the annotation can be removed. See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations.
@@ -14,6 +19,8 @@ Changelog
 - **Removed**: Remove the `ComposeRememberMissing` rule in favor of Compose's own `UnrememberedMutableState` lint, which ships with the Compose runtime, is enabled by default, and covers more state builders without the false positives our rule had. See [#490](https://github.com/slackhq/compose-lints/issues/490).
 - Build against lint `32.2.1`.
 - Target Kotlin 2.2 (matches lint 32.*).
+
+Special thanks to [@aasitnikov](https://github.com/aasitnikov) for contributing to this release!
 
 1.4.3
 -----
