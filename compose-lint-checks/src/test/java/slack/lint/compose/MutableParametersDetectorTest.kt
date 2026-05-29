@@ -36,10 +36,11 @@ class MutableParametersDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/test.kt:5: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
+        src/test.kt:5: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app. Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change. 
+        See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
         fun Something(a: MutableState<String>) {}
                          ~~~~~~~~~~~~~~~~~~~~
-        1 errors, 0 warnings
+        1 error
         """
           .trimIndent()
       )
@@ -119,19 +120,23 @@ class MutableParametersDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/test.kt:5: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app. Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change. See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
+        src/test.kt:5: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app. Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change. 
+        See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
         fun Something(a: MutableState<String>) {}
                          ~~~~~~~~~~~~~~~~~~~~
-        src/test.kt:7: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app. Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change. See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
+        src/test.kt:7: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app. Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change. 
+        See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
         fun Something(a: ArrayList<String>) {}
                          ~~~~~~~~~~~~~~~~~
-        src/test.kt:9: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app. Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change. See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
+        src/test.kt:9: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app. Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change. 
+        See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
         fun Something(a: HashSet<String>) {}
                          ~~~~~~~~~~~~~~~
-        src/test.kt:11: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app. Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change. See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
+        src/test.kt:11: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app. Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change. 
+        See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
         fun Something(a: MutableMap<String, String>) {}
                          ~~~~~~~~~~~~~~~~~~~~~~~~~~
-        4 errors, 0 warnings
+        4 errors
         """
           .trimIndent()
       )
@@ -182,13 +187,15 @@ class MutableParametersDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/MyStableMarker.kt:15: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
+        src/MyStableMarker.kt:15: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app. Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change. 
+        See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
         fun Something(a: MutableState<String>) {}
                          ~~~~~~~~~~~~~~~~~~~~
-        src/MyStableMarker.kt:17: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app.Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
+        src/MyStableMarker.kt:17: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app. Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change. 
+        See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
         fun Something(a: MutableSharedFlow<String>) {}
                          ~~~~~~~~~~~~~~~~~~~~~~~~~
-        2 errors, 0 warnings
+        2 errors
         """
           .trimIndent()
       )
