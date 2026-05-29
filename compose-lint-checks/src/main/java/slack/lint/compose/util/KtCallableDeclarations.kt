@@ -22,11 +22,7 @@ fun UParameter.isTypeMutable(evaluator: JavaEvaluator): Boolean {
 
   val uParamClass = type.let(evaluator::getTypeClass)?.toUElementOfType<UClass>() ?: return false
 
-  if (uParamClass.hasAnnotation("androidx.compose.runtime.Immutable")) {
-    return false
-  }
-
-  return uParamClass.name in KnownMutableCommonTypesSimpleNames
+  return uParamClass.javaPsi.name in KnownMutableCommonTypesSimpleNames
 }
 
 /** Lint can't read "Mutable*" Kotlin collections that are compiler intrinsics. */
@@ -39,15 +35,25 @@ val KnownMutableKotlinCollections =
     )
     .map(::Regex)
 
-val KnownMutableCommonTypesSimpleNames =
+val KnownMutableCommonCollectionTypesSimpleNames =
   setOf(
     // Set
     "MutableSet",
+    "MutableScatterSet",
     "ArraySet",
     "HashSet",
+    "LinkedHashSet",
+    "TreeSet",
+    "CopyOnWriteArraySet",
+    "ConcurrentSkipListSet",
     // List
     "MutableList",
+    "MutableObjectList",
     "ArrayList",
+    "LinkedList",
+    "Vector",
+    "Stack",
+    "CopyOnWriteArrayList",
     // Array
     "SparseArray",
     "SparseArrayCompat",
@@ -56,21 +62,40 @@ val KnownMutableCommonTypesSimpleNames =
     "SparseIntArray",
     // Map
     "MutableMap",
+    "MutableScatterMap",
+    "MutableIntObjectMap",
+    "MutableObjectIntMap",
+    "MutableLongObjectMap",
+    "MutableObjectLongMap",
     "HashMap",
+    "LinkedHashMap",
+    "TreeMap",
     "Hashtable",
-    // Compose
-    "MutableState",
-    // Flow
-    "MutableStateFlow",
-    "MutableSharedFlow",
-    // RxJava & RxRelay
-    "PublishSubject",
-    "BehaviorSubject",
-    "ReplaySubject",
-    "PublishRelay",
-    "BehaviorRelay",
-    "ReplayRelay",
+    "ConcurrentHashMap",
+    "ConcurrentSkipListMap",
+    "IdentityHashMap",
+    "WeakHashMap",
+    // Queue
+    "ArrayDeque",
+    "PriorityQueue",
   )
+
+val KnownMutableCommonTypesSimpleNames =
+  KnownMutableCommonCollectionTypesSimpleNames +
+    setOf(
+      // Compose
+      "MutableState",
+      // Flow
+      "MutableStateFlow",
+      "MutableSharedFlow",
+      // RxJava & RxRelay
+      "PublishSubject",
+      "BehaviorSubject",
+      "ReplaySubject",
+      "PublishRelay",
+      "BehaviorRelay",
+      "ReplayRelay",
+    )
 
 fun UParameter.isTypeUnstableCollection(evaluator: JavaEvaluator): Boolean {
   val uParamClass = type.let(evaluator::getTypeClass)?.toUElementOfType<UClass>() ?: return false
