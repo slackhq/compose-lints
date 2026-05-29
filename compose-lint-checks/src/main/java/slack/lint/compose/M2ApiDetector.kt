@@ -54,7 +54,7 @@ constructor(
           briefDescription = "Using a Compose M2 API is not recommended",
           explanation =
             """
-              Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs.\
+              Compose Material 2 (M2) is succeeded by Material 3 (M3). Please use M3 APIs. \
               See https://slackhq.github.io/compose-lints/rules/#use-material-3 for more information.
             """,
           category = CORRECTNESS,
