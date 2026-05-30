@@ -37,10 +37,14 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
         id = "ComposeViewModelForwarding",
         briefDescription = "Don't forward ViewModels through composables",
         explanation =
-          """
-          Forwarding a `ViewModel` through multiple `@Composable` functions should be avoided. Consider using state hoisting. \
-          See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information.
-        """,
+          issueText(
+            """
+            Forwarding a `ViewModel` through multiple `@Composable` functions should be avoided.
+            Consider using state hoisting.
+
+            See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information.
+            """
+          ),
         category = Category.CORRECTNESS,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,

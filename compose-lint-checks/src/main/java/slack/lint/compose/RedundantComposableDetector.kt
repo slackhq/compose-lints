@@ -58,12 +58,16 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
         id = "ComposeRedundantComposable",
         briefDescription = "Unnecessary @Composable annotation",
         explanation =
-          """
-            This declaration is annotated with `@Composable` but doesn't call any other `@Composable` \
-            functions or read any `@Composable` properties (like a `CompositionLocal`'s `current`), so \
-            it doesn't use the composition and the `@Composable` annotation can be removed. \
+          issueText(
+            """
+            This declaration is annotated with `@Composable` but doesn't call any other
+            `@Composable` functions or read any `@Composable` properties (like a
+            `CompositionLocal`'s `current`), so it doesn't use the composition and the
+            `@Composable` annotation can be removed.
+
             See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information.
-          """,
+            """
+          ),
         category = Category.PRODUCTIVITY,
         priority = Priorities.NORMAL,
         severity = Severity.WARNING,

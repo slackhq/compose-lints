@@ -52,10 +52,14 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/test.kt:7: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes. See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
+        src/test.kt:7: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes.
+
+        See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
           slot: @Composable () -> Unit,
           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        src/test.kt:18: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes. See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
+        src/test.kt:18: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes.
+
+        See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
           slot: @Composable () -> Unit,
           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         2 errors, 0 warnings
@@ -94,7 +98,9 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/test.kt:8: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes. See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
+        src/test.kt:8: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes.
+
+        See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
           slot: @Composable () -> Unit,
           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         1 errors, 0 warnings
@@ -140,7 +146,9 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/test.kt:8: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes. See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
+        src/test.kt:8: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes.
+
+        See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
           slot: @Composable () -> Unit,
           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         1 errors, 0 warnings
@@ -186,7 +194,9 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/test.kt:8: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes. See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
+        src/test.kt:8: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes.
+
+        See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
           slot: @Composable () -> Unit,
           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         1 errors, 0 warnings
@@ -227,7 +237,9 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/test.kt:8: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes. See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
+        src/test.kt:8: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes.
+
+        See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
           slot: @Composable () -> Unit,
           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         1 errors, 0 warnings
@@ -269,10 +281,14 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/test.kt:8: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes. See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
+        src/test.kt:8: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes.
+
+        See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
           slot1: @Composable () -> Unit,
           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        src/test.kt:9: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes. See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
+        src/test.kt:9: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes.
+
+        See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
           slot2: @Composable () -> Unit,
           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         2 errors, 0 warnings
