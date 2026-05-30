@@ -4,8 +4,16 @@ Changelog
 **Unreleased**
 --------------
 
+1.5.1
+-----
+
+_2026-05-31_
+
 - **Enhancement**: Add AndroidX mutable scatter collections to known mutable collection types.
 - **Fix**: Keep `ComposeMutableParameters` enabled by default for all known mutable parameter types, including a number of mutable collections.
+- **Fix**: Fix and clean up some lint explanation text formatting.
+
+Special thanks to [@SimonMarquis](https://github.com/SimonMarquis) for contributing to this release!
 
 1.5.0
 -----
