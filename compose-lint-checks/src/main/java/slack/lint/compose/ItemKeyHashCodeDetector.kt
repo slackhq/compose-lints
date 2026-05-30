@@ -38,13 +38,16 @@ class ItemKeyHashCodeDetector : ComposableFunctionDetector(), SourceCodeScanner 
         id = "ComposeItemKeyHashCode",
         briefDescription = "Don't use hashCode as an item key",
         explanation =
-          """
-            Item keys in `Lazy*`/`Pager`/etc. layouts must be unique, but `hashCode()` is never \
-            guaranteed to be unique. `Lazy*` layouts throw at runtime when they encounter duplicate \
-            keys, so a `hashCode`-based key can crash as soon as data with a colliding hash comes \
-            along. Use a genuinely unique, stable identifier instead (e.g. a server-provided id). \
+          issueText(
+            """
+            Item keys in `Lazy*`/`Pager`/etc. layouts must be unique, but `hashCode()` is never
+            guaranteed to be unique. `Lazy*` layouts throw at runtime when they encounter duplicate
+            keys, so a `hashCode`-based key can crash as soon as data with a colliding hash comes
+            along. Use a genuinely unique, stable identifier instead (e.g. a server-provided id).
+
             See https://slackhq.github.io/compose-lints/rules/#dont-use-hashcode-as-a-key for more information.
-          """,
+            """
+          ),
         category = Category.CORRECTNESS,
         priority = Priorities.NORMAL,
         severity = Severity.WARNING,

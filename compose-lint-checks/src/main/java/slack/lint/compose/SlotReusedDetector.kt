@@ -32,11 +32,16 @@ class SlotReusedDetector : ComposableFunctionDetector(), SourceCodeScanner {
         id = "SlotReused",
         briefDescription = "Slots should be invoked in at most one place",
         explanation =
-          """
-            Slots should be invoked in at most once place to meet lifecycle expectations. \
-            Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes. \
+          issueText(
+            """
+            Slots should be invoked in at most once place to meet lifecycle expectations. Slots
+            should not be invoked in multiple places in source code, where the invoking location
+            changes based on some condition. This will preserve the slot's internal state when the
+            invoking location changes.
+
             See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information.
-          """,
+            """
+          ),
         category = Category.CORRECTNESS,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,

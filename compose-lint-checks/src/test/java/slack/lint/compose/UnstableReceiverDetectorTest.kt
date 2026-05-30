@@ -141,19 +141,29 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/ExampleInterface.kt:4: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible. See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
+        src/ExampleInterface.kt:4: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible.
+
+        See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
           @Composable fun Content()
                           ~~~~~~~
-        src/ExampleInterface.kt:8: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible. See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
+        src/ExampleInterface.kt:8: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible.
+
+        See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
           @Composable fun Content() {}
                           ~~~~~~~
-        src/ExampleInterface.kt:12: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible. See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
+        src/ExampleInterface.kt:12: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible.
+
+        See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
         fun Example.OtherContent() {}
             ~~~~~~~
-        src/ExampleInterface.kt:16: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible. See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
+        src/ExampleInterface.kt:16: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible.
+
+        See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
           @Composable fun present()
                           ~~~~~~~
-        src/ExampleInterface.kt:20: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible. See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
+        src/ExampleInterface.kt:20: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible.
+
+        See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
           @Composable override fun present() { println("hi") }
                                    ~~~~~~~
         0 errors, 5 warnings

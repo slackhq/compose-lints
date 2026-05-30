@@ -6,7 +6,7 @@ import com.android.tools.lint.detector.api.BooleanOption
 
 /**
  * Builds the `stability-checks` option that gates the Compose stability checks
- * (`ComposeUnstableReceiver`, `ComposeMutableParameters`, and `ComposeUnstableCollections`).
+ * (`ComposeUnstableReceiver` and `ComposeUnstableCollections`).
  *
  * Each detector must create and register its **own** instance. Lint stores a single back-reference
  * ([com.android.tools.lint.detector.api.Option.issue]) on an option when it's registered with an
@@ -23,7 +23,7 @@ import com.android.tools.lint.detector.api.BooleanOption
 fun stabilityChecksOption(): BooleanOption =
   BooleanOption(
     "stability-checks",
-    "Enable Compose stability checks (unstable receivers, mutable parameters, unstable collections)",
+    "Enable Compose stability checks",
     false,
     "Stability-related checks are significantly less important now that Compose strong skipping is " +
       "widely available, so they are disabled by default. Set this to true to re-enable them. See " +

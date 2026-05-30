@@ -87,7 +87,9 @@ class ViewModelForwardingDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/MyViewModel.kt:7: Error: Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting. See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information. [ComposeViewModelForwarding]
+        src/MyViewModel.kt:7: Error: Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting.
+
+        See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information. [ComposeViewModelForwarding]
             AnotherComposable(viewModel)
             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         1 errors, 0 warnings
@@ -119,7 +121,9 @@ class ViewModelForwardingDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/MyViewModel.kt:8: Error: Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting. See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information. [ComposeViewModelForwarding]
+        src/MyViewModel.kt:8: Error: Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting.
+
+        See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information. [ComposeViewModelForwarding]
                 AnotherComposable(viewModel)
                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         1 errors, 0 warnings
@@ -149,7 +153,9 @@ class ViewModelForwardingDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/MyViewModel.kt:8: Error: Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting. See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information. [ComposeViewModelForwarding]
+        src/MyViewModel.kt:8: Error: Forwarding a ViewModel through multiple @Composable functions should be avoided. Consider using state hoisting.
+
+        See https://slackhq.github.io/compose-lints/rules/#hoist-all-the-things for more information. [ComposeViewModelForwarding]
             AnotherComposable(vm)
             ~~~~~~~~~~~~~~~~~~~~~
         1 errors, 0 warnings

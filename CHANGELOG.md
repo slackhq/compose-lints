@@ -4,6 +4,9 @@ Changelog
 **Unreleased**
 --------------
 
+- **Enhancement**: Add AndroidX mutable scatter collections to known mutable collection types.
+- **Fix**: Keep `ComposeMutableParameters` enabled by default for all known mutable parameter types, including a number of mutable collections.
+
 1.5.0
 -----
 

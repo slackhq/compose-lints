@@ -1,17 +1,14 @@
 ## Stability
 
-A handful of rules ([`ComposeUnstableReceiver`](#unstable-receivers), [`ComposeMutableParameters`](#do-not-use-inherently-mutable-types-as-parameters), and [`ComposeUnstableCollections`](#avoid-using-unstable-collections)) exist to flag parameters and receivers whose instability would prevent a composable from being skipped during recomposition.
+A couple of rules ([`ComposeUnstableReceiver`](#unstable-receivers) and [`ComposeUnstableCollections`](#avoid-using-unstable-collections)) exist to flag parameters and receivers whose instability would prevent a composable from being skipped during recomposition.
 
-These are **significantly less important in the era of [Compose strong skipping](https://developer.android.com/develop/ui/compose/performance/stability/strongskipping)**, which makes composables skippable regardless of parameter/receiver stability. Because of that, they are **disabled by default**.
+These are **significantly less important in the era of [Compose strong skipping](https://developer.android.com/develop/ui/compose/performance/stability/strongskipping)**, which makes composables skippable regardless of parameter/receiver stability. Because of that, these checks are **disabled by default**.
 
-To opt back in, enable the `stability-checks` option in `lint.xml`. The option is shared by all three rules, so set it on each rule you want to turn on:
+To opt back in, enable the `stability-checks` option in `lint.xml`. The option is shared by both rules, so set it on each rule you want to turn on:
 
 ```xml
 <lint>
    <issue id="ComposeUnstableReceiver">
-      <option name="stability-checks" value="true" />
-   </issue>
-   <issue id="ComposeMutableParameters">
       <option name="stability-checks" value="true" />
    </issue>
    <issue id="ComposeUnstableCollections">
@@ -88,9 +85,6 @@ This is an anti-pattern though as it breaks the pattern of state flowing down, a
 There are a few reasons for this, but the main one is that it is very easy to use a mutable object which does not trigger recomposition. Without triggering recomposition, your composables will not automatically update to reflect the updated value.
 
 Passing `ArrayList<T>`, `MutableState<T>`, `ViewModel` are common examples of this (but not limited to those types).
-
-!!! note "Disabled by default"
-    This is a [stability check](#stability) and is disabled by default. Enable it with the `stability-checks` option.
 
 Related rule: [`ComposeMutableParameters`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MutableParametersDetector.kt)
 

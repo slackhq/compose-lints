@@ -33,11 +33,15 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
           id = "ComposeUnstableReceiver",
           briefDescription = "Unstable receivers will always be recomposed",
           explanation =
-            """
-              Instance composable functions on non-stable classes will always be recomposed. \
-              If possible, make the receiver type stable or refactor this function if that isn't possible. \
+            issueText(
+              """
+              Instance composable functions on non-stable classes will always be recomposed. If
+              possible, make the receiver type stable or refactor this function if that isn't
+              possible.
+
               See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information.
-            """,
+              """
+            ),
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.WARNING,

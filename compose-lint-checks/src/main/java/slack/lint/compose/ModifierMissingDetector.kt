@@ -47,10 +47,13 @@ constructor(
           id = "ComposeModifierMissing",
           briefDescription = "Missing modifier parameter",
           explanation =
-            """
-              This @Composable function emits content but doesn't have a modifier parameter. \
+            issueText(
+              """
+              This @Composable function emits content but doesn't have a modifier parameter.
+
               See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information.
-            """,
+              """
+            ),
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,

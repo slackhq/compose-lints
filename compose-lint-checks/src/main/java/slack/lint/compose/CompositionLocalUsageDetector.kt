@@ -41,10 +41,13 @@ class CompositionLocalUsageDetector : Detector(), SourceCodeScanner {
           id = "ComposeCompositionLocalUsage",
           briefDescription = "CompositionLocals are discouraged",
           explanation =
-            """
-              `CompositionLocal`s are implicit dependencies and creating new ones should be avoided. \
+            issueText(
+              """
+              `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.
+
               See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information.
-            """,
+              """
+            ),
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.WARNING,
@@ -57,10 +60,12 @@ class CompositionLocalUsageDetector : Detector(), SourceCodeScanner {
           id = "ComposeCompositionLocalGetter",
           briefDescription = "CompositionLocals should not use getters",
           explanation =
-            """
-              `CompositionLocal`s should be singletons and not use getters. Otherwise a new \
-              instance will be returned every call.
-            """,
+            issueText(
+              """
+              `CompositionLocal`s should be singletons and not use getters. Otherwise a new instance
+              will be returned every call.
+              """
+            ),
           category = Category.PRODUCTIVITY,
           priority = Priorities.NORMAL,
           severity = Severity.ERROR,
