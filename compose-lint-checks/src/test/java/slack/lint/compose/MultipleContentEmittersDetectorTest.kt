@@ -61,7 +61,7 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
-  fun `passes when the composable is a context receiver`() {
+  fun `passes when the composable is a context receiver or parameter`() {
     @Language("kotlin")
     val code =
       """
@@ -71,10 +71,13 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
           Text("Hi")
           Text("Hola")
       }
-      context(RowScope)
+
+      context(scope: RowScope)
       @Composable
       fun Something() {
-          Spacer16()
+          with(scope) {
+              Text("Hi", Modifier.weight(1f))
+          }
           Text("Hola")
       }
       """

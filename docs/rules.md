@@ -168,13 +168,23 @@ private fun InnerContent() {
 ```
 Nesting of layouts has a drastically lower cost vs the view system, so developers should not try to minimize UI layers at the cost of correctness.
 
-There is a slight exception to this rule, which is when the function is defined as an extension function of an appropriate scope, like so:
+There is a slight exception to this rule, which is when the function is tied to an appropriate scope with an extension receiver or context parameter, like so:
+
 ```kotlin
 @Composable
 private fun ColumnScope.InnerContent() {
     Text(...)
     Image(...)
     Button(...)
+}
+
+context(scope: ColumnScope)
+@Composable
+private fun InnerContent() {
+    with(scope) {
+        Text(..., Modifier.weight(1f))
+    }
+    Image(...)
 }
 ```
 This effectively ties the function to be called from a Column, but is still not recommended (although permitted).
