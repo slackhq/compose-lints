@@ -61,28 +61,127 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
-  fun `passes when the composable is a context receiver or parameter`() {
+  fun `passes when multiple top-level emitters thread a context parameter`() {
     @Language("kotlin")
     val code =
       """
-      context(ColumnScope)
+      import androidx.compose.runtime.Composable
+
+      class Modifier
+
       @Composable
-      fun Something() {
-          Text("Hi")
-          Text("Hola")
+      fun Text(text: String, modifier: Modifier) {}
+
+      interface RowScope {
+          fun itemModifier(): Modifier
       }
 
       context(scope: RowScope)
       @Composable
       fun Something() {
-          with(scope) {
-              Text("Hi", Modifier.weight(1f))
-          }
-          Text("Hola")
+          WeightedText("Hi", scope.itemModifier())
+          WeightedText("Hola", scope.itemModifier())
+      }
+
+      @Composable
+      fun WeightedText(text: String, modifier: Modifier) {
+          Text(text, modifier)
       }
       """
         .trimIndent()
-    lint().files(kotlin(code)).allowCompilationErrors().run().expectClean()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `errors when multiple top-level emitters ignore a context parameter`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      class Modifier
+
+      val DefaultModifier = Modifier()
+
+      @Composable
+      fun Text(text: String, modifier: Modifier) {}
+
+      interface RowScope
+
+      context(scope: RowScope)
+      @Composable
+      fun Something() {
+          WeightedText("Hi", DefaultModifier)
+          WeightedText("Hola", DefaultModifier)
+      }
+
+      @Composable
+      fun WeightedText(text: String, modifier: Modifier) {
+          Text(text, modifier)
+      }
+      """
+        .trimIndent()
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/Modifier.kt:12: Error: Composable functions should only be emitting content into the composition from one source at their top level.
+
+        See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+        context(scope: RowScope)
+        ^
+        1 errors, 0 warnings
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
+  fun `errors when only some top-level emitters use a context parameter`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      class Modifier
+
+      val DefaultModifier = Modifier()
+
+      @Composable
+      fun Text(text: String, modifier: Modifier) {}
+
+      interface RowScope {
+          fun itemModifier(): Modifier
+      }
+
+      context(scope: RowScope)
+      @Composable
+      fun Something() {
+          WeightedText("Hi", scope.itemModifier())
+          WeightedText("Hola", DefaultModifier)
+      }
+
+      @Composable
+      fun WeightedText(text: String, modifier: Modifier) {
+          Text(text, modifier)
+      }
+      """
+        .trimIndent()
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/Modifier.kt:14: Error: Composable functions should only be emitting content into the composition from one source at their top level.
+
+        See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+        context(scope: RowScope)
+        ^
+        1 errors, 0 warnings
+        """
+          .trimIndent()
+      )
   }
 
   @Test

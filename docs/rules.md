@@ -181,13 +181,18 @@ private fun ColumnScope.InnerContent() {
 context(scope: ColumnScope)
 @Composable
 private fun InnerContent() {
+    WeightedText("Title", scope)
+    WeightedText("Subtitle", scope)
+}
+
+@Composable
+private fun WeightedText(text: String, scope: ColumnScope) {
     with(scope) {
-        Text(..., Modifier.weight(1f))
+        Text(text, Modifier.weight(1f))
     }
-    Image(...)
 }
 ```
-This effectively ties the function to be called from a Column, but is still not recommended (although permitted).
+This effectively ties the function to be called from a Column, but is still not recommended (although permitted). Context parameter exceptions are only allowed when the emitted calls actually use the context parameter.
 
 Related rule: [`ComposeMultipleContentEmitters`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/MultipleContentEmittersDetector.kt)
 

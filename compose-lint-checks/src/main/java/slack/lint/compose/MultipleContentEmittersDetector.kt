@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.uast.UFile
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.kotlin.isKotlin
@@ -39,6 +40,9 @@ constructor(
 
     val CONTENT_EMITTER_OPTION = ContentEmitterLintOption.newOption()
 
+    private val ContextParameterNameRegex =
+      Regex("""(?:\bcontext\s*\(|,)\s*([A-Za-z_][A-Za-z0-9_]*|_)\s*:""")
+
     val ISSUE =
       Issue.create(
           id = "ComposeMultipleContentEmitters",
@@ -60,6 +64,13 @@ constructor(
   internal val KtFunction.directUiEmitterCount: Int
     get() {
       return bodyBlockExpression?.let { block ->
+        val directUiEmitterCalls = block.directUiEmitterCalls
+        val directUiEmitterCount =
+          if (directUiEmitterCalls.areAllScopedToContextParameters(contextParameterNames)) {
+            0
+          } else {
+            directUiEmitterCalls.size
+          }
         // If there's content emitted in a for loop, we assume there's at
         // least two iterations and thus count any emitters in them as multiple
         val forLoopCount =
@@ -68,7 +79,7 @@ constructor(
           } else {
             0
           }
-        block.directUiEmitterCount + forLoopCount
+        directUiEmitterCount + forLoopCount
       } ?: 0
     }
 
@@ -88,34 +99,35 @@ constructor(
     }
 
   internal val KtBlockExpression.directUiEmitterCount: Int
-    get() {
-      return statements
-        .mapNotNull { it.unwrapParenthesis() }
-        .filterIsInstance<KtCallExpression>()
-        .count { it.emitsContent(contentEmitterOption.value) }
-    }
+    get() = directUiEmitterCalls.size
 
   internal fun KtFunction.indirectUiEmitterCount(mapping: Map<KtFunction, Int>): Int {
     val bodyBlock = bodyBlockExpression ?: return 0
-    return bodyBlock.statements
-      .mapNotNull { it.unwrapParenthesis() }
-      .filterIsInstance<KtCallExpression>()
-      .count { callExpression ->
-        // If it's a direct hit on our list, it should count directly
-        if (callExpression.emitsContent(contentEmitterOption.value)) return@count true
+    val contextParameterNames = contextParameterNames
+    val indirectUiEmitterCalls =
+      bodyBlock.statements
+        .mapNotNull { it.unwrapParenthesis() }
+        .filterIsInstance<KtCallExpression>()
+        .filter { callExpression ->
+          // If it's a direct hit on our list, it should count directly
+          if (callExpression.emitsContent(contentEmitterOption.value)) return@filter true
 
-        val name = callExpression.calleeExpression?.text ?: return@count false
-        // If the hit is in the provided mapping, it means it is using a composable that we know
-        // emits
-        // UI, that we inferred from previous passes
-        val value =
-          mapping
-            .mapKeys { entry -> entry.key.name }
-            .getOrElse(name) {
-              return@count false
-            }
-        value > 0
-      }
+          val name = callExpression.calleeExpression?.text ?: return@filter false
+          // If the hit is in the provided mapping, it means it is using a composable that we know
+          // emits UI, that we inferred from previous passes
+          val value =
+            mapping
+              .mapKeys { entry -> entry.key.name }
+              .getOrElse(name) {
+                return@filter false
+              }
+          value > 0
+        }
+    return if (indirectUiEmitterCalls.areAllScopedToContextParameters(contextParameterNames)) {
+      0
+    } else {
+      indirectUiEmitterCalls.size
+    }
   }
 
   override fun getApplicableUastTypes() = listOf(UFile::class.java)
@@ -135,10 +147,6 @@ constructor(
             // things like
             // BoxScope which are legit, and we want to avoid false positives.
             .filter { it.hasBlockBody() }
-            // Same applies to context receivers/parameters: we could have a
-            // BoxScope/ColumnScope/RowScope and it'd be legit.
-            // We don't have a way to know for sure, so we'd better avoid the issue altogether.
-            .filter { it.contextReceivers.isEmpty() }
             // We want only methods with a body
             .filterNot { it.hasReceiverType }
 
@@ -198,4 +206,47 @@ constructor(
       }
     }
   }
+
+  private val KtFunction.contextParameterNames: Set<String>
+    get() {
+      return ContextParameterNameRegex.findAll(text.substringBefore("{")).mapNotNullTo(
+        mutableSetOf()
+      ) { match ->
+        match.groupValues[1].takeUnless { name -> name == "_" }
+      }
+    }
+
+  private val KtBlockExpression.directUiEmitterCalls: List<KtCallExpression>
+    get() {
+      return statements
+        .mapNotNull { it.unwrapParenthesis() }
+        .filterIsInstance<KtCallExpression>()
+        .filter { it.emitsContent(contentEmitterOption.value) }
+    }
+
+  private fun List<KtCallExpression>.areAllScopedToContextParameters(
+    contextParameterNames: Set<String>
+  ): Boolean {
+    return size > 1 &&
+      contextParameterNames.isNotEmpty() &&
+      all { it.referencesAnyContextParameter(contextParameterNames) }
+  }
+
+  private fun KtCallExpression.referencesAnyContextParameter(
+    contextParameterNames: Set<String>
+  ): Boolean {
+    return findChildrenByClass<KtSimpleNameExpression>().any {
+      it.getReferencedName() in contextParameterNames
+    } || contextParameterNames.any { text.containsIdentifier(it) }
+  }
+
+  private fun String.containsIdentifier(name: String): Boolean {
+    return windowed(name.length, partialWindows = false).withIndex().any { (index, value) ->
+      value == name &&
+        getOrNull(index - 1)?.isIdentifierPart() != true &&
+        getOrNull(index + name.length)?.isIdentifierPart() != true
+    }
+  }
+
+  private fun Char.isIdentifierPart(): Boolean = isLetterOrDigit() || this == '_' || this == '$'
 }
