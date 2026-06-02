@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
-import com.android.tools.lint.checks.infrastructure.TestLintTask
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
+import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class UnstableReceiverDetectorTest : BaseComposeLintTest() {
@@ -14,24 +14,20 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
 
   override fun getIssues(): List<Issue> = listOf(UnstableReceiverDetector.ISSUE)
 
-  // Stability checks are off by default; enable them for these tests.
-  override fun lint(): TestLintTask =
-    super.lint().configureOption(UnstableReceiverDetector.STABILITY_CHECKS_OPTION, true)
+  private val enabledIssueConfig =
+    xml(
+      "lint.xml",
+      """
+      <lint>
+        <issue id="ComposeUnstableReceiver" severity="warning" />
+      </lint>
+      """
+        .trimIndent(),
+    )
 
   @Test
-  fun `stability checks are disabled by default`() {
-    @Language("kotlin")
-    val code =
-      """
-      import androidx.compose.runtime.Composable
-
-      class Example {
-        @Composable fun Content() {}
-      }
-      """
-        .trimIndent()
-    // Note super.lint() to avoid enabling the option.
-    super.lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  fun `issue is disabled by default`() {
+    assertFalse(UnstableReceiverDetector.ISSUE.isEnabledByDefault())
   }
 
   @Test
@@ -105,7 +101,7 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
       }
       """
         .trimIndent()
-    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+    lint().files(enabledIssueConfig, *commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -137,7 +133,7 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
       """
         .trimIndent()
     lint()
-      .files(*commonStubs, kotlin(code))
+      .files(enabledIssueConfig, *commonStubs, kotlin(code))
       .run()
       .expect(
         """
@@ -191,7 +187,7 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
           @Composable get() = this.copy(alpha = 0f)
       """
         .trimIndent()
-    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+    lint().files(enabledIssueConfig, *commonStubs, kotlin(code)).run().expectClean()
   }
 
   // Regression for the value-class receiver path: K2 UAST doesn't surface the receiver of a
@@ -228,7 +224,7 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
           @Composable get() {}
       """
         .trimIndent()
-    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+    lint().files(enabledIssueConfig, *commonStubs, kotlin(code)).run().expectClean()
   }
 
   // A value/inline class is stable iff its underlying property type is stable, so composable
@@ -254,7 +250,7 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
       }
       """
         .trimIndent()
-    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+    lint().files(enabledIssueConfig, *commonStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -288,6 +284,6 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
       }
       """
         .trimIndent()
-    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+    lint().files(enabledIssueConfig, *commonStubs, kotlin(code)).run().expectClean()
   }
 }

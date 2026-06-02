@@ -4,17 +4,13 @@ A couple of rules ([`ComposeUnstableReceiver`](#unstable-receivers) and [`Compos
 
 These are **significantly less important in the era of [Compose strong skipping](https://developer.android.com/develop/ui/compose/performance/stability/strongskipping)**, which makes composables skippable regardless of parameter/receiver stability. Because of that, these checks are **disabled by default**.
 
-To opt back in, enable the `stability-checks` option in `lint.xml`. The option is shared by both rules, so set it on each rule you want to turn on:
+To opt back in, enable each issue via your lint configuration:
 
-```xml
-<lint>
-   <issue id="ComposeUnstableReceiver">
-      <option name="stability-checks" value="true" />
-   </issue>
-   <issue id="ComposeUnstableCollections">
-      <option name="stability-checks" value="true" />
-   </issue>
-</lint>
+```kotlin
+lint {
+   enable += "ComposeUnstableReceiver"
+   enable += "ComposeUnstableCollections"
+}
 ```
 
 ## State
@@ -70,7 +66,7 @@ val list: StringList = StringList(yourList)
 More info: [Jetpack Compose Stability Explained](https://medium.com/androiddevelopers/jetpack-compose-stability-explained-79c10db270c8), [Kotlinx Immutable Collections](https://github.com/Kotlin/kotlinx.collections.immutable)
 
 !!! note "Disabled by default"
-    This is a [stability check](#stability) and is disabled by default. Enable it with the `stability-checks` option.
+    This is a [stability check](#stability) and is disabled by default. Enable it with your lint configuration.
 
 Related rule: [`ComposeUnstableCollections`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/UnstableCollectionsDetector.kt)
 
@@ -94,7 +90,7 @@ In compose, all parameters must be stable or immutable in order for a composable
 _restartable_ or _skippable_. This _includes_ the containing class or receiver, which the compose-compiler will treat as the 0th argument. Using an unstable receiver is usually a bug, so this lint offers a warning to raise this issue.
 
 !!! note "Disabled by default"
-    This is a [stability check](#stability) and is disabled by default — it is largely obsoleted by Strong Skipping. Enable it with the `stability-checks` option.
+    This is a [stability check](#stability) and is disabled by default — it is largely obsoleted by Strong Skipping. Enable it with your lint configuration.
 
 More info: [Compose API Stability](https://developer.android.com/jetpack/compose/performance/stability)
 

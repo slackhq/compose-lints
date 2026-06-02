@@ -7,6 +7,7 @@ Changelog
 - **Enhancement**: See through typealiases when detecting `@Composable` functions in parameters.
 - **Fix**: Fix a few false positives with the new `ComposeRedundantComposable` check.
 - **Fix**: Fix Java 17 compatibility.
+- **Fix**: Replace the `stability-checks` option with lint's standard disabled-by-default issue support for `ComposeUnstableReceiver` and `ComposeUnstableCollections`.
 
 Special thanks to [@eboudrant](https://github.com/eboudrant) and [@kboyarshinov](https://github.com/kboyarshinov) for contributing to this release!
 

@@ -22,32 +22,29 @@ import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isStable
 import slack.lint.compose.util.returnsUnitOrVoid
 import slack.lint.compose.util.sourceImplementation
-import slack.lint.compose.util.stabilityChecksOption
 
 class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner {
   companion object {
-    val STABILITY_CHECKS_OPTION = stabilityChecksOption()
-
     val ISSUE =
       Issue.create(
-          id = "ComposeUnstableReceiver",
-          briefDescription = "Unstable receivers will always be recomposed",
-          explanation =
-            issueText(
-              """
-              Instance composable functions on non-stable classes will always be recomposed. If
-              possible, make the receiver type stable or refactor this function if that isn't
-              possible.
+        id = "ComposeUnstableReceiver",
+        briefDescription = "Unstable receivers will always be recomposed",
+        explanation =
+          issueText(
+            """
+            Instance composable functions on non-stable classes will always be recomposed. If
+            possible, make the receiver type stable or refactor this function if that isn't
+            possible.
 
-              See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information.
-              """
-            ),
-          category = Category.PRODUCTIVITY,
-          priority = Priorities.NORMAL,
-          severity = Severity.WARNING,
-          implementation = sourceImplementation<UnstableReceiverDetector>(),
-        )
-        .setOptions(listOf(STABILITY_CHECKS_OPTION))
+            See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information.
+            """
+          ),
+        category = Category.PRODUCTIVITY,
+        priority = Priorities.NORMAL,
+        severity = Severity.WARNING,
+        enabledByDefault = false,
+        implementation = sourceImplementation<UnstableReceiverDetector>(),
+      )
   }
 
   override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
@@ -55,8 +52,6 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
   }
 
   override fun visitComposable(context: JavaContext, method: UMethod) {
-    if (!STABILITY_CHECKS_OPTION.getValue(context)) return
-
     // Use a metadata-aware evaluator so value-class receivers/containers are understood even when
     // they come from other modules compiled without source (checkDependencies=false).
     val evaluator = MetadataJavaEvaluator(context.file.name, context.evaluator)

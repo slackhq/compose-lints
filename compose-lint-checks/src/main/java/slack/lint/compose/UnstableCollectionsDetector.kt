@@ -15,13 +15,10 @@ import org.jetbrains.uast.UMethod
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isTypeUnstableCollection
 import slack.lint.compose.util.sourceImplementation
-import slack.lint.compose.util.stabilityChecksOption
 
 class UnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
   companion object {
-    val STABILITY_CHECKS_OPTION = stabilityChecksOption()
-
     private val DiamondRegex by lazy(LazyThreadSafetyMode.NONE) { Regex("<.*>\\??") }
     private val String.capitalized: String
       get() = replaceFirstChar {
@@ -38,20 +35,18 @@ class UnstableCollectionsDetector : ComposableFunctionDetector(), SourceCodeScan
 
     val ISSUE =
       Issue.create(
-          id = "ComposeUnstableCollections",
-          briefDescription = "Immutable collections should ideally be used in Composables",
-          explanation = "This is replaced when reported",
-          category = Category.PRODUCTIVITY,
-          priority = Priorities.NORMAL,
-          severity = Severity.WARNING,
-          implementation = sourceImplementation<UnstableCollectionsDetector>(),
-        )
-        .setOptions(listOf(STABILITY_CHECKS_OPTION))
+        id = "ComposeUnstableCollections",
+        briefDescription = "Immutable collections should ideally be used in Composables",
+        explanation = "This is replaced when reported",
+        category = Category.PRODUCTIVITY,
+        priority = Priorities.NORMAL,
+        severity = Severity.WARNING,
+        enabledByDefault = false,
+        implementation = sourceImplementation<UnstableCollectionsDetector>(),
+      )
   }
 
   override fun visitComposable(context: JavaContext, method: UMethod, function: KtFunction) {
-    if (!STABILITY_CHECKS_OPTION.getValue(context)) return
-
     for (param in method.uastParameters.filter { it.isTypeUnstableCollection(context.evaluator) }) {
       val variableName = param.name
       val type = (param.sourcePsi as? KtParameter)?.typeReference?.text ?: "List/Set/Map"
