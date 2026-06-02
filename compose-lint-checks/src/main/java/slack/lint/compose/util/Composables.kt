@@ -5,6 +5,12 @@ package slack.lint.compose.util
 
 import com.android.tools.lint.client.api.JavaEvaluator
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.components.fullyExpandedType
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
+import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
@@ -175,8 +181,7 @@ val ModifierQualifiedNames by
     setOf("androidx.compose.ui.Modifier", "androidx.glance.GlanceModifier")
   }
 
-val KtCallableDeclaration.isModifier: Boolean
-  get() = ModifierNames.contains(typeReference?.text)
+private val ComposableClassId = ClassId.topLevel(FqName("androidx.compose.runtime.Composable"))
 
 fun UParameter.isModifier(evaluator: JavaEvaluator): Boolean {
   (sourcePsi as? KtParameter)?.let {
@@ -189,30 +194,35 @@ fun UParameter.isModifier(evaluator: JavaEvaluator): Boolean {
 }
 
 fun UParameter.isSlotParameter(): Boolean {
-  // Check if the parameter type has a @Composable annotation
   val ktParam = sourcePsi as? KtParameter ?: return false
-  var typeRef = ktParam.typeReference ?: return false
-  // Loop to expand typealias chains (e.g. `typealias A = B`, `typealias B = @Composable () -> Unit`).
-  while (true) {
-    // Check if any annotation on the type reference is @Composable
-    val hasComposableAnnotation =
+  val typeRef = ktParam.typeReference ?: return false
+
+  // Fast, happy path check
+  val isSimpleComposableFunction =
+    typeRef.typeElement is KtFunctionType &&
       typeRef.annotationEntries.any { annotation ->
         annotation.shortName?.asString() == "Composable" ||
           annotation.text?.contains("Composable") == true
       }
-    // Check if the type is a function type (using the KtFunctionType PSI directly)
-    val typeElement = typeRef.typeElement
-    if (hasComposableAnnotation) return typeElement is KtFunctionType
-    // Also handle typealiases: `typealias Foo = @Composable () -> Unit`
-    typeRef =
-      (typeElement as? KtUserType)
-        ?.referenceExpression
-        ?.references
-        ?.firstOrNull()
-        ?.resolve()
-        ?.let { it as? KtTypeAlias }
-        ?.getTypeReference() ?: return false
+
+  if (isSimpleComposableFunction) {
+    return true
   }
+
+  return if (typeRef.isTypeAlias()) {
+    // If it's a typealias, fall through to a more thorough check
+    analyze(ktParam) {
+      val type = ktParam.symbol.returnType.fullyExpandedType
+      type is KaFunctionType && ComposableClassId in type.annotations
+    }
+  } else {
+    false
+  }
+}
+
+private fun KtTypeReference.isTypeAlias(): Boolean {
+  return (typeElement as? KtUserType)?.referenceExpression?.references?.firstOrNull()?.resolve() is
+    KtTypeAlias
 }
 
 val KtCallableDeclaration.isModifierReceiver: Boolean

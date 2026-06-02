@@ -186,7 +186,7 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
         println("doesn't even call content")
       }
       """
-         .trimIndent()
+        .trimIndent()
     lint().files(stubs, kotlin(code)).run().expectClean()
   }
 
