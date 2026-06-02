@@ -230,7 +230,8 @@ private fun UMethod.toSimplifiedCfaAst(references: Set<PsiElement>): CfaBlock {
 
       fun enterBlock() = stack.add(mutableListOf())
 
-      fun exitBlock(): List<CfaNode> = stack.removeLast()
+      // Avoid removeLast() as that's JDK 21+
+      fun exitBlock(): List<CfaNode> = stack.removeAt(stack.lastIndex)
 
       fun finalizeBlock(): List<CfaNode> = stack.single()
 
