@@ -134,6 +134,34 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
+  fun `no errors when composition is only used in a default argument value`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.CompositionLocal
+      import androidx.compose.runtime.compositionLocalOf
+
+      val LocalThing: CompositionLocal<Int> = compositionLocalOf { 0 }
+
+      // A @Composable function, used below as a default argument value.
+      @Composable
+      fun provideValue(): Int = LocalThing.current
+
+      // The bodies use no composition, but each default value invokes the composition (a @Composable
+      // function call / a @Composable property read), so the @Composable annotation is required:
+      // removing it would be a compile error. The rule only inspects the body and so must not flag these.
+      @Composable
+      fun usesComposableFunctionDefault(value: Int = provideValue()): Int = value
+
+      @Composable
+      fun usesComposablePropertyDefault(value: Int = LocalThing.current): Int = value
+      """
+        .trimIndent()
+    lint().files(stubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
   fun `no errors when reading or writing State value`() {
     @Language("kotlin")
     val code =
