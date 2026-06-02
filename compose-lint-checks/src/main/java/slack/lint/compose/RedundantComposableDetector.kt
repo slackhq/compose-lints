@@ -89,6 +89,9 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     // If the body uses the composition in any way, the annotation is required.
     if (body.usesComposition(context)) return
 
+    // A default value evaluated in the composable's context can also require the annotation.
+    if (method.uastParameters.any { it.uastInitializer?.usesComposition(context) == true }) return
+
     val annotation = method.uAnnotations.find { it.qualifiedName == COMPOSABLE }
     val location = annotation?.let(context::getLocation) ?: context.getNameLocation(method)
     context.report(
