@@ -6,6 +6,7 @@ Changelog
 
 - **Enhancement**: See through typealiases when detecting `@Composable` functions in parameters.
 - **Fix**: Fix a few false positives with the new `ComposeRedundantComposable` check.
+- **Fix**: Fix Java 17 compatibility.
 
 Special thanks to [@eboudrant](https://github.com/eboudrant) and [@kboyarshinov](https://github.com/kboyarshinov) for contributing to this release!
 
