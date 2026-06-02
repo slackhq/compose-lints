@@ -201,6 +201,24 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
+  fun `no errors for composables that take typealiased composable slot`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      typealias ComposableTypealias = @Composable () -> Unit
+
+      @Composable
+      fun Wrapper(content: ComposableTypealias) {
+        println("doesn't even call content")
+      }
+      """
+        .trimIndent()
+    lint().files(stubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
   fun `no errors for overrides and overridable declarations`() {
     @Language("kotlin")
     val code =
