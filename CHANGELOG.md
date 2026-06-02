@@ -4,6 +4,8 @@ Changelog
 **Unreleased**
 --------------
 
+- **Fix**: Fix Java 17 compatibility.
+
 1.5.1
 -----
 
