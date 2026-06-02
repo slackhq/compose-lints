@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
-import com.android.tools.lint.checks.infrastructure.TestLintTask
 import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
+import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class UnstableCollectionsDetectorTest : BaseComposeLintTest() {
@@ -20,23 +20,20 @@ class UnstableCollectionsDetectorTest : BaseComposeLintTest() {
   // alias + lint's inability to reach kotlin intrinsic collections defeats it
   override val skipTestModes: Array<TestMode> = arrayOf(TestMode.TYPE_ALIAS)
 
-  // Stability checks are off by default; enable them for these tests.
-  override fun lint(): TestLintTask =
-    super.lint().configureOption(UnstableCollectionsDetector.STABILITY_CHECKS_OPTION, true)
+  private val enabledIssueConfig =
+    xml(
+      "lint.xml",
+      """
+      <lint>
+        <issue id="ComposeUnstableCollections" severity="warning" />
+      </lint>
+      """
+        .trimIndent(),
+    )
 
   @Test
-  fun `stability checks are disabled by default`() {
-    @Language("kotlin")
-    val code =
-      """
-      import androidx.compose.runtime.Composable
-
-      @Composable
-      fun Something(a: List<String>) {}
-      """
-        .trimIndent()
-    // Note super.lint() to avoid enabling the option.
-    super.lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  fun `issue is disabled by default`() {
+    assertFalse(UnstableCollectionsDetector.ISSUE.isEnabledByDefault())
   }
 
   @Test
@@ -58,7 +55,7 @@ class UnstableCollectionsDetectorTest : BaseComposeLintTest() {
         .trimIndent()
 
     lint()
-      .files(*commonStubs, kotlin(code))
+      .files(enabledIssueConfig, *commonStubs, kotlin(code))
       .run()
       .expect(
         """
@@ -109,6 +106,6 @@ class UnstableCollectionsDetectorTest : BaseComposeLintTest() {
       fun Something(a: StringList, b: StringSet, c: StringToIntMap) {}
       """
         .trimIndent()
-    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+    lint().files(enabledIssueConfig, *commonStubs, kotlin(code)).run().expectClean()
   }
 }
