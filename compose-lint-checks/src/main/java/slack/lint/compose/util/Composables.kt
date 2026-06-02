@@ -8,9 +8,13 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtFunctionType
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.KtTypeAlias
+import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParameter
@@ -187,17 +191,28 @@ fun UParameter.isModifier(evaluator: JavaEvaluator): Boolean {
 fun UParameter.isSlotParameter(): Boolean {
   // Check if the parameter type has a @Composable annotation
   val ktParam = sourcePsi as? KtParameter ?: return false
-  val typeRef = ktParam.typeReference ?: return false
-  // Check if any annotation on the type reference is @Composable
-  val hasComposableAnnotation =
-    typeRef.annotationEntries.any { annotation ->
-      annotation.shortName?.asString() == "Composable" ||
-        annotation.text?.contains("Composable") == true
-    }
-  if (!hasComposableAnnotation) return false
-  // Check if the type is a function type (using the KtFunctionType PSI directly)
-  val typeElement = typeRef.typeElement
-  return typeElement is org.jetbrains.kotlin.psi.KtFunctionType
+  var typeRef = ktParam.typeReference ?: return false
+  // Loop to expand typealias chains (e.g. `typealias A = B`, `typealias B = @Composable () -> Unit`).
+  while (true) {
+    // Check if any annotation on the type reference is @Composable
+    val hasComposableAnnotation =
+      typeRef.annotationEntries.any { annotation ->
+        annotation.shortName?.asString() == "Composable" ||
+          annotation.text?.contains("Composable") == true
+      }
+    // Check if the type is a function type (using the KtFunctionType PSI directly)
+    val typeElement = typeRef.typeElement
+    if (hasComposableAnnotation) return typeElement is KtFunctionType
+    // Also handle typealiases: `typealias Foo = @Composable () -> Unit`
+    typeRef =
+      (typeElement as? KtUserType)
+        ?.referenceExpression
+        ?.references
+        ?.firstOrNull()
+        ?.resolve()
+        ?.let { it as? KtTypeAlias }
+        ?.getTypeReference() ?: return false
+  }
 }
 
 val KtCallableDeclaration.isModifierReceiver: Boolean
