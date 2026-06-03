@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.3.21"
+kotlin = "2.4.0"
 ktfmt = "0.63"
 jdk = "23"
 jvmTarget = "17"
