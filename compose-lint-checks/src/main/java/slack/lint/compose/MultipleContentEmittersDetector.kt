@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.uast.UFile
 import org.jetbrains.uast.UMethod
@@ -40,9 +41,6 @@ constructor(
 
     val CONTENT_EMITTER_OPTION = ContentEmitterLintOption.newOption()
 
-    private val ContextParameterNameRegex =
-      Regex("""(?:\bcontext\s*\(|,)\s*([A-Za-z_][A-Za-z0-9_]*|_)\s*:""")
-
     val ISSUE =
       Issue.create(
           id = "ComposeMultipleContentEmitters",
@@ -65,12 +63,21 @@ constructor(
     get() {
       return bodyBlockExpression?.let { block ->
         val directUiEmitterCalls = block.directUiEmitterCalls
+        val functionContextParameters = contextParameterUsages
+
+        val allAreScopedToContextParams =
+          directUiEmitterCalls.areAllScopedToContextParameters(
+            functionContextParameters,
+            containingKtFile.contextParameterTypesByCallableName,
+          )
+
         val directUiEmitterCount =
-          if (directUiEmitterCalls.areAllScopedToContextParameters(contextParameterNames)) {
+          if (allAreScopedToContextParams) {
             0
           } else {
             directUiEmitterCalls.size
           }
+
         // If there's content emitted in a for loop, we assume there's at
         // least two iterations and thus count any emitters in them as multiple
         val forLoopCount =
@@ -103,7 +110,8 @@ constructor(
 
   internal fun KtFunction.indirectUiEmitterCount(mapping: Map<KtFunction, Int>): Int {
     val bodyBlock = bodyBlockExpression ?: return 0
-    val contextParameterNames = contextParameterNames
+    val functionContextParameters = contextParameterUsages
+    val contextParameterTypesByCallableName = containingKtFile.contextParameterTypesByCallableName
     val indirectUiEmitterCalls =
       bodyBlock.statements
         .mapNotNull { it.unwrapParenthesis() }
@@ -123,7 +131,14 @@ constructor(
               }
           value > 0
         }
-    return if (indirectUiEmitterCalls.areAllScopedToContextParameters(contextParameterNames)) {
+
+    val allAreScopedToContextParams =
+      indirectUiEmitterCalls.areAllScopedToContextParameters(
+        functionContextParameters,
+        contextParameterTypesByCallableName,
+      )
+
+    return if (allAreScopedToContextParams) {
       0
     } else {
       indirectUiEmitterCalls.size
@@ -144,8 +159,7 @@ constructor(
             .findChildrenByClass<KtFunction>()
             .filter { it.toUElementOfType<UMethod>()?.isComposable == true }
             // We don't want to analyze composables that are extension functions, as they might be
-            // things like
-            // BoxScope which are legit, and we want to avoid false positives.
+            // things like BoxScope which are legit, and we want to avoid false positives.
             .filter { it.hasBlockBody() }
             // We want only methods with a body
             .filterNot { it.hasReceiverType }
@@ -189,8 +203,7 @@ constructor(
         }
 
         // Here we have the settled data after all the needed passes, so we want to show errors for
-        // them,
-        // if they were not caught already by the 1st emission loop
+        // them, if they were not caught already by the 1st emission loop
         currentMapping
           .filterValues { it > 1 }
           .filterNot { directEmissionsReported.contains(it.key) }
@@ -207,13 +220,43 @@ constructor(
     }
   }
 
-  private val KtFunction.contextParameterNames: Set<String>
+  private val KtFunction.contextParameterUsages: Set<ContextParameter>
     get() {
-      return ContextParameterNameRegex.findAll(text.substringBefore("{")).mapNotNullTo(
-        mutableSetOf()
-      ) { match ->
-        match.groupValues[1].takeUnless { name -> name == "_" }
-      }
+      val contextParameterUsages =
+        modifierList?.findChildrenByClass<KtParameter>()?.mapNotNull { parameter ->
+          parameter.toContextParameterUsage()
+        } ?: emptySequence()
+      val contextReceiverUsages =
+        contextReceivers.asSequence().mapNotNull { contextReceiver ->
+          val typeName =
+            contextReceiver.typeReference()?.text?.contextParameterTypeName()
+              ?: return@mapNotNull null
+          ContextParameter(name = null, typeName)
+        }
+      return (contextParameterUsages + contextReceiverUsages).toSet()
+    }
+
+  private fun KtParameter.toContextParameterUsage(): ContextParameter? {
+    val typeName = typeReference?.text?.contextParameterTypeName() ?: return null
+    return ContextParameter(name?.takeUnless { it == "_" }, typeName)
+  }
+
+  private fun String.contextParameterTypeName(): String? {
+    return substringAfterLast('.').filterNot(Char::isWhitespace).takeIf(String::isNotEmpty)
+  }
+
+  private val KtFile.contextParameterTypesByCallableName: Map<String, Set<String>>
+    get() {
+      return findChildrenByClass<KtFunction>()
+        .groupBy { it.name }
+        .mapNotNull { (name, functions) ->
+          if (name == null) return@mapNotNull null
+          name to
+            functions.flatMapTo(mutableSetOf()) {
+              it.contextParameterUsages.map(ContextParameter::typeName)
+            }
+        }
+        .toMap()
     }
 
   private val KtBlockExpression.directUiEmitterCalls: List<KtCallExpression>
@@ -225,11 +268,20 @@ constructor(
     }
 
   private fun List<KtCallExpression>.areAllScopedToContextParameters(
-    contextParameterNames: Set<String>
+    contextParameters: Set<ContextParameter>,
+    contextParameterTypesByCallableName: Map<String, Set<String>>,
   ): Boolean {
+    val contextParameterNames = contextParameters.mapNotNullTo(mutableSetOf()) { it.name }
+    val contextParameterTypes = contextParameters.mapTo(mutableSetOf(), ContextParameter::typeName)
     return size > 1 &&
-      contextParameterNames.isNotEmpty() &&
-      all { it.referencesAnyContextParameter(contextParameterNames) }
+      contextParameters.isNotEmpty() &&
+      all {
+        it.referencesAnyContextParameter(contextParameterNames) ||
+          it.takesAnyContextParameterType(
+            contextParameterTypes,
+            contextParameterTypesByCallableName,
+          )
+      }
   }
 
   private fun KtCallExpression.referencesAnyContextParameter(
@@ -238,6 +290,16 @@ constructor(
     return findChildrenByClass<KtSimpleNameExpression>().any {
       it.getReferencedName() in contextParameterNames
     } || contextParameterNames.any { text.containsIdentifier(it) }
+  }
+
+  private fun KtCallExpression.takesAnyContextParameterType(
+    contextParameterTypes: Set<String>,
+    contextParameterTypesByCallableName: Map<String, Set<String>>,
+  ): Boolean {
+    val calleeName = calleeExpression?.text ?: return false
+    return contextParameterTypesByCallableName[calleeName].orEmpty().any {
+      it in contextParameterTypes
+    }
   }
 
   private fun String.containsIdentifier(name: String): Boolean {
@@ -249,4 +311,6 @@ constructor(
   }
 
   private fun Char.isIdentifierPart(): Boolean = isLetterOrDigit() || this == '_' || this == '$'
+
+  private data class ContextParameter(val name: String?, val typeName: String)
 }

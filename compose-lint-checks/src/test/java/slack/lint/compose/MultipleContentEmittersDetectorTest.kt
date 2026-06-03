@@ -76,8 +76,8 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
           fun itemModifier(): Modifier
       }
 
-      context(scope: RowScope)
       @Composable
+      context(scope: RowScope)
       fun Something() {
           WeightedText("Hi", scope.itemModifier())
           WeightedText("Hola", scope.itemModifier())
@@ -90,6 +90,72 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
       """
         .trimIndent()
     lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `passes when multiple top-level emitters take a context parameter implicitly`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      interface RowScope
+
+      @Composable
+      context(scope: RowScope)
+      fun Something() {
+          WeightedText("Hi")
+          WeightedText("Hola")
+      }
+
+      @Composable
+      context(scope: RowScope)
+      fun WeightedText(text: String) {
+          Text(text)
+      }
+      """
+        .trimIndent()
+    lint().files(*commonStubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `errors when multiple top-level emitters take a different context parameter implicitly`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      interface RowScope
+      interface ColumnScope
+
+      @Composable
+      context(scope: RowScope)
+      fun Something() {
+          WeightedText("Hi")
+          WeightedText("Hola")
+      }
+
+      @Composable
+      context(scope: ColumnScope)
+      fun WeightedText(text: String) {
+          Text(text)
+      }
+      """
+        .trimIndent()
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/RowScope.kt:6: Error: Composable functions should only be emitting content into the composition from one source at their top level.
+
+        See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
+        @Composable
+        ^
+        1 errors, 0 warnings
+        """
+          .trimIndent()
+      )
   }
 
   @Test
@@ -108,8 +174,8 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
 
       interface RowScope
 
-      context(scope: RowScope)
       @Composable
+      context(scope: RowScope)
       fun Something() {
           WeightedText("Hi", DefaultModifier)
           WeightedText("Hola", DefaultModifier)
@@ -129,7 +195,7 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
         src/Modifier.kt:12: Error: Composable functions should only be emitting content into the composition from one source at their top level.
 
         See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
-        context(scope: RowScope)
+        @Composable
         ^
         1 errors, 0 warnings
         """
@@ -155,8 +221,8 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
           fun itemModifier(): Modifier
       }
 
-      context(scope: RowScope)
       @Composable
+      context(scope: RowScope)
       fun Something() {
           WeightedText("Hi", scope.itemModifier())
           WeightedText("Hola", DefaultModifier)
@@ -176,7 +242,7 @@ class MultipleContentEmittersDetectorTest : BaseComposeLintTest() {
         src/Modifier.kt:14: Error: Composable functions should only be emitting content into the composition from one source at their top level.
 
         See https://slackhq.github.io/compose-lints/rules/#do-not-emit-multiple-pieces-of-content for more information. [ComposeMultipleContentEmitters]
-        context(scope: RowScope)
+        @Composable
         ^
         1 errors, 0 warnings
         """

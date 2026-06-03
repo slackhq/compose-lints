@@ -174,8 +174,8 @@ private fun ColumnScope.InnerContent() {
     Button(...)
 }
 
-context(scope: ColumnScope)
 @Composable
+context(scope: ColumnScope)
 private fun InnerContent() {
     WeightedText("Title", scope)
     WeightedText("Subtitle", scope)
