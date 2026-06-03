@@ -4,7 +4,13 @@ Changelog
 **Unreleased**
 --------------
 
+1.5.2
+-----
+
+_2026-06-03_
+
 - **Enhancement**: See through typealiases when detecting `@Composable` functions in parameters.
+- **Enhancement**: Improve support for context parameters on `ComposeMultipleContentEmitters` lint.
 - **Fix**: Fix a few false positives with the new `ComposeRedundantComposable` check.
 - **Fix**: Fix Java 17 compatibility.
 - **Fix**: Replace the `stability-checks` option with lint's standard disabled-by-default issue support for `ComposeUnstableReceiver` and `ComposeUnstableCollections`.
