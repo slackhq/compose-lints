@@ -146,7 +146,9 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     accept(
       object : AbstractUastVisitor() {
         override fun visitCallExpression(node: UCallExpression): Boolean {
-          if (!usesComposition && (node.resolve().isComposable() || node.invokesComposableLambda())) {
+          if (
+            !usesComposition && (node.resolve().isComposable() || node.invokesComposableLambda())
+          ) {
             usesComposition = true
           }
           return usesComposition
