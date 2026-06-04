@@ -4,6 +4,7 @@ Changelog
 **Unreleased**
 --------------
 
+- **Enhancement**: Suggest just annotating with `@ReadOnlyComposable` if a function is only `@Composable` to access composition locals.
 - **Fix**: Fix false positive in `ComposeRedundantComposable` when invoking composable function parameters in the body.
 
 Special thanks to [@UniqueEVE](https://github.com/UniqueEVE) for contributing to this release!

@@ -34,18 +34,23 @@ import slack.lint.compose.util.slotParameters
 import slack.lint.compose.util.sourceImplementation
 
 /**
- * Reports `@Composable` functions and property getters that can be made non-composable.
+ * Reports `@Composable` functions and property getters whose body doesn't need a restart group. If
+ * the body doesn't use the composition at all, the `@Composable` annotation can be removed. If the
+ * body only reads `CompositionLocal.current`, the declaration can be annotated with
+ * `@ReadOnlyComposable`.
  *
  * This detector only reports when the body and default argument values do not use composition.
- * Composable calls, composable property reads, composable function values, and State value access
- * all count as composition usage. It also skips declarations whose annotation is part of a
- * contract, such as overrides, overridable members, interface members, and declarations with
+ * Composable calls, non-read-only composable property reads, composable function values, and State
+ * value access all count as composition usage. It also skips declarations whose annotation is part
+ * of a contract, such as overrides, overridable members, interface members, and declarations with
  * composable slot parameters.
  */
 class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
   companion object {
     private const val COMPOSABLE = "androidx.compose.runtime.Composable"
+    private const val COMPOSITION_LOCAL = "androidx.compose.runtime.CompositionLocal"
+    private const val READ_ONLY_COMPOSABLE = "androidx.compose.runtime.ReadOnlyComposable"
     private const val STATE = "androidx.compose.runtime.State"
 
     val ISSUE =
@@ -68,6 +73,27 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
         severity = Severity.WARNING,
         implementation = sourceImplementation<RedundantComposableDetector>(),
       )
+
+    val READ_ONLY_ISSUE =
+      Issue.create(
+        id = "ComposeReadOnlyComposable",
+        briefDescription = "Composable only reads CompositionLocals",
+        explanation =
+          issueText(
+            """
+            This declaration only uses the composition to read `CompositionLocal` values, so it can
+            be annotated with `@ReadOnlyComposable` to avoid generating a group around its body.
+
+            See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information.
+            """
+          ),
+        category = Category.PRODUCTIVITY,
+        priority = Priorities.NORMAL,
+        severity = Severity.INFORMATIONAL,
+        implementation = sourceImplementation<RedundantComposableDetector>(),
+      )
+
+    val ISSUES = arrayOf(ISSUE, READ_ONLY_ISSUE)
   }
 
   override fun visitComposable(context: JavaContext, method: UMethod) {
@@ -81,21 +107,41 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     // composition. Even when they don't, skipping them avoids false positives.
     if (method.slotParameters().isNotEmpty()) return
 
-    // If the body uses the composition in any way, the annotation is required.
-    if (body.usesComposition(context)) return
+    val bodyUsage = body.compositionUsage(context)
 
     // A default value evaluated in the composable's context can also require the annotation.
-    if (method.uastParameters.any { it.uastInitializer?.usesComposition(context) == true }) return
+    if (
+      method.uastParameters.any {
+        (it.uastInitializer?.compositionUsage(context) ?: CompositionUsage.NONE) !=
+          CompositionUsage.NONE
+      }
+    ) {
+      return
+    }
 
     val annotation = method.uAnnotations.find { it.qualifiedName == COMPOSABLE }
     val location = annotation?.let(context::getLocation) ?: context.getNameLocation(method)
-    context.report(
-      ISSUE,
-      annotation ?: method,
-      location,
-      ISSUE.getExplanation(TextFormat.TEXT),
-      annotation?.let { buildRemoveFix(context, it) },
-    )
+    when (bodyUsage) {
+      CompositionUsage.NONE ->
+        context.report(
+          ISSUE,
+          annotation ?: method,
+          location,
+          ISSUE.getExplanation(TextFormat.TEXT),
+          annotation?.let { buildRemoveFix(context, it) },
+        )
+      CompositionUsage.READ_ONLY ->
+        if (!method.hasAnnotation(READ_ONLY_COMPOSABLE)) {
+          context.report(
+            READ_ONLY_ISSUE,
+            annotation ?: method,
+            location,
+            READ_ONLY_ISSUE.getExplanation(TextFormat.TEXT),
+            annotation?.let { buildReadOnlyFix(context, it) },
+          )
+        }
+      CompositionUsage.OTHER -> return
+    }
   }
 
   /** Quickfix that removes the redundant `@Composable` annotation (and its trailing whitespace). */
@@ -119,6 +165,25 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
       .build()
   }
 
+  /** Quickfix that adds `@ReadOnlyComposable` next to the existing `@Composable` annotation. */
+  private fun buildReadOnlyFix(context: JavaContext, annotation: UAnnotation): LintFix? {
+    val entry = annotation.sourcePsi ?: return null
+    val contents = context.getContents() ?: return null
+    val start = entry.textRange.startOffset
+    val location = Location.create(context.file, contents, start, entry.textRange.endOffset)
+    val lineStart = contents.lastIndexOf('\n', start - 1).let { if (it == -1) 0 else it + 1 }
+    val indentation = contents.substring(lineStart, start).takeWhile(Char::isWhitespace)
+    return fix()
+      .replace()
+      .name("Annotate with @ReadOnlyComposable")
+      .range(location)
+      .shortenNames()
+      .text(entry.text)
+      .with("${entry.text}\n${indentation}@$READ_ONLY_COMPOSABLE")
+      .autoFix()
+      .build()
+  }
+
   /** Whether removing `@Composable` here would break inheritance or a platform contract. */
   private fun UMethod.isContractDeclaration(): Boolean {
     if (unwrapped?.isTopLevelKtOrJavaMember() == true) return false
@@ -133,35 +198,39 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     return MODALITY_MODIFIERS.any(modifierOwner::hasModifier)
   }
 
-  private fun UElement.usesComposition(context: JavaContext): Boolean {
-    var usesComposition = false
+  private fun UElement.compositionUsage(context: JavaContext): CompositionUsage {
+    var usage = CompositionUsage.NONE
     accept(
       object : AbstractUastVisitor() {
         override fun visitCallExpression(node: UCallExpression): Boolean {
-          return stopIf(node.usesComposition())
+          return stopIf(node.compositionUsage(context))
         }
 
         // Catches @Composable property reads, e.g. a CompositionLocal's `current`.
         override fun visitSimpleNameReferenceExpression(
           node: USimpleNameReferenceExpression
         ): Boolean {
-          return stopIf(node.usesComposition())
+          return stopIf(node.compositionUsage(context))
         }
 
         // Catches reads and writes of a State's `value` (`state.value` / `state.value = ...`).
         override fun visitQualifiedReferenceExpression(
           node: UQualifiedReferenceExpression
         ): Boolean {
-          return stopIf(node.isStateValueAccess(context))
+          return stopIf(
+            if (node.isStateValueAccess(context)) CompositionUsage.OTHER else CompositionUsage.NONE
+          )
         }
 
-        private fun stopIf(foundCompositionUsage: Boolean): Boolean {
-          usesComposition = usesComposition || foundCompositionUsage
-          return usesComposition
+        private fun stopIf(foundCompositionUsage: CompositionUsage): Boolean {
+          if (foundCompositionUsage.ordinal > usage.ordinal) {
+            usage = foundCompositionUsage
+          }
+          return usage == CompositionUsage.OTHER
         }
       }
     )
-    return usesComposition
+    return usage
   }
 
   /** Whether [this] is an access (read or write) of a Compose [State]'s `value` property. */
@@ -174,15 +243,53 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
   private fun PsiMethod?.isComposable(): Boolean =
     this?.toUElementOfType<UMethod>()?.isComposable == true
 
-  private fun UCallExpression.usesComposition(): Boolean =
-    resolve().isComposable() || invokesComposableLambda()
+  private fun PsiMethod?.isCompositionLocalCurrent(context: JavaContext): Boolean {
+    if (this == null || name != "getCurrent") return false
+    val containingClass = containingClass ?: return false
+    return context.evaluator.implementsInterface(
+      containingClass,
+      COMPOSITION_LOCAL,
+      /* strict= */ false,
+    )
+  }
 
-  private fun USimpleNameReferenceExpression.usesComposition(): Boolean =
-    (resolve() as? PsiMethod).isComposable()
+  private fun PsiMethod?.isCompositionLocalCurrent(
+    context: JavaContext,
+    node: USimpleNameReferenceExpression,
+  ): Boolean {
+    if (node.identifier != "current") return false
+    return isCompositionLocalCurrent(context)
+  }
+
+  private fun UCallExpression.compositionUsage(context: JavaContext): CompositionUsage {
+    val method = resolve()
+    return when {
+      method.isCompositionLocalCurrent(context) -> CompositionUsage.READ_ONLY
+      method.isComposable() || invokesComposableLambda() -> CompositionUsage.OTHER
+      else -> CompositionUsage.NONE
+    }
+  }
+
+  private fun USimpleNameReferenceExpression.compositionUsage(
+    context: JavaContext
+  ): CompositionUsage {
+    val method = resolve() as? PsiMethod
+    return when {
+      method.isCompositionLocalCurrent(context, this) -> CompositionUsage.READ_ONLY
+      method.isComposable() -> CompositionUsage.OTHER
+      else -> CompositionUsage.NONE
+    }
+  }
 
   private fun UCallExpression.invokesComposableLambda(): Boolean {
     val callee = (sourcePsi as? KtCallExpression)?.calleeExpression ?: return false
     return callee.hasComposableFunctionType()
+  }
+
+  private enum class CompositionUsage {
+    NONE,
+    READ_ONLY,
+    OTHER,
   }
 }
 

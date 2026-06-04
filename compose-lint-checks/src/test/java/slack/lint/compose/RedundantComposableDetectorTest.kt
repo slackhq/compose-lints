@@ -10,8 +10,7 @@ import org.junit.Test
 class RedundantComposableDetectorTest : BaseComposeLintTest() {
 
   // Self-contained stubs: the callable composables are exempt from the rule (Text is `external` so
-  // it
-  // has no body; CompositionLocal.current is an interface member), so the stubs produce no
+  // it has no body; CompositionLocal.current is an interface member), so the stubs produce no
   // warnings.
   private val stubs =
     kotlin(
@@ -19,6 +18,8 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
       package androidx.compose.runtime
 
       annotation class Composable
+
+      annotation class ReadOnlyComposable
 
       interface CompositionLocal<T> {
         val current: T
@@ -42,7 +43,7 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
 
   override fun getDetector(): Detector = RedundantComposableDetector()
 
-  override fun getIssues(): List<Issue> = listOf(RedundantComposableDetector.ISSUE)
+  override fun getIssues(): List<Issue> = RedundantComposableDetector.ISSUES.toList()
 
   @Test
   fun `errors when a composable does not use composition`() {
@@ -105,6 +106,64 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
+  fun `informational when only CompositionLocals are read`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.CompositionLocal
+      import androidx.compose.runtime.compositionLocalOf
+
+      val LocalThing: CompositionLocal<Int> = compositionLocalOf { 0 }
+
+      @Composable
+      fun readsCompositionLocal() {
+        println(LocalThing.current)
+      }
+
+      val themed: Int
+        @Composable get() = LocalThing.current
+      """
+        .trimIndent()
+    lint()
+      .files(stubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/test.kt:7: Hint: This declaration only uses the composition to read CompositionLocal values, so it can be annotated with @ReadOnlyComposable to avoid generating a group around its body.
+
+        See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeReadOnlyComposable]
+        @Composable
+        ~~~~~~~~~~~
+        src/test.kt:13: Hint: This declaration only uses the composition to read CompositionLocal values, so it can be annotated with @ReadOnlyComposable to avoid generating a group around its body.
+
+        See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeReadOnlyComposable]
+          @Composable get() = LocalThing.current
+          ~~~~~~~~~~~
+        0 errors, 0 warnings, 2 hints
+        """
+          .trimIndent()
+      )
+      .expectFixDiffs(
+        """
+        Autofix for src/test.kt line 7: Annotate with @ReadOnlyComposable:
+        @@ -2,0 +3 @@
+        +import androidx.compose.runtime.ReadOnlyComposable
+        @@ -7,0 +9 @@
+        +@ReadOnlyComposable
+        Autofix for src/test.kt line 13: Annotate with @ReadOnlyComposable:
+        @@ -2,0 +3 @@
+        +import androidx.compose.runtime.ReadOnlyComposable
+        @@ -13 +14,2 @@
+        -  @Composable get() = LocalThing.current
+        +  @Composable
+        +  @ReadOnlyComposable get() = LocalThing.current
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun `no errors when composition is used`() {
     @Language("kotlin")
     val code =
@@ -122,12 +181,32 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
       }
 
       @Composable
+      fun readsCompositionLocalAndCallsComposable() {
+        println(LocalThing.current)
+        Text("hi")
+      }
+      """
+        .trimIndent()
+    lint().files(stubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `no errors when already annotated with ReadOnlyComposable`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.CompositionLocal
+      import androidx.compose.runtime.ReadOnlyComposable
+      import androidx.compose.runtime.compositionLocalOf
+
+      val LocalThing: CompositionLocal<Int> = compositionLocalOf { 0 }
+
+      @Composable
+      @ReadOnlyComposable
       fun readsCompositionLocal() {
         println(LocalThing.current)
       }
-
-      val themed: Int
-        @Composable get() = LocalThing.current
       """
         .trimIndent()
     lint().files(stubs, kotlin(code)).run().expectClean()
@@ -140,12 +219,14 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
       """
       import androidx.compose.runtime.Composable
       import androidx.compose.runtime.CompositionLocal
+      import androidx.compose.runtime.ReadOnlyComposable
       import androidx.compose.runtime.compositionLocalOf
 
       val LocalThing: CompositionLocal<Int> = compositionLocalOf { 0 }
 
       // A @Composable function, used below as a default argument value.
       @Composable
+      @ReadOnlyComposable
       fun provideValue(): Int = LocalThing.current
 
       // The bodies use no composition, but each default value invokes the composition (a @Composable
