@@ -235,7 +235,6 @@ private fun KaSession.isComposableFunctionType(type: KaType): Boolean {
   return expandedType is KaFunctionType && ComposableClassId in expandedType.annotations
 }
 
-
 val KtCallableDeclaration.isModifierReceiver: Boolean
   get() = ModifierNames.contains(receiverTypeReference?.text)
 
