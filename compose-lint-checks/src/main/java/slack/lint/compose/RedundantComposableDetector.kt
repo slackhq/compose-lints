@@ -133,7 +133,7 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
           annotation?.let { buildRemoveFix(context, it) },
         )
       CompositionUsage.READ_ONLY ->
-        if (method.hasAnnotation(READ_ONLY_COMPOSABLE)) {
+        if (!method.hasAnnotation(READ_ONLY_COMPOSABLE)) {
           context.report(
             READ_ONLY_ISSUE,
             annotation ?: method,
