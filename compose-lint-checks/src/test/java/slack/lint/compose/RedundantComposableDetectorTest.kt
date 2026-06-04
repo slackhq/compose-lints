@@ -337,11 +337,6 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
   // callee is composable.  If that resolution fails for binary-backed PSI
   // elements the rule incorrectly fires on the caller.
   //
-  // Repro observed in practice with Instacart Design System (IDS): functions
-  // such as TopNavigationDefault, ICScaffold.Scaffold, and BaseInputTextField
-  // all come from a pre-compiled AAR, and callers in the app were flagged even
-  // though their @Composable annotation was required.
-
   // Binary stub compiled with @Retention(AnnotationRetention.BINARY) on @Composable, which
   // matches the real androidx.compose.runtime.Composable.  The @Composable annotation is
   // therefore stored in RuntimeInvisibleAnnotations (CLASS retention) in the class file.
