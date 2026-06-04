@@ -5,10 +5,10 @@ package slack.lint.compose.util
 
 import com.android.tools.lint.client.api.JavaEvaluator
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.components.fullyExpandedType
-import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -212,10 +212,7 @@ fun UParameter.isSlotParameter(): Boolean {
 
   return if (typeRef.isTypeAlias()) {
     // If it's a typealias, fall through to a more thorough check
-    analyze(ktParam) {
-      val type = ktParam.symbol.returnType.fullyExpandedType
-      type is KaFunctionType && ComposableClassId in type.annotations
-    }
+    analyze(ktParam) { isComposableFunctionType(ktParam.symbol.returnType) }
   } else {
     false
   }
@@ -226,12 +223,18 @@ private fun KtTypeReference.isTypeAlias(): Boolean {
     KtTypeAlias
 }
 
-fun KtExpression.isComposableFunctionType(): Boolean {
+fun KtExpression.hasComposableFunctionType(): Boolean {
   return analyze(this) {
-    val type = expressionType?.fullyExpandedType ?: return@analyze false
-    type is KaFunctionType && ComposableClassId in type.annotations
+    val type = expressionType ?: return@analyze false
+    isComposableFunctionType(type)
   }
 }
+
+private fun KaSession.isComposableFunctionType(type: KaType): Boolean {
+  val expandedType = type.fullyExpandedType
+  return expandedType is KaFunctionType && ComposableClassId in expandedType.annotations
+}
+
 
 val KtCallableDeclaration.isModifierReceiver: Boolean
   get() = ModifierNames.contains(receiverTypeReference?.text)

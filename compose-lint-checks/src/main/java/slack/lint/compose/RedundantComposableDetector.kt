@@ -29,7 +29,7 @@ import org.jetbrains.uast.toUElementOfType
 import org.jetbrains.uast.visitor.AbstractUastVisitor
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isComposable
-import slack.lint.compose.util.isComposableFunctionType
+import slack.lint.compose.util.hasComposableFunctionType
 import slack.lint.compose.util.slotParameters
 import slack.lint.compose.util.sourceImplementation
 
@@ -188,7 +188,7 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
 
   private fun UCallExpression.invokesComposableLambda(): Boolean {
     val callee = (sourcePsi as? KtCallExpression)?.calleeExpression ?: return false
-    return callee.isComposableFunctionType()
+    return callee.hasComposableFunctionType()
   }
 }
 
