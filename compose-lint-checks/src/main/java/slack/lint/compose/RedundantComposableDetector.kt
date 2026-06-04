@@ -14,6 +14,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isTopLevelKtOrJavaMember
@@ -27,25 +28,19 @@ import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.toUElementOfType
 import org.jetbrains.uast.visitor.AbstractUastVisitor
 import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.hasComposableFunctionType
 import slack.lint.compose.util.isComposable
 import slack.lint.compose.util.slotParameters
 import slack.lint.compose.util.sourceImplementation
 
 /**
- * Reports `@Composable` functions and property getters whose body doesn't actually use the
- * composition, meaning they don't call any other `@Composable` function or read a `@Composable`
- * property (such as a `CompositionLocal`'s `current`). In those cases the `@Composable` annotation
- * can be removed.
+ * Reports `@Composable` functions and property getters that can be made non-composable.
  *
- * This is conservative to avoid false positives: it only reports when no composition usage is found
- * anywhere in the body, and it skips declarations where removing the annotation would break a
- * contract (overrides, `open`/`abstract` members, interface members, `expect`/`actual`/`external`)
- * or that take a `@Composable` lambda parameter (a "slot", which is generally invoked). Reading or
- * writing a `androidx.compose.runtime.State`'s `value` is also treated as composition usage: while
- * it isn't technically a `@Composable` operation, it signals intentional use of Compose state
- * (often kept `@Composable` for a tighter recomposition scope), so we don't flag it. It can still
- * miss some removable cases (e.g., invoking a `@Composable` lambda stored in a local with an
- * inferred type), which is the safe direction.
+ * This detector only reports when the body and default argument values do not use composition.
+ * Composable calls, composable property reads, composable function values, and State value access
+ * all count as composition usage. It also skips declarations whose annotation is part of a
+ * contract, such as overrides, overridable members, interface members, and declarations with
+ * composable slot parameters.
  */
 class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
@@ -143,25 +138,25 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     accept(
       object : AbstractUastVisitor() {
         override fun visitCallExpression(node: UCallExpression): Boolean {
-          if (!usesComposition && node.resolve().isComposable()) usesComposition = true
-          return usesComposition
+          return stopIf(node.usesComposition())
         }
 
         // Catches @Composable property reads, e.g. a CompositionLocal's `current`.
         override fun visitSimpleNameReferenceExpression(
           node: USimpleNameReferenceExpression
         ): Boolean {
-          if (!usesComposition && (node.resolve() as? PsiMethod).isComposable()) {
-            usesComposition = true
-          }
-          return usesComposition
+          return stopIf(node.usesComposition())
         }
 
         // Catches reads and writes of a State's `value` (`state.value` / `state.value = ...`).
         override fun visitQualifiedReferenceExpression(
           node: UQualifiedReferenceExpression
         ): Boolean {
-          if (!usesComposition && node.isStateValueAccess(context)) usesComposition = true
+          return stopIf(node.isStateValueAccess(context))
+        }
+
+        private fun stopIf(foundCompositionUsage: Boolean): Boolean {
+          usesComposition = usesComposition || foundCompositionUsage
           return usesComposition
         }
       }
@@ -178,6 +173,17 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
 
   private fun PsiMethod?.isComposable(): Boolean =
     this?.toUElementOfType<UMethod>()?.isComposable == true
+
+  private fun UCallExpression.usesComposition(): Boolean =
+    resolve().isComposable() || invokesComposableLambda()
+
+  private fun USimpleNameReferenceExpression.usesComposition(): Boolean =
+    (resolve() as? PsiMethod).isComposable()
+
+  private fun UCallExpression.invokesComposableLambda(): Boolean {
+    val callee = (sourcePsi as? KtCallExpression)?.calleeExpression ?: return false
+    return callee.hasComposableFunctionType()
+  }
 }
 
 private val MODALITY_MODIFIERS =
