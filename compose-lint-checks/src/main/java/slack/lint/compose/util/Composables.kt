@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionType
 import org.jetbrains.kotlin.psi.KtParameter
@@ -223,6 +224,13 @@ fun UParameter.isSlotParameter(): Boolean {
 private fun KtTypeReference.isTypeAlias(): Boolean {
   return (typeElement as? KtUserType)?.referenceExpression?.references?.firstOrNull()?.resolve() is
     KtTypeAlias
+}
+
+fun KtExpression.isComposableFunctionType(): Boolean {
+  return analyze(this) {
+    val type = expressionType?.fullyExpandedType ?: return@analyze false
+    type is KaFunctionType && ComposableClassId in type.annotations
+  }
 }
 
 val KtCallableDeclaration.isModifierReceiver: Boolean

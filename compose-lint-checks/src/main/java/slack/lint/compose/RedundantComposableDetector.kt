@@ -14,6 +14,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isTopLevelKtOrJavaMember
@@ -28,6 +29,7 @@ import org.jetbrains.uast.toUElementOfType
 import org.jetbrains.uast.visitor.AbstractUastVisitor
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isComposable
+import slack.lint.compose.util.isComposableFunctionType
 import slack.lint.compose.util.slotParameters
 import slack.lint.compose.util.sourceImplementation
 
@@ -43,9 +45,10 @@ import slack.lint.compose.util.sourceImplementation
  * or that take a `@Composable` lambda parameter (a "slot", which is generally invoked). Reading or
  * writing a `androidx.compose.runtime.State`'s `value` is also treated as composition usage: while
  * it isn't technically a `@Composable` operation, it signals intentional use of Compose state
- * (often kept `@Composable` for a tighter recomposition scope), so we don't flag it. It can still
- * miss some removable cases (e.g., invoking a `@Composable` lambda stored in a local with an
- * inferred type), which is the safe direction.
+ * (often kept `@Composable` for a tighter recomposition scope), so we don't flag it. Invoking a
+ * value whose type is a `@Composable` function type (such as a `@Composable () -> Unit` held in a
+ * property or local) also counts as composition usage. It can still miss some removable cases,
+ * which is the safe direction.
  */
 class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
@@ -143,7 +146,9 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     accept(
       object : AbstractUastVisitor() {
         override fun visitCallExpression(node: UCallExpression): Boolean {
-          if (!usesComposition && node.resolve().isComposable()) usesComposition = true
+          if (!usesComposition && (node.resolve().isComposable() || node.invokesComposableLambda())) {
+            usesComposition = true
+          }
           return usesComposition
         }
 
@@ -178,6 +183,11 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
 
   private fun PsiMethod?.isComposable(): Boolean =
     this?.toUElementOfType<UMethod>()?.isComposable == true
+
+  private fun UCallExpression.invokesComposableLambda(): Boolean {
+    val callee = (sourcePsi as? KtCallExpression)?.calleeExpression ?: return false
+    return callee.isComposableFunctionType()
+  }
 }
 
 private val MODALITY_MODIFIERS =
