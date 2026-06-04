@@ -4,6 +4,8 @@ Changelog
 **Unreleased**
 --------------
 
+- **Enhancement**: Suggest just annotating with `@ReadOnlyComposable` if a function is only `@Composable` to access composition locals.
+
 1.5.2
 -----
 
