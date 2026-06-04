@@ -4,6 +4,10 @@ Changelog
 **Unreleased**
 --------------
 
+- **Fix**: Fix false positive in `ComposeRedundantComposable` when invoking composable function parameters in the body.
+
+Special thanks to [@UniqueEVE](https://github.com/UniqueEVE) for contributing to this release!
+
 1.5.2
 -----
 
