@@ -325,4 +325,28 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
         .trimIndent()
     lint().files(stubs, kotlin(code)).run().expectClean()
   }
+
+  @Test
+  fun `no errors when invoking a composable lambda stored in a property`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      sealed interface State {
+        data object A : State
+        class B(val composable: @Composable () -> Unit) : State
+      }
+
+      @Composable
+      fun HandleState(state: State) {
+        when (state) {
+          State.A -> Unit
+          is State.B -> state.composable()
+        }
+      }
+      """
+        .trimIndent()
+    lint().files(stubs, kotlin(code)).run().expectClean()
+  }
 }

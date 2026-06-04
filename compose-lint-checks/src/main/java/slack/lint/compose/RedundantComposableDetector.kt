@@ -14,6 +14,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isTopLevelKtOrJavaMember
@@ -27,6 +28,7 @@ import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.toUElementOfType
 import org.jetbrains.uast.visitor.AbstractUastVisitor
 import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.hasComposableFunctionType
 import slack.lint.compose.util.isComposable
 import slack.lint.compose.util.slotParameters
 import slack.lint.compose.util.sourceImplementation
@@ -37,15 +39,11 @@ import slack.lint.compose.util.sourceImplementation
  * body only reads `CompositionLocal.current`, the declaration can be annotated with
  * `@ReadOnlyComposable`.
  *
- * This is conservative to avoid false positives: it only reports when no composition usage is found
- * anywhere in the body, and it skips declarations where removing the annotation would break a
- * contract (overrides, `open`/`abstract` members, interface members, `expect`/`actual`/`external`)
- * or that take a `@Composable` lambda parameter (a "slot", which is generally invoked). Reading or
- * writing a `androidx.compose.runtime.State`'s `value` is also treated as composition usage: while
- * it isn't technically a `@Composable` operation, it signals intentional use of Compose state
- * (often kept `@Composable` for a tighter recomposition scope), so we don't flag it. It can still
- * miss some removable cases (e.g., invoking a `@Composable` lambda stored in a local with an
- * inferred type), which is the safe direction.
+ * This detector only reports when the body and default argument values do not use composition.
+ * Composable calls, non-read-only composable property reads, composable function values, and State
+ * value access all count as composition usage. It also skips declarations whose annotation is part
+ * of a contract, such as overrides, overridable members, interface members, and declarations with
+ * composable slot parameters.
  */
 class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScanner {
 
@@ -205,38 +203,28 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     accept(
       object : AbstractUastVisitor() {
         override fun visitCallExpression(node: UCallExpression): Boolean {
-          if (usage != CompositionUsage.OTHER) {
-            val method = node.resolve()
-            if (method.isCompositionLocalCurrent(context)) {
-              usage = CompositionUsage.READ_ONLY
-            } else if (method.isComposable()) {
-              usage = CompositionUsage.OTHER
-            }
-          }
-          return usage == CompositionUsage.OTHER
+          return stopIf(node.compositionUsage(context))
         }
 
         // Catches @Composable property reads, e.g. a CompositionLocal's `current`.
         override fun visitSimpleNameReferenceExpression(
           node: USimpleNameReferenceExpression
         ): Boolean {
-          if (usage != CompositionUsage.OTHER) {
-            val method = node.resolve() as? PsiMethod
-            if (method.isCompositionLocalCurrent(context, node)) {
-              usage = CompositionUsage.READ_ONLY
-            } else if (method.isComposable()) {
-              usage = CompositionUsage.OTHER
-            }
-          }
-          return usage == CompositionUsage.OTHER
+          return stopIf(node.compositionUsage(context))
         }
 
         // Catches reads and writes of a State's `value` (`state.value` / `state.value = ...`).
         override fun visitQualifiedReferenceExpression(
           node: UQualifiedReferenceExpression
         ): Boolean {
-          if (usage != CompositionUsage.OTHER && node.isStateValueAccess(context)) {
-            usage = CompositionUsage.OTHER
+          return stopIf(
+            if (node.isStateValueAccess(context)) CompositionUsage.OTHER else CompositionUsage.NONE
+          )
+        }
+
+        private fun stopIf(foundCompositionUsage: CompositionUsage): Boolean {
+          if (foundCompositionUsage.ordinal > usage.ordinal) {
+            usage = foundCompositionUsage
           }
           return usage == CompositionUsage.OTHER
         }
@@ -271,6 +259,31 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
   ): Boolean {
     if (node.identifier != "current") return false
     return isCompositionLocalCurrent(context)
+  }
+
+  private fun UCallExpression.compositionUsage(context: JavaContext): CompositionUsage {
+    val method = resolve()
+    return when {
+      method.isCompositionLocalCurrent(context) -> CompositionUsage.READ_ONLY
+      method.isComposable() || invokesComposableLambda() -> CompositionUsage.OTHER
+      else -> CompositionUsage.NONE
+    }
+  }
+
+  private fun USimpleNameReferenceExpression.compositionUsage(
+    context: JavaContext
+  ): CompositionUsage {
+    val method = resolve() as? PsiMethod
+    return when {
+      method.isCompositionLocalCurrent(context, this) -> CompositionUsage.READ_ONLY
+      method.isComposable() -> CompositionUsage.OTHER
+      else -> CompositionUsage.NONE
+    }
+  }
+
+  private fun UCallExpression.invokesComposableLambda(): Boolean {
+    val callee = (sourcePsi as? KtCallExpression)?.calleeExpression ?: return false
+    return callee.hasComposableFunctionType()
   }
 
   private enum class CompositionUsage {
