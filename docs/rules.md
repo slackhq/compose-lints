@@ -478,3 +478,32 @@ LazyColumn {
 If you truly need an identity-based key and aren't targeting Kotlin Multiplatform, `java.lang.System.identityHashCode` is allowed.
 
 Related rule: [`ComposeItemKeyHashCode`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ItemKeyHashCodeDetector.kt)
+
+### Item key types must be saveable
+
+`Lazy*` layouts can persist the current `key` across configuration changes and process death (for example to restore item state stored via `rememberSaveable`). On Android that state is stored in a `Bundle`, so [the type of the key should be saveable via `Bundle`](https://developer.android.com/develop/ui/compose/lists#item-keys) - a primitive, `String`/`CharSequence`, `Serializable`, or `Parcelable`. A key whose type is none of these can crash at runtime when the key is saved and restored.
+
+So this rule flags `key` values whose type isn't saveable in lazy-layout builders (`item`, `items`, `itemsIndexed`, including extensions):
+
+```kotlin
+class CompositeKey(val a: Int, val b: String)
+
+// Don't do this: CompositeKey can't be put in a Bundle
+LazyColumn {
+    items(people, key = { CompositeKey(it.groupId, it.id) }) { /* ... */ }
+}
+
+// Do this instead: use a saveable identifier
+LazyColumn {
+    items(people, key = { "${it.groupId}-${it.id}" }) { /* ... */ }
+}
+
+// ...or make the key type Parcelable/Serializable
+@Parcelize data class CompositeKey(val a: Int, val b: String) : Parcelable
+```
+
+Scoping is by receiver type. A call is only checked when it's invoked on one of the AndroidX scopes that documents this restriction (or a subtype): `LazyListScope`, `LazyGridScope`, `LazyStaggeredGridScope`, the Wear `ScalingLazyListScope`/`TransformingLazyColumnScope`, and Glimmer's `GlimmerLazyListScope`. Both interface members and extension functions are covered, while unrelated APIs that happen to take a `key` (e.g. `Pager`) are not.
+
+The check is conservative: it only fires when the key's type resolves to a concrete class that is provably not saveable. Arrays are checked by their component type, but unresolved types, type parameters (generics), `Any`, function-typed `key` selectors, and collections (whose stdlib implementations are always `Serializable`) are left alone. The `key` argument is resolved by parameter mapping, so it's caught whether passed by name or positionally.
+
+Related rule: [`ComposeItemKeyNotSaveable`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ItemKeyNotSaveableDetector.kt)

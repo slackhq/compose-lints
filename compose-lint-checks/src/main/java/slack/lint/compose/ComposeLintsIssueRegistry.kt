@@ -28,6 +28,7 @@ class ComposeLintsIssueRegistry : IssueRegistry() {
       *CompositionLocalUsageDetector.ISSUES,
       ContentEmitterReturningValuesDetector.ISSUE,
       ItemKeyHashCodeDetector.ISSUE,
+      ItemKeyNotSaveableDetector.ISSUE,
       ModifierMissingDetector.ISSUE,
       ModifierReusedDetector.ISSUE,
       ModifierWithoutDefaultDetector.ISSUE,
