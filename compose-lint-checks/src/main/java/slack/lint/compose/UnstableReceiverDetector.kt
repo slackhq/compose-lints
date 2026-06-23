@@ -17,7 +17,6 @@ import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UTypeReferenceExpression
 import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.toUElementOfType
-import slack.lint.compose.util.MetadataJavaEvaluator
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.isStable
 import slack.lint.compose.util.returnsUnitOrVoid
@@ -52,9 +51,7 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
   }
 
   override fun visitComposable(context: JavaContext, method: UMethod) {
-    // Use a metadata-aware evaluator so value-class receivers/containers are understood even when
-    // they come from other modules compiled without source (checkDependencies=false).
-    val evaluator = MetadataJavaEvaluator(context.file.name, context.evaluator)
+    val evaluator = context.evaluator
 
     // Only Unit-returning functions can be skippable. Non-skippable functions will always be
     // recomposed regardless of the receiver type, so there's nothing actionable to report.
@@ -74,7 +71,7 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
       val receiverType: PsiType? =
         method.uastParameters.firstOrNull()?.type
           ?: receiverTypeReference.toUElementOfType<UTypeReferenceExpression>()?.type
-      if (receiverType?.isStable(evaluator) == false) {
+      if (receiverType?.isStable(evaluator, useSiteElement = receiverTypeReference) == false) {
         context.report(
           ISSUE,
           receiverTypeReference,
@@ -97,7 +94,13 @@ class UnstableReceiverDetector : ComposableFunctionDetector(), SourceCodeScanner
           ?.takeIf { it.sourcePsi is KtClass }
           ?.let(evaluator::getClassType) ?: return
 
-      if (!containingClassType.isStable(evaluator, resolveUClass = { containingClass })) {
+      if (
+        !containingClassType.isStable(
+          evaluator,
+          useSiteElement = containingClass.sourcePsi as KtClass,
+          resolveUClass = { containingClass },
+        )
+      ) {
         context.report(
           ISSUE,
           method,
