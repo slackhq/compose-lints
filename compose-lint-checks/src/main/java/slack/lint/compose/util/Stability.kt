@@ -5,8 +5,12 @@ package slack.lint.compose.util
 import com.android.tools.lint.client.api.JavaEvaluator
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiTypes
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UTypeReferenceExpression
@@ -15,7 +19,6 @@ import org.jetbrains.uast.toUElementOfType
 private const val COMPOSE_STABLE = "androidx.compose.runtime.Stable"
 private const val COMPOSE_IMMUTABLE = "androidx.compose.runtime.Immutable"
 private const val COMPOSE_STABLE_MARKER = "androidx.compose.runtime.StableMarker"
-private const val JVM_INLINE = "kotlin.jvm.JvmInline"
 
 val STABILITY_ANNOTATIONS = setOf(COMPOSE_STABLE, COMPOSE_IMMUTABLE)
 
@@ -59,6 +62,7 @@ object KnownStableConstructs {
 
 fun PsiType.isStable(
   evaluator: JavaEvaluator,
+  useSiteElement: KtElement,
   resolveUClass: () -> UClass? = { evaluator.getTypeClass(this)?.toUElementOfType<UClass>() },
 ): Boolean {
   // Primitive types
@@ -93,27 +97,30 @@ fun PsiType.isStable(
     if (isStableAnnotated) return true
   }
 
-  // A value class is stable iff its single underlying property type is stable, mirroring the
-  // Compose
-  // compiler. Most callers never reach this branch because UAST already inlines a value-class type
-  // to
-  // its underlying type before stability is checked; this covers the cases where the value-class
-  // type
-  // itself is resolved (e.g. as a containing class), including compiled cross-module classes when a
-  // [MetadataJavaEvaluator] is supplied.
-  if (evaluator.isValueClass(root)) {
+  // Value classes are stable when their underlying type is stable. UAST often erases a value class
+  // to its underlying type, but this branch handles cases where the value class itself is still
+  // visible, including compiled dependency classes.
+  if (isValueClass(root, useSiteElement)) {
     // If we can't resolve the underlying type (e.g. a compiled class with no source), assume stable
     // since value classes overwhelmingly wrap stable primitives.
-    return root.valueClassUnderlyingType?.isStable(evaluator) ?: true
+    return root.valueClassUnderlyingType?.isStable(evaluator, useSiteElement) ?: true
   }
   return false
 }
 
-private fun JavaEvaluator.isValueClass(uClass: UClass): Boolean {
-  // @JvmInline is required on (and binary-retained for) all JVM value classes, so this catches both
-  // source and compiled classes. A [MetadataJavaEvaluator] additionally reads the `value` modifier
-  // from Kotlin metadata for compiled cross-module classes (i.e. when checkDependencies=false).
-  return uClass.hasAnnotation(JVM_INLINE) || hasModifier(uClass.javaPsi, KtTokens.VALUE_KEYWORD)
+@OptIn(KaExperimentalApi::class)
+private fun PsiType.isValueClass(uClass: UClass, useSiteElement: KtElement): Boolean {
+  return analyze(useSiteElement) {
+    val useSiteSymbol =
+      when (useSiteElement) {
+        is KtClass -> useSiteElement.namedClassSymbol
+        is KtTypeReference -> useSiteElement.type.expandedSymbol as? KaNamedClassSymbol
+        else -> asKaType(useSiteElement)?.expandedSymbol as? KaNamedClassSymbol
+      }
+    useSiteSymbol?.isInline == true ||
+      ((uClass.sourcePsi as? KtClass)?.namedClassSymbol)?.isInline == true ||
+      (uClass.javaPsi.namedClassSymbol)?.isInline == true
+  }
 }
 
 /** The type of a value class's single underlying property, if resolvable from source. */

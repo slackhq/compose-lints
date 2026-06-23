@@ -5,7 +5,6 @@ package slack.lint.compose
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
-import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class UnstableReceiverDetectorTest : BaseComposeLintTest() {
@@ -227,9 +226,27 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
     lint().files(enabledIssueConfig, *commonStubs, kotlin(code)).run().expectClean()
   }
 
+  @Test
+  fun `composable extensions on compiled value class receivers report no errors`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import kotlin.time.Duration
+
+      @Composable
+      fun Duration.Render() {}
+
+      val Duration.rendered: Unit
+          @Composable get() {}
+      """
+        .trimIndent()
+
+    lint().files(enabledIssueConfig, *commonStubs, kotlin(code)).run().expectClean()
+  }
+
   // A value/inline class is stable iff its underlying property type is stable, so composable
-  // members
-  // of one (whose containing class is the receiver) shouldn't be flagged.
+  // members of one (whose containing class is the receiver) shouldn't be flagged.
   @Test
   fun `composable members of value classes report no errors`() {
     @Language("kotlin")
