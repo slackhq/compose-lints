@@ -32,27 +32,27 @@ import org.jetbrains.uast.tryResolve
 fun KtFunction.emitsContent(providedContentEmitters: Set<String>): Boolean {
   return if (toUElementOfType<UMethod>()?.isComposable == true) {
     sequence {
-        tailrec suspend fun SequenceScope<KtCallExpression>.scan(elements: List<PsiElement>) {
-          if (elements.isEmpty()) return
-          val toProcess =
-            elements
-              .mapNotNull { current ->
-                if (current is KtCallExpression) {
-                  if (current.emitExplicitlyNoContent) {
-                    null
-                  } else {
-                    yield(current)
-                    current
-                  }
+      tailrec suspend fun SequenceScope<KtCallExpression>.scan(elements: List<PsiElement>) {
+        if (elements.isEmpty()) return
+        val toProcess =
+          elements
+            .mapNotNull { current ->
+              if (current is KtCallExpression) {
+                if (current.emitExplicitlyNoContent) {
+                  null
                 } else {
+                  yield(current)
                   current
                 }
+              } else {
+                current
               }
-              .flatMap { it.children.toList() }
-          return scan(toProcess)
-        }
-        scan(listOf(this@emitsContent))
+            }
+            .flatMap { it.children.toList() }
+        return scan(toProcess)
       }
+      scan(listOf(this@emitsContent))
+    }
       .any { it.emitsContent(providedContentEmitters) }
   } else {
     false
