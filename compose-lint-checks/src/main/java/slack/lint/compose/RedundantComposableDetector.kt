@@ -28,6 +28,7 @@ import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.toUElementOfType
 import org.jetbrains.uast.visitor.AbstractUastVisitor
 import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.calleeIsComposable
 import slack.lint.compose.util.hasComposableFunctionType
 import slack.lint.compose.util.isComposable
 import slack.lint.compose.util.slotParameters
@@ -261,11 +262,22 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     return isCompositionLocalCurrent(context)
   }
 
+  /**
+   * K2-based fallback that reads @Composable from Kotlin metadata via symbol analysis. This covers
+   * binary dependencies where @Composable (AnnotationRetention.BINARY) may not be visible through
+   * the PSI layer used by [PsiMethod.isComposable].
+   */
+  private fun UCallExpression.calleeIsComposableViaK2(): Boolean {
+    val ktCall = sourcePsi as? KtCallExpression ?: return false
+    return ktCall.calleeIsComposable()
+  }
+
   private fun UCallExpression.compositionUsage(context: JavaContext): CompositionUsage {
     val method = resolve()
     return when {
       method.isCompositionLocalCurrent(context) -> CompositionUsage.READ_ONLY
-      method.isComposable() || invokesComposableLambda() -> CompositionUsage.OTHER
+      method.isComposable() || invokesComposableLambda() || calleeIsComposableViaK2() ->
+        CompositionUsage.OTHER
       else -> CompositionUsage.NONE
     }
   }

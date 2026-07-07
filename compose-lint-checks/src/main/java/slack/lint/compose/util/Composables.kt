@@ -7,6 +7,8 @@ import com.android.tools.lint.client.api.JavaEvaluator
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.resolution.singleFunctionCallOrNull
+import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
@@ -233,6 +235,22 @@ fun KtExpression.hasComposableFunctionType(): Boolean {
 private fun KaSession.isComposableFunctionType(type: KaType): Boolean {
   val expandedType = type.fullyExpandedType
   return expandedType is KaFunctionType && ComposableClassId in expandedType.annotations
+}
+
+/**
+ * Returns true if this call expression invokes a function whose Kotlin symbol is annotated with
+ * @Composable, using K2 analysis to read from Kotlin metadata.
+ *
+ * This is a more reliable check than the PSI-based approach for binary dependencies where
+ * @Composable (which has AnnotationRetention.BINARY) may not be visible through the PSI layer,
+ * e.g. in class files compiled with the Compose compiler plugin.
+ */
+fun KtCallExpression.calleeIsComposable(): Boolean {
+  return analyze(this) {
+    val call = this@calleeIsComposable.resolveToCall()?.singleFunctionCallOrNull()
+      ?: return@analyze false
+    ComposableClassId in call.partiallyAppliedSymbol.symbol.annotations
+  }
 }
 
 val KtCallableDeclaration.isModifierReceiver: Boolean
