@@ -23,7 +23,7 @@ import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.definedInInterface
 import slack.lint.compose.util.findAllParameterReferences
 import slack.lint.compose.util.isActual
-import slack.lint.compose.util.isComposable
+import slack.lint.compose.util.isComposableCall
 import slack.lint.compose.util.isOverride
 import slack.lint.compose.util.isRestartableEffect
 import slack.lint.compose.util.sourceImplementation
@@ -110,8 +110,8 @@ class ViewModelForwardingDetector : ComposableFunctionDetector(), SourceCodeScan
   private fun KtCallExpression.isLikelyComposableCall(): Boolean {
     val capitalized = calleeExpression?.unwrapParenthesis()?.text?.firstOrNull()?.isUpperCase()
     if (capitalized != true) return false
-    val resolved = toUElementOfType<UCallExpression>()?.resolve() ?: return true
-    val resolvedMethod = resolved.toUElementOfType<UMethod>() ?: return true
-    return resolvedMethod.isComposable
+    val call = toUElementOfType<UCallExpression>() ?: return true
+    if (call.resolve() == null) return true
+    return call.isComposableCall
   }
 }

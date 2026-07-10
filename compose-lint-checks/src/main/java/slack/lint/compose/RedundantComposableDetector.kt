@@ -25,11 +25,12 @@ import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UQualifiedReferenceExpression
 import org.jetbrains.uast.USimpleNameReferenceExpression
 import org.jetbrains.uast.getContainingUClass
-import org.jetbrains.uast.toUElementOfType
 import org.jetbrains.uast.visitor.AbstractUastVisitor
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.hasComposableFunctionType
+import slack.lint.compose.util.isComposableCall
 import slack.lint.compose.util.isComposable
+import slack.lint.compose.util.isComposableMethod
 import slack.lint.compose.util.slotParameters
 import slack.lint.compose.util.sourceImplementation
 
@@ -240,9 +241,6 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     return context.evaluator.implementsInterface(receiverClass, STATE, /* strict= */ false)
   }
 
-  private fun PsiMethod?.isComposable(): Boolean =
-    this?.toUElementOfType<UMethod>()?.isComposable == true
-
   private fun PsiMethod?.isCompositionLocalCurrent(context: JavaContext): Boolean {
     if (this == null || name != "getCurrent") return false
     val containingClass = containingClass ?: return false
@@ -265,7 +263,7 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     val method = resolve()
     return when {
       method.isCompositionLocalCurrent(context) -> CompositionUsage.READ_ONLY
-      method.isComposable() || invokesComposableLambda() -> CompositionUsage.OTHER
+      isComposableCall || invokesComposableLambda() -> CompositionUsage.OTHER
       else -> CompositionUsage.NONE
     }
   }
@@ -276,7 +274,7 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     val method = resolve() as? PsiMethod
     return when {
       method.isCompositionLocalCurrent(context, this) -> CompositionUsage.READ_ONLY
-      method.isComposable() -> CompositionUsage.OTHER
+      method.isComposableMethod -> CompositionUsage.OTHER
       else -> CompositionUsage.NONE
     }
   }
