@@ -36,9 +36,67 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
         override var value: T
       }
 
+      fun <T> derivedStateOf(calculation: () -> T): State<T> = error("stub")
+
+      @Suppress("ComposeRedundantComposable")
+      @Composable
+      inline fun <T> remember(key1: Any?, crossinline calculation: () -> T): T = error("stub")
+
       @Composable external fun Text(text: String)
       """
         .trimIndent()
+    )
+
+  private val unitStubs =
+    kotlin(
+      """
+      package androidx.compose.ui.unit
+
+      class Dp(val value: Int)
+
+      val Int.dp: Dp
+        get() = Dp(this)
+      """
+        .trimIndent()
+    )
+
+  private val issue574Stubs =
+    arrayOf(
+      kotlin(
+        """
+        package androidx.compose.ui
+
+        interface Modifier {
+          companion object : Modifier
+        }
+
+        object Alignment {
+          val CenterVertically: Any = Any()
+        }
+        """
+          .trimIndent()
+      ),
+      kotlin(
+        """
+        package androidx.compose.foundation.layout
+
+        import androidx.compose.runtime.Composable
+        import androidx.compose.ui.Modifier
+        import androidx.compose.ui.unit.Dp
+
+        @Composable
+        external fun Row(
+          modifier: Modifier = Modifier,
+          verticalAlignment: Any? = null,
+          content: @Composable () -> Unit,
+        )
+
+        @Composable external fun Spacer(modifier: Modifier = Modifier)
+
+        fun Modifier.padding(end: Dp): Modifier = this
+        """
+          .trimIndent()
+      ),
     )
 
   override fun getDetector(): Detector = RedundantComposableDetector()
@@ -187,6 +245,112 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
       }
       """
         .trimIndent()
+    lint().files(stubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `no errors when inline composable call is used`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.State
+      import androidx.compose.runtime.derivedStateOf
+      import androidx.compose.runtime.remember
+      import androidx.compose.ui.unit.Dp
+      import androidx.compose.ui.unit.dp
+
+      enum class SampleState {
+        ONE,
+        TWO,
+      }
+
+      @Composable
+      fun rememberCollapsed(
+        state: SampleState,
+        contentHeight: Dp,
+      ): State<Dp> {
+        return remember(contentHeight) {
+          derivedStateOf {
+            when (state) {
+              SampleState.ONE -> 84.dp
+              SampleState.TWO -> 88.dp
+            }
+          }
+        }
+      }
+      """
+        .trimIndent()
+
+    lint()
+      .files(stubs, unitStubs, kotlin(code).to("RememberCollapsed.kt"))
+      .isolated("src/RememberCollapsed.kt")
+      .run()
+      .expectClean()
+  }
+
+  // Exact IDE-only fixture from #574. The local-call test below is the unit-host negative control
+  // for the same UAST resolution fallback.
+  @Test
+  fun `issue 574 ProgressSlider is not redundant`() {
+    @Language("kotlin")
+    val code =
+      """
+      package com.example.myapplication
+
+      import androidx.compose.foundation.layout.Row
+      import androidx.compose.foundation.layout.Spacer
+      import androidx.compose.foundation.layout.padding
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Alignment
+      import androidx.compose.ui.Modifier
+      import androidx.compose.ui.unit.dp
+
+      @Composable
+      internal fun ProgressSlider(
+        stepsCount: Int,
+        modifier: Modifier = Modifier,
+      ) {
+        Row(
+          modifier = modifier,
+          verticalAlignment = Alignment.CenterVertically,
+        ) {
+          for (i in 0 until stepsCount) {
+            Spacer(
+              modifier = Modifier.padding(end = if (i < stepsCount - 1) 24.dp else 0.dp),
+            )
+          }
+        }
+      }
+      """
+        .trimIndent()
+
+    lint()
+      .files(stubs, unitStubs, *issue574Stubs, kotlin(code).to("ProgressSlider.kt"))
+      .isolated("src/ProgressSlider.kt")
+      .run()
+      .expectClean()
+  }
+
+  @Test
+  fun `no errors when UAST cannot resolve a local composable call`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      @Composable
+      fun outer() {
+        @Composable
+        fun local() {
+          println("local")
+        }
+
+        local()
+      }
+      """
+        .trimIndent()
+
     lint().files(stubs, kotlin(code)).run().expectClean()
   }
 
