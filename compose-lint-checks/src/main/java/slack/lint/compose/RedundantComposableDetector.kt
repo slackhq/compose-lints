@@ -29,7 +29,6 @@ import org.jetbrains.uast.visitor.AbstractUastVisitor
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.hasComposableFunctionType
 import slack.lint.compose.util.isComposableCall
-import slack.lint.compose.util.isComposable
 import slack.lint.compose.util.isComposableMethod
 import slack.lint.compose.util.slotParameters
 import slack.lint.compose.util.sourceImplementation

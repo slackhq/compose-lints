@@ -23,7 +23,6 @@ import org.jetbrains.uast.USwitchExpression
 import org.jetbrains.uast.UThrowExpression
 import org.jetbrains.uast.kotlin.KotlinLocalFunctionULambdaExpression
 import org.jetbrains.uast.kotlin.KotlinUReturnExpression
-import org.jetbrains.uast.toUElementOfType
 import org.jetbrains.uast.visitor.AbstractUastVisitor
 import slack.lint.compose.util.isComposableCall
 
