@@ -23,9 +23,8 @@ import org.jetbrains.uast.USwitchExpression
 import org.jetbrains.uast.UThrowExpression
 import org.jetbrains.uast.kotlin.KotlinLocalFunctionULambdaExpression
 import org.jetbrains.uast.kotlin.KotlinUReturnExpression
-import org.jetbrains.uast.toUElementOfType
 import org.jetbrains.uast.visitor.AbstractUastVisitor
-import slack.lint.compose.util.isComposable
+import slack.lint.compose.util.isComposableCall
 
 /**
  * **Code flow analysis** that identifies execution paths within a method that read the `modifier`
@@ -325,8 +324,7 @@ private fun UMethod.toSimplifiedCfaAst(references: Set<PsiElement>): CfaBlock {
       override fun visitCallExpression(node: UCallExpression): Boolean {
         val ktCallExpression = node.sourcePsi
         if (ktCallExpression is KtCallExpression && ktCallExpression.isUsingModifiers(references)) {
-          val isComposable = (node.resolve().toUElementOfType<UMethod>())?.isComposable ?: false
-          if (isComposable) {
+          if (node.isComposableCall) {
             val callNode = CfaCall(ktCallExpression)
             blockStack.addNode(callNode)
           }
