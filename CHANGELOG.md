@@ -4,6 +4,7 @@ Changelog
 **Unreleased**
 --------------
 
+- **New**: Add `ComposeItemKeyNotSaveable` to flag `key` values in `Lazy*` layout builders whose type can't be saved to a `Bundle` on Android.
 - **Enhancement**: Suggest just annotating with `@ReadOnlyComposable` if a function is only `@Composable` to access composition locals.
 - **Fix**: Fix false positive in `ComposeRedundantComposable` when invoking composable function parameters in the body.
 - **Fix**: Fix IDE false positives in `ComposeRedundantComposable` when resolving calls to library composables.
