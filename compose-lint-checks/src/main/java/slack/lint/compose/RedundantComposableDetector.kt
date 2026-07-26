@@ -12,9 +12,19 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.components.resolveToCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.singleVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.symbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isTopLevelKtOrJavaMember
@@ -52,6 +62,8 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     private const val COMPOSITION_LOCAL = "androidx.compose.runtime.CompositionLocal"
     private const val READ_ONLY_COMPOSABLE = "androidx.compose.runtime.ReadOnlyComposable"
     private const val STATE = "androidx.compose.runtime.State"
+    private val COMPOSABLE_CLASS_ID = ClassId.topLevel(FqName(COMPOSABLE))
+    private val READ_ONLY_COMPOSABLE_CLASS_ID = ClassId.topLevel(FqName(READ_ONLY_COMPOSABLE))
 
     val ISSUE =
       Issue.create(
@@ -274,7 +286,26 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     return when {
       method.isCompositionLocalCurrent(context, this) -> CompositionUsage.READ_ONLY
       method.isComposableMethod -> CompositionUsage.OTHER
-      else -> CompositionUsage.NONE
+      else -> resolvesToComposablePropertyUsage()
+    }
+  }
+
+  private fun USimpleNameReferenceExpression.resolvesToComposablePropertyUsage(): CompositionUsage {
+    val reference = sourcePsi as? KtElement ?: return CompositionUsage.NONE
+    return analyze(reference) {
+      val access =
+        reference.resolveToCall()?.singleVariableAccessCall() as? KaSimpleVariableAccessCall
+          ?: return@analyze CompositionUsage.NONE
+      if (access.simpleAccess !is KaSimpleVariableAccess.Read) {
+        return@analyze CompositionUsage.NONE
+      }
+      val getter =
+        (access.symbol as? KaPropertySymbol)?.getter ?: return@analyze CompositionUsage.NONE
+      when {
+        COMPOSABLE_CLASS_ID !in getter.annotations -> CompositionUsage.NONE
+        READ_ONLY_COMPOSABLE_CLASS_ID in getter.annotations -> CompositionUsage.READ_ONLY
+        else -> CompositionUsage.OTHER
+      }
     }
   }
 
