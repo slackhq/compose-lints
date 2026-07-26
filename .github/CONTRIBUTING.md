@@ -9,6 +9,14 @@ The primary project is `compose-lint-checks`.
 
 Kotlin should be used for more idiomatic use with lint APIs.
 
+## Formatting
+
+This project uses [Kempt](https://github.com/ZacSweers/kempt) for Kotlin formatting, whitespace cleanup, and license headers. After checking out the repository, run `kempt install-hook` to install the pre-commit hook for your local checkout.
+
+Run `kempt format` to format the repository and `kempt check` to verify formatting without changing files.
+
+Kempt applies the standard Salesforce license header from `config/license-header.txt`. Kotlin files adapted from external projects that need to preserve their existing headers must be listed in `config/license-excludes-kt.txt`.
+
 ## Lint Documentation
 
 [The Android Lint API Guide](https://googlesamples.github.io/android-custom-lint-rules/book.html) provides an excellent overview of lint's purpose, how it works, and how to author custom checks.
