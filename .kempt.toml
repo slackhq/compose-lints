@@ -1,0 +1,25 @@
+# kempt configuration: https://github.com/ZacSweers/kempt
+# Run `kempt --help` to see all options.
+
+[ktfmt]
+version = "0.64"
+
+[license-header]
+file = "config/license-header.txt"
+
+[ktfmt.license-header]
+excludes = "config/license-excludes-kt.txt"
+
+[whitespace.paths]
+include = [
+  "**/*.kt",
+  "**/*.kts",
+  "CHANGELOG.md",
+  "README.md",
+  "RELEASING.md",
+  "SECURITY.md",
+  ".gitignore",
+]
+
+[hook]
+mode = "format"   # format | check
