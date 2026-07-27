@@ -4,6 +4,8 @@ Changelog
 **Unreleased**
 --------------
 
+- **Fix**: Fix false positives in `ComposeRedundantComposable` when reading composable properties such as `CompositionLocal.current` in commonMain code.
+
 1.5.3
 -----
 

@@ -222,6 +222,45 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
+  fun `informational for expect read-only composable property getter`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.ReadOnlyComposable
+
+      expect class ProvidableCompositionLocal<T> {
+        val current: T
+          @ReadOnlyComposable @Composable get
+      }
+
+      expect val LocalAnsweringNavigatorProvider: ProvidableCompositionLocal<Any?>
+
+      @Composable
+      fun answeringNavigationAvailable(): Boolean =
+        LocalAnsweringNavigatorProvider.current != null
+      """
+        .trimIndent()
+
+    // Standalone expect declarations model a commonMain dependency in the lint unit harness.
+    lint()
+      .files(stubs, kotlin(code))
+      .allowCompilationErrors(true)
+      .run()
+      .expect(
+        """
+        src/ProvidableCompositionLocal.kt:11: Hint: This declaration only uses the composition to read CompositionLocal values, so it can be annotated with @ReadOnlyComposable to avoid generating a group around its body.
+
+        See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeReadOnlyComposable]
+        @Composable
+        ~~~~~~~~~~~
+        0 errors, 0 warnings, 1 hint
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun `no errors when composition is used`() {
     @Language("kotlin")
     val code =
