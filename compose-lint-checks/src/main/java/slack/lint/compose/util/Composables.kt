@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionType
+import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtTypeAlias
+import org.jetbrains.kotlin.psi.KtTypeElement
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
@@ -210,8 +212,8 @@ fun UParameter.isSlotParameter(): Boolean {
     return true
   }
 
-  return if (typeRef.isTypeAlias()) {
-    // If it's a typealias, fall through to a more thorough check
+  return if (typeRef.typeElement.unwrapNullableType() is KtFunctionType || typeRef.isTypeAlias()) {
+    // Nullable/parenthesized function types and typealiases require semantic annotation lookup.
     analyze(ktParam) { isComposableFunctionType(ktParam.symbol.returnType) }
   } else {
     false
@@ -219,8 +221,15 @@ fun UParameter.isSlotParameter(): Boolean {
 }
 
 private fun KtTypeReference.isTypeAlias(): Boolean {
-  return (typeElement as? KtUserType)?.referenceExpression?.references?.firstOrNull()?.resolve() is
-    KtTypeAlias
+  return (typeElement.unwrapNullableType() as? KtUserType)
+    ?.referenceExpression
+    ?.references
+    ?.firstOrNull()
+    ?.resolve() is KtTypeAlias
+}
+
+private tailrec fun KtTypeElement?.unwrapNullableType(): KtTypeElement? {
+  return if (this is KtNullableType) innerType.unwrapNullableType() else this
 }
 
 fun KtExpression.hasComposableFunctionType(): Boolean {
