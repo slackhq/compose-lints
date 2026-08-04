@@ -17,6 +17,8 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
       """
       package androidx.compose.runtime
 
+      import kotlin.reflect.KProperty
+
       annotation class Composable
 
       annotation class ReadOnlyComposable
@@ -36,6 +38,8 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
         override var value: T
       }
 
+      operator fun <T> State<T>.getValue(thisObj: Any?, property: KProperty<*>): T = value
+
       fun <T> derivedStateOf(calculation: () -> T): State<T> = error("stub")
 
       @Suppress("ComposeRedundantComposable")
@@ -43,6 +47,23 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
       inline fun <T> remember(key1: Any?, crossinline calculation: () -> T): T = error("stub")
 
       @Composable external fun Text(text: String)
+      """
+        .trimIndent()
+    )
+
+  private val annotationStubs =
+    kotlin(
+      """
+      package example
+
+      @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
+      annotation class MyAnnotation
+
+      @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
+      annotation class MyOtherAnnotation
+
+      @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE)
+      annotation class NotComposable
       """
         .trimIndent()
     )
@@ -469,6 +490,56 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
+  fun `no errors when reading delegated Compose State`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.MutableState
+      import androidx.compose.runtime.State
+      import androidx.compose.runtime.getValue
+
+      @Composable
+      fun readsState(state: State<Int>) {
+        val value by state
+        println(value)
+      }
+
+      @Composable
+      fun readsMutableState(state: MutableState<Int>) {
+        val value by state
+        println(value)
+      }
+      """
+        .trimIndent()
+
+    lint().files(stubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `ordinary property delegates do not count as Compose State`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import kotlin.reflect.KProperty
+
+      class OrdinaryDelegate {
+        operator fun getValue(thisObj: Any?, property: KProperty<*>): Int = 1
+      }
+
+      @Composable
+      fun readsOrdinaryDelegate(delegate: OrdinaryDelegate) {
+        val value by delegate
+        println(value)
+      }
+      """
+        .trimIndent()
+
+    lint().files(stubs, kotlin(code)).run().expectWarningCount(1)
+  }
+
+  @Test
   fun `no errors for composables that take a composable slot`() {
     @Language("kotlin")
     val code =
@@ -482,6 +553,63 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
       """
         .trimIndent()
     lint().files(stubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `no errors for nullable and parenthesized composable slots`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      @Composable
+      fun nullableSlot(content: (@Composable () -> Unit)?) {
+        println("doesn't even call content")
+      }
+
+      @Composable
+      fun parenthesizedSlot(content: (@Composable () -> Unit)) {
+        println("doesn't even call content")
+      }
+
+      @Composable
+      fun nestedNullableSlot(content: ((@Composable () -> Unit)?)?) {
+        println("doesn't even call content")
+      }
+
+      typealias NullableComposableSlot = (@Composable () -> Unit)?
+
+      @Composable
+      fun nullableTypealiasSlot(content: NullableComposableSlot) {
+        println("doesn't even call content")
+      }
+      """
+        .trimIndent()
+
+    lint().files(stubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `ordinary nullable lambdas and unrelated annotations are not composable slots`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import example.NotComposable
+
+      @Composable
+      fun ordinaryNullableSlot(content: (() -> Unit)?) {
+        println("doesn't even call content")
+      }
+
+      @Composable
+      fun unrelatedAnnotatedSlot(content: (@NotComposable () -> Unit)?) {
+        println("doesn't even call content")
+      }
+      """
+        .trimIndent()
+
+    lint().files(stubs, annotationStubs, kotlin(code)).run().expectWarningCount(2)
   }
 
   @Test
@@ -551,5 +679,191 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
       """
         .trimIndent()
     lint().files(stubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `no errors when reading top-level and member composable properties`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Text
+
+      val topLevelContent: Int
+        @Composable get() {
+          Text("top-level")
+          return 1
+        }
+
+      class ContentHolder {
+        val memberContent: Int
+          @Composable get() {
+            Text("member")
+            return 2
+          }
+      }
+
+      @Composable
+      fun readsTopLevelProperty() {
+        println(topLevelContent)
+      }
+
+      @Composable
+      fun readsMemberProperty(holder: ContentHolder) {
+        println(holder.memberContent)
+      }
+      """
+        .trimIndent()
+
+    lint().files(stubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `ordinary property getters do not count as composition usage`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      val ordinaryProperty: Int
+        get() = 1
+
+      @Composable
+      fun readsOrdinaryProperty() {
+        println(ordinaryProperty)
+      }
+      """
+        .trimIndent()
+
+    lint().files(stubs, kotlin(code)).run().expectWarningCount(1)
+  }
+
+  @Test
+  fun `configured annotations only ignore matching redundant composables`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import example.MyAnnotation
+      import example.MyOtherAnnotation
+      import example.NotComposable
+
+      @MyAnnotation
+      @Composable
+      fun annotated() {
+        println("annotated")
+      }
+
+      @MyOtherAnnotation
+      @Composable
+      fun alsoAnnotated() {
+        println("also annotated")
+      }
+
+      @NotComposable
+      @Composable
+      fun unconfigured() {
+        println("unconfigured")
+      }
+
+      @Composable
+      fun ordinary() {
+        println("ordinary")
+      }
+
+      @MyAnnotation
+      object AnnotatedEntryPoint {
+        @Composable
+        operator fun invoke() {
+          println("annotated entry point")
+        }
+
+        @Composable
+        fun unrelated() {
+          println("ordinary member")
+        }
+      }
+
+      @MyAnnotation
+      class AnnotatedClass {
+        @Composable
+        operator fun invoke() {
+          println("ordinary class member")
+        }
+      }
+
+      @MyAnnotation
+      object ValueReturningEntryPoint {
+        @Composable
+        operator fun invoke(): String = "ordinary value-returning member"
+      }
+      """
+        .trimIndent()
+
+    val configuration =
+      xml(
+        "lint.xml",
+        """
+        <lint>
+          <issue id="ComposeRedundantComposable">
+            <option
+              name="ignore-annotated"
+              value="example.MyAnnotation,example.MyOtherAnnotation" />
+          </issue>
+        </lint>
+        """
+          .trimIndent(),
+      )
+
+    lint().files(stubs, annotationStubs, kotlin(code), configuration).run().expectWarningCount(5)
+  }
+
+  @Test
+  fun `ignored annotations do not suppress read-only composable suggestions`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.CompositionLocal
+      import androidx.compose.runtime.compositionLocalOf
+      import example.MyAnnotation
+
+      val LocalThing: CompositionLocal<Int> = compositionLocalOf { 0 }
+
+      @MyAnnotation
+      @Composable
+      fun readsCompositionLocal() {
+        println(LocalThing.current)
+      }
+      """
+        .trimIndent()
+
+    val configuration =
+      xml(
+        "lint.xml",
+        """
+        <lint>
+          <issue id="ComposeRedundantComposable">
+            <option name="ignore-annotated" value="example.MyAnnotation" />
+          </issue>
+        </lint>
+        """
+          .trimIndent(),
+      )
+
+    lint()
+      .files(stubs, annotationStubs, kotlin(code), configuration)
+      .run()
+      .expect(
+        """
+        src/test.kt:9: Hint: This declaration only uses the composition to read CompositionLocal values, so it can be annotated with @ReadOnlyComposable to avoid generating a group around its body.
+
+        See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeReadOnlyComposable]
+        @Composable
+        ~~~~~~~~~~~
+        0 errors, 0 warnings, 1 hint
+        """
+          .trimIndent()
+      )
   }
 }
