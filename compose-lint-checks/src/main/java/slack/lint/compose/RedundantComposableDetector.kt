@@ -9,9 +9,13 @@ import com.android.tools.lint.detector.api.LintFix
 import com.android.tools.lint.detector.api.Location
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
+import com.android.tools.lint.detector.api.StringOption
 import com.android.tools.lint.detector.api.TextFormat
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiType
+import com.intellij.psi.PsiTypes
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.components.resolveToCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess
@@ -26,6 +30,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isTopLevelKtOrJavaMember
 import org.jetbrains.uast.UAnnotation
@@ -37,6 +44,7 @@ import org.jetbrains.uast.USimpleNameReferenceExpression
 import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.visitor.AbstractUastVisitor
 import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.StringSetLintOption
 import slack.lint.compose.util.hasComposableFunctionType
 import slack.lint.compose.util.isComposableCall
 import slack.lint.compose.util.isComposableMethod
@@ -55,7 +63,11 @@ import slack.lint.compose.util.sourceImplementation
  * of a contract, such as overrides, overridable members, interface members, and declarations with
  * composable slot parameters.
  */
-class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScanner {
+class RedundantComposableDetector
+@JvmOverloads
+constructor(
+  private val ignoredAnnotations: StringSetLintOption = StringSetLintOption(IGNORE_ANNOTATED)
+) : ComposableFunctionDetector(ignoredAnnotations to ISSUE), SourceCodeScanner {
 
   companion object {
     private const val COMPOSABLE = "androidx.compose.runtime.Composable"
@@ -65,13 +77,21 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     private val COMPOSABLE_CLASS_ID = ClassId.topLevel(FqName(COMPOSABLE))
     private val READ_ONLY_COMPOSABLE_CLASS_ID = ClassId.topLevel(FqName(READ_ONLY_COMPOSABLE))
 
+    internal val IGNORE_ANNOTATED =
+      StringOption(
+        "ignore-annotated",
+        "A comma-separated list of fully qualified annotations on composables to ignore.",
+        null,
+        "Annotations on an object only ignore its Unit-returning composable operator invoke entry point.",
+      )
+
     val ISSUE =
       Issue.create(
-        id = "ComposeRedundantComposable",
-        briefDescription = "Unnecessary @Composable annotation",
-        explanation =
-          issueText(
-            """
+          id = "ComposeRedundantComposable",
+          briefDescription = "Unnecessary @Composable annotation",
+          explanation =
+            issueText(
+              """
             This declaration is annotated with `@Composable` but doesn't call any other
             `@Composable` functions or read any `@Composable` properties (like a
             `CompositionLocal`'s `current`), so it doesn't use the composition and the
@@ -79,12 +99,13 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
 
             See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information.
             """
-          ),
-        category = Category.PRODUCTIVITY,
-        priority = Priorities.NORMAL,
-        severity = Severity.WARNING,
-        implementation = sourceImplementation<RedundantComposableDetector>(),
-      )
+            ),
+          category = Category.PRODUCTIVITY,
+          priority = Priorities.NORMAL,
+          severity = Severity.WARNING,
+          implementation = sourceImplementation<RedundantComposableDetector>(),
+        )
+        .setOptions(listOf(IGNORE_ANNOTATED))
 
     val READ_ONLY_ISSUE =
       Issue.create(
@@ -135,13 +156,15 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     val location = annotation?.let(context::getLocation) ?: context.getNameLocation(method)
     when (bodyUsage) {
       CompositionUsage.NONE ->
-        context.report(
-          ISSUE,
-          annotation ?: method,
-          location,
-          ISSUE.getExplanation(TextFormat.TEXT),
-          annotation?.let { buildRemoveFix(context, it) },
-        )
+        if (!method.hasIgnoredAnnotation()) {
+          context.report(
+            ISSUE,
+            annotation ?: method,
+            location,
+            ISSUE.getExplanation(TextFormat.TEXT),
+            annotation?.let { buildRemoveFix(context, it) },
+          )
+        }
       CompositionUsage.READ_ONLY ->
         if (!method.hasAnnotation(READ_ONLY_COMPOSABLE)) {
           context.report(
@@ -154,6 +177,21 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
         }
       CompositionUsage.OTHER -> return
     }
+  }
+
+  /** Whether this declaration is explicitly excluded from the redundant-composable issue. */
+  private fun UMethod.hasIgnoredAnnotation(): Boolean {
+    if (ignoredAnnotations.value.any { hasAnnotation(it) }) return true
+
+    val containingClass = getContainingUClass() ?: return false // Only members have a container.
+    return name == "invoke" && // Only match the object's invocation entry point.
+      returnType == PsiTypes.voidType() && // Exclude Unit-returning functions only.
+      // Require an actual operator, not just a function named invoke.
+      (sourcePsi as? KtNamedFunction)?.hasModifier(KtTokens.OPERATOR_KEYWORD) == true &&
+      containingClass.sourcePsi is KtObjectDeclaration && // Classes do not qualify.
+      ignoredAnnotations.value.any { // The object itself must have an ignored annotation.
+        containingClass.findAnnotation(it) != null
+      }
   }
 
   /** Quickfix that removes the redundant `@Composable` annotation (and its trailing whitespace). */
@@ -248,8 +286,30 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
   /** Whether [this] is an access (read or write) of a Compose [State]'s `value` property. */
   private fun UQualifiedReferenceExpression.isStateValueAccess(context: JavaContext): Boolean {
     if ((selector as? USimpleNameReferenceExpression)?.identifier != "value") return false
-    val receiverClass = context.evaluator.getTypeClass(receiver.getExpressionType()) ?: return false
+    return receiver.getExpressionType().isComposeState(context)
+  }
+
+  private fun PsiType?.isComposeState(context: JavaContext): Boolean {
+    val receiverClass = context.evaluator.getTypeClass(this) ?: return false
     return context.evaluator.implementsInterface(receiverClass, STATE, /* strict= */ false)
+  }
+
+  /**
+   * Detect delegated reads without matching unrelated operators that happen to be named getValue.
+   */
+  private fun UCallExpression.isStateDelegateGetValue(context: JavaContext): Boolean {
+    if (methodName != "getValue") return false
+    return sequenceOf(receiver, *valueArguments.toTypedArray()).any {
+      it?.getExpressionType().isComposeState(context)
+    }
+  }
+
+  private fun USimpleNameReferenceExpression.isDelegatedStateRead(context: JavaContext): Boolean {
+    val source = sourcePsi ?: return false
+    val property = PsiTreeUtil.getParentOfType(source, KtProperty::class.java) ?: return false
+    val delegateExpression = property.delegateExpression ?: return false
+    return PsiTreeUtil.isAncestor(delegateExpression, source, /* strict= */ false) &&
+      getExpressionType().isComposeState(context)
   }
 
   private fun PsiMethod?.isCompositionLocalCurrent(context: JavaContext): Boolean {
@@ -274,7 +334,8 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     val method = resolve()
     return when {
       method.isCompositionLocalCurrent(context) -> CompositionUsage.READ_ONLY
-      isComposableCall || invokesComposableLambda() -> CompositionUsage.OTHER
+      isComposableCall || invokesComposableLambda() || isStateDelegateGetValue(context) ->
+        CompositionUsage.OTHER
       else -> CompositionUsage.NONE
     }
   }
@@ -285,7 +346,7 @@ class RedundantComposableDetector : ComposableFunctionDetector(), SourceCodeScan
     val method = resolve() as? PsiMethod
     return when {
       method.isCompositionLocalCurrent(context, this) -> CompositionUsage.READ_ONLY
-      method.isComposableMethod -> CompositionUsage.OTHER
+      method.isComposableMethod || isDelegatedStateRead(context) -> CompositionUsage.OTHER
       else -> resolvesToComposablePropertyUsage()
     }
   }
