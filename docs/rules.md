@@ -111,6 +111,17 @@ Removing the redundant annotation drops the unneeded composer plumbing and makes
 !!! note "Library authors"
     A trivially-bodied public composable can be intentionally `@Composable` as part of your API contract; removing it would be a source/binary-incompatible change. Suppress or disable this rule for such declarations.
 
+!!! note "Configuration"
+    The `ignore-annotated` option provides an escape hatch for this check, which can be useful when a codebase generates other contracts based on a composable declaration. Specify a comma-separated list of fully qualified annotation names in `lint.xml`:
+
+    ```xml
+    <issue id="ComposeRedundantComposable">
+       <option
+          name="ignore-annotated"
+          value="example.MyAnnotation,example.MyOtherAnnotation" />
+    </issue>
+    ```
+
 Related rule: [`ComposeRedundantComposable`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/RedundantComposableDetector.kt)
 
 ### Do not emit content and return a result

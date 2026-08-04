@@ -4,6 +4,8 @@ Changelog
 **Unreleased**
 --------------
 
+- **Enhancement**: Add an `ignore-annotated` option to `ComposeRedundantComposable` as an escape hatch for this check, which can be useful for scenarios where a codebase may generate other contracts based on a composable declaration.
+- **Fix**: Fix false positives in `ComposeRedundantComposable` for nullable composable slots and delegated Compose `State` reads.
 - **Fix**: Fix false positives in `ComposeRedundantComposable` when reading composable properties such as `CompositionLocal.current` in commonMain code.
 
 1.5.3
