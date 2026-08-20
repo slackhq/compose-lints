@@ -47,6 +47,47 @@ class ModifierComposedDetectorTest : BaseComposeLintTest() {
   override fun getIssues(): List<Issue> = listOf(ModifierComposedDetector.ISSUE)
 
   @Test
+  fun testDocumentationExample() {
+    @Language("kotlin")
+    val code =
+      """
+        package test
+
+      import androidx.compose.ui.composed
+      import androidx.compose.ui.Modifier
+
+      fun Modifier.something1() = Modifier.composed { }
+      fun Modifier.something2() = composed { }
+      fun Modifier.something3() = somethingElse()
+      """
+        .trimIndent()
+
+    lint()
+      .files(modifierStub, composed, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/test/test.kt:6: Error: Modifier.composed { ... } is no longer recommended due to performance issues.
+
+        You should use the Modifier.Node API instead, as it was designed from the ground up to be far more performant than composed modifiers.
+
+        See https://slackhq.github.io/compose-lints/rules/#migrate-to-modifiernode for more information. [ComposeModifierComposed]
+        fun Modifier.something1() = Modifier.composed { }
+                                    ~~~~~~~~~~~~~~~~~~~~~
+        src/test/test.kt:7: Error: Modifier.composed { ... } is no longer recommended due to performance issues.
+
+        You should use the Modifier.Node API instead, as it was designed from the ground up to be far more performant than composed modifiers.
+
+        See https://slackhq.github.io/compose-lints/rules/#migrate-to-modifiernode for more information. [ComposeModifierComposed]
+        fun Modifier.something2() = composed { }
+                                    ~~~~~~~~~~~~
+        2 errors, 0 warnings
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun `errors when a composable Modifier extension is detected`() {
     @Language("kotlin")
     val code =

@@ -68,6 +68,41 @@ class ItemKeyHashCodeDetectorTest : BaseComposeLintTest() {
   override fun getIssues(): List<Issue> = listOf(ItemKeyHashCodeDetector.ISSUE)
 
   @Test
+  fun testDocumentationExample() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.foundation.lazy.LazyColumn
+      import androidx.compose.foundation.lazy.items
+
+      data class Item(val id: String)
+
+      @Composable
+      fun Content(list: List<Item>) {
+        LazyColumn {
+          items(list, key = { it.hashCode() }) {}
+        }
+      }
+      """
+        .trimIndent()
+    lint()
+      .files(*commonStubs, lazyStub, pagerStub, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/Item.kt:10: Warning: Item keys in Lazy*/Pager/etc. layouts must be unique, but hashCode() is never guaranteed to be unique. Lazy* layouts throw at runtime when they encounter duplicate keys, so a hashCode-based key can crash as soon as data with a colliding hash comes along. Use a genuinely unique, stable identifier instead (e.g. a server-provided id).
+
+        See https://slackhq.github.io/compose-lints/rules/#dont-use-hashcode-as-a-key for more information. [ComposeItemKeyHashCode]
+            items(list, key = { it.hashCode() }) {}
+                                ~~~~~~~~~~~~~
+        0 errors, 1 warnings
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun `errors when hashCode is used in a key`() {
     @Language("kotlin")
     val code =

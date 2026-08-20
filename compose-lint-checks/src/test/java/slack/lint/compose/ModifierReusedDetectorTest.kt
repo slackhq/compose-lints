@@ -24,6 +24,44 @@ class ModifierReusedDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
+  fun testDocumentationExample() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+
+      @Composable
+      fun Something(modifier: Modifier) {
+          Row(modifier) {
+              OtherComposable(modifier)
+          }
+      }
+      """
+        .trimIndent()
+
+    lint()
+      .files(*commonStubs, *specificStubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/test.kt:6: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
+
+        See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+            Row(modifier) {
+                ~~~~~~~~
+        src/test.kt:7: Error: Modifiers should only be used once and by the root level layout of a Composable. This is true even if appended to or with other modifiers e.g. modifier.fillMaxWidth(). Use Modifier (with a capital 'M') to construct a new Modifier that you can pass to other composables.
+
+        See https://slackhq.github.io/compose-lints/rules/#dont-re-use-modifiers for more information. [ComposeModifierReused]
+                OtherComposable(modifier)
+                                ~~~~~~~~
+        2 errors, 0 warnings
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun `errors when the modifier parameter of a Composable is used more than once by siblings or parent-children`() {
     @Language("kotlin")
     val code =

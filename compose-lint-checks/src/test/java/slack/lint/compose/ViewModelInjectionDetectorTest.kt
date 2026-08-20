@@ -39,6 +39,37 @@ class ViewModelInjectionDetectorTest(private val viewModel: String) : BaseCompos
   }
 
   @Test
+  fun testDocumentationExample() {
+    @Language("kotlin")
+    val code =
+      """
+       import androidx.compose.runtime.Composable
+       import androidx.compose.ui.Modifier
+
+        @Composable
+       fun MyComposable(modifier: Modifier) {
+         val myViewModel = viewModel<MyVM>()
+       }
+      """
+        .trimIndent()
+
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expect(
+        """
+            src/test.kt:6: Error: Implicit dependencies of composables should be made explicit.
+            Usages of viewModel to acquire a ViewModel should be done in composable default parameters, so that it is more testable and flexible.
+            See https://slackhq.github.io/compose-lints/rules/#viewmodels for more information. [ComposeViewModelInjection]
+              val myViewModel = viewModel<MyVM>()
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            1 errors, 0 warnings
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun `passes when a weaverViewModel is used as a default param`() {
     @Language("kotlin")
     val code =

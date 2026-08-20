@@ -30,6 +30,51 @@ class UnstableReceiverDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
+  fun testDocumentationExample() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      interface ExampleInterface {
+        @Composable fun Content()
+      }
+
+      class Example {
+        @Composable fun Content() {}
+      }
+
+      @Composable
+      fun Example.OtherContent() {}
+      """
+        .trimIndent()
+    lint()
+      .files(enabledIssueConfig, *commonStubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/ExampleInterface.kt:4: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible.
+
+        See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
+          @Composable fun Content()
+                          ~~~~~~~
+        src/ExampleInterface.kt:8: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible.
+
+        See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
+          @Composable fun Content() {}
+                          ~~~~~~~
+        src/ExampleInterface.kt:12: Warning: Instance composable functions on non-stable classes will always be recomposed. If possible, make the receiver type stable or refactor this function if that isn't possible.
+
+        See https://slackhq.github.io/compose-lints/rules/#unstable-receivers for more information. [ComposeUnstableReceiver]
+        fun Example.OtherContent() {}
+            ~~~~~~~
+        0 errors, 3 warnings
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun `stable receiver types report no errors`() {
     @Language("kotlin")
     val code =

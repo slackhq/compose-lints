@@ -6,6 +6,7 @@ package slack.lint.compose
 import com.android.tools.lint.checks.infrastructure.TestLintTask
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
+import org.intellij.lang.annotations.Language
 import org.junit.Test
 
 class CompositionLocalUsageDetectorTest : BaseComposeLintTest() {
@@ -17,6 +18,37 @@ class CompositionLocalUsageDetectorTest : BaseComposeLintTest() {
   override fun lint(): TestLintTask {
     return super.lint()
       .configureOption(CompositionLocalUsageDetector.ALLOW_LIST, "LocalBanana,LocalPotato")
+  }
+
+  @Test
+  fun testDocumentationExample() {
+    @Language("kotlin")
+    val code =
+      """
+      val LocalApple = staticCompositionLocalOf<String> { "Apple" }
+      val LocalPrune = compositionLocalOf { "Prune" }
+      """
+        .trimIndent()
+    lint()
+      .files(kotlin(code))
+      .allowCompilationErrors()
+      .run()
+      .expect(
+        """
+        src/test.kt:1: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.
+
+        See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
+        val LocalApple = staticCompositionLocalOf<String> { "Apple" }
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        src/test.kt:2: Warning: `CompositionLocal`s are implicit dependencies and creating new ones should be avoided.
+
+        See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information. [ComposeCompositionLocalUsage]
+        val LocalPrune = compositionLocalOf { "Prune" }
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        0 errors, 2 warnings
+        """
+          .trimIndent()
+      )
   }
 
   @Test

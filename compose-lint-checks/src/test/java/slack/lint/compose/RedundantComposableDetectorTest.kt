@@ -125,6 +125,66 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
   override fun getIssues(): List<Issue> = RedundantComposableDetector.ISSUES.toList()
 
   @Test
+  fun testDocumentationExample() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      @Composable
+      fun redundant() = println("derp")
+
+      @Composable
+      fun stillRedundant(name: String) {
+        println(name.length)
+      }
+
+      val redundantProperty: Int
+        @Composable get() = 3
+      """
+        .trimIndent()
+    lint()
+      .files(stubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/test.kt:3: Warning: This declaration is annotated with @Composable but doesn't call any other @Composable functions or read any @Composable properties (like a CompositionLocal's current), so it doesn't use the composition and the @Composable annotation can be removed.
+
+        See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeRedundantComposable]
+        @Composable
+        ~~~~~~~~~~~
+        src/test.kt:6: Warning: This declaration is annotated with @Composable but doesn't call any other @Composable functions or read any @Composable properties (like a CompositionLocal's current), so it doesn't use the composition and the @Composable annotation can be removed.
+
+        See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeRedundantComposable]
+        @Composable
+        ~~~~~~~~~~~
+        src/test.kt:12: Warning: This declaration is annotated with @Composable but doesn't call any other @Composable functions or read any @Composable properties (like a CompositionLocal's current), so it doesn't use the composition and the @Composable annotation can be removed.
+
+        See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeRedundantComposable]
+          @Composable get() = 3
+          ~~~~~~~~~~~
+        0 errors, 3 warnings
+        """
+          .trimIndent()
+      )
+      .expectFixDiffs(
+        """
+        Autofix for src/test.kt line 3: Remove redundant @Composable:
+        @@ -3 +2,0 @@
+        -@Composable
+        Autofix for src/test.kt line 6: Remove redundant @Composable:
+        @@ -6 +5,0 @@
+        -@Composable
+        Autofix for src/test.kt line 12: Remove redundant @Composable:
+        @@ -12 +12 @@
+        -  @Composable get() = 3
+        +  get() = 3
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun `errors when a composable does not use composition`() {
     @Language("kotlin")
     val code =

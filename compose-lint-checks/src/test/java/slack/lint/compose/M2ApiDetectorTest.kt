@@ -56,7 +56,7 @@ class M2ApiDetectorTest : BaseComposeLintTest() {
     )
 
   @Test
-  fun smokeTest() {
+  fun testDocumentationExample() {
     lint()
       .configureOption(M2ApiDetector.ALLOW_LIST, "Surface")
       .files(

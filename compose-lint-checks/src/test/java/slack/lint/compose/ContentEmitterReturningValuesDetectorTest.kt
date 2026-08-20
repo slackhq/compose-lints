@@ -24,6 +24,43 @@ class ContentEmitterReturningValuesDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
+  fun testDocumentationExample() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Text
+
+      @Composable
+      fun Something(): String {
+          Text("Hi")
+          Text("Hola")
+          Something2()
+          return "hi"
+      }
+      @Composable
+      fun Something2() {
+          Text("Alo")
+      }
+      """
+        .trimIndent()
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/test.kt:5: Error: Composable functions should either emit content into the composition or return a value, but not both. If a composable should offer additional control surfaces to its caller, those control surfaces or callbacks should be provided as parameters to the composable function by the caller.
+
+        See https://slackhq.github.io/compose-lints/rules/#do-not-emit-content-and-return-a-result for more information. [ComposeContentEmitterReturningValues]
+        fun Something(): String {
+            ~~~~~~~~~
+        1 errors, 0 warnings
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun `passes when only one item emits up at the top level`() {
     @Language("kotlin")
     val code =

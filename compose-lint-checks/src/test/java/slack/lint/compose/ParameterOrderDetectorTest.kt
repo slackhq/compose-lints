@@ -15,6 +15,55 @@ class ParameterOrderDetectorTest : BaseComposeLintTest() {
   override fun getIssues(): List<Issue> = listOf(ParameterOrderDetector.ISSUE)
 
   @Test
+  fun testDocumentationExample() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+
+      @Composable
+      fun MyComposable(modifier: Modifier = Modifier, other: String, other2: String) { }
+
+      @Composable
+      fun MyComposable(text: String = "deffo", modifier: Modifier = Modifier) { }
+      """
+        .trimIndent()
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/test.kt:5: Error: Parameters in a composable function should be ordered following this pattern: params without defaults, modifiers, params with defaults and optionally, a trailing function that might not have a default param.
+        Current params are: [modifier: Modifier = Modifier, other: String, other2: String] but should be [other: String, other2: String, modifier: Modifier = Modifier].
+        See https://slackhq.github.io/compose-lints/rules/#ordering-composable-parameters-properly for more information. [ComposeParameterOrder]
+        fun MyComposable(modifier: Modifier = Modifier, other: String, other2: String) { }
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        src/test.kt:8: Error: Parameters in a composable function should be ordered following this pattern: params without defaults, modifiers, params with defaults and optionally, a trailing function that might not have a default param.
+        Current params are: [text: String = "deffo", modifier: Modifier = Modifier] but should be [modifier: Modifier = Modifier, text: String = "deffo"].
+        See https://slackhq.github.io/compose-lints/rules/#ordering-composable-parameters-properly for more information. [ComposeParameterOrder]
+        fun MyComposable(text: String = "deffo", modifier: Modifier = Modifier) { }
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        2 errors, 0 warnings
+        """
+          .trimIndent()
+      )
+      .expectFixDiffs(
+        """
+        Fix for src/test.kt line 5: Replace with (other: String, other2: String, modifier: Modifier = Modifier):
+        @@ -5 +5
+        - fun MyComposable(modifier: Modifier = Modifier, other: String, other2: String) { }
+        + fun MyComposable(other: String, other2: String, modifier: Modifier = Modifier) { }
+        Fix for src/test.kt line 8: Replace with (modifier: Modifier = Modifier, text: String = "deffo"):
+        @@ -8 +8
+        - fun MyComposable(text: String = "deffo", modifier: Modifier = Modifier) { }
+        + fun MyComposable(modifier: Modifier = Modifier, text: String = "deffo") { }
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun `no errors when ordering is correct`() {
     @Language("kotlin")
     val code =

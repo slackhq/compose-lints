@@ -14,6 +14,43 @@ class SlotReusedDetectorTest : BaseComposeLintTest() {
   override fun getIssues(): List<Issue> = listOf(SlotReusedDetector.ISSUE)
 
   @Test
+  fun testDocumentationExample() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+
+      @Composable
+      fun Something(
+        modifier: Modifier = Modifier,
+        slot: @Composable () -> Unit,
+      ) {
+        Row(modifier) {
+          slot()
+          slot()
+        }
+      }
+      """
+        .trimIndent()
+
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/test.kt:7: Error: Slots should be invoked in at most once place to meet lifecycle expectations. Slots should not be invoked in multiple places in source code, where the invoking location changes based on some condition. This will preserve the slot's internal state when the invoking location changes.
+
+        See https://slackhq.github.io/compose-lints/rules/#do-not-invoke-slots-in-more-than-once-place for more information. [SlotReused]
+          slot: @Composable () -> Unit,
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        1 errors, 0 warnings
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun `errors when the slot parameter of a Composable is used more than once at the same time`() {
     @Language("kotlin")
     val code =

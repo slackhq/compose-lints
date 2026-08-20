@@ -15,6 +15,44 @@ class PreviewNamingDetectorTest : BaseComposeLintTest() {
   override fun getIssues(): List<Issue> = listOf(PreviewNamingDetector.ISSUE)
 
   @Test
+  fun testDocumentationExample() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.ui.tooling.preview.Preview
+
+      @Preview
+      annotation class Banana
+      @Preview
+      annotation class BananaPreviews
+      @BananaPreviews
+      annotation class WithBananaPreviews
+      """
+        .trimIndent()
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/Banana.kt:3: Error: Preview annotations with 1 preview annotations should end with the Preview suffix.
+        See https://slackhq.github.io/compose-lints/rules/#naming-multipreview-annotations-properly for more information. [ComposePreviewNaming]
+        @Preview
+        ^
+        src/Banana.kt:5: Error: Preview annotations with 1 preview annotations should end with the Preview suffix.
+        See https://slackhq.github.io/compose-lints/rules/#naming-multipreview-annotations-properly for more information. [ComposePreviewNaming]
+        @Preview
+        ^
+        src/Banana.kt:7: Error: Preview annotations with 1 preview annotations should end with the Preview suffix.
+        See https://slackhq.github.io/compose-lints/rules/#naming-multipreview-annotations-properly for more information. [ComposePreviewNaming]
+        @BananaPreviews
+        ^
+        3 errors, 0 warnings
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun `passes for non-preview annotations`() {
     @Language("kotlin")
     val code =

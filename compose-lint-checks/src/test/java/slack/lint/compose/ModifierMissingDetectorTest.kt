@@ -15,6 +15,66 @@ class ModifierMissingDetectorTest : BaseComposeLintTest() {
   override fun getIssues(): List<Issue> = listOf(ModifierMissingDetector.ISSUE)
 
   @Test
+  fun testDocumentationExample() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.ui.Modifier
+      import androidx.compose.runtime.Composable
+
+      @Composable
+      fun Something1() {
+          Row {
+          }
+      }
+      @Composable
+      fun Something2() {
+          Column(modifier = Modifier.fillMaxSize()) {
+          }
+      }
+      @Composable
+      fun Something3(): Unit {
+          SomethingElse {
+              Box(modifier = Modifier.fillMaxSize()) {
+              }
+          }
+      }
+      @Composable
+      fun Something4(modifier: Modifier = Modifier) {
+          Row {
+              Text("Hi!")
+          }
+      }
+      """
+        .trimIndent()
+
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/test.kt:5: Error: This @Composable function emits content but doesn't have a modifier parameter.
+
+        See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+        fun Something1() {
+            ~~~~~~~~~~
+        src/test.kt:10: Error: This @Composable function emits content but doesn't have a modifier parameter.
+
+        See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+        fun Something2() {
+            ~~~~~~~~~~
+        src/test.kt:15: Error: This @Composable function emits content but doesn't have a modifier parameter.
+
+        See https://slackhq.github.io/compose-lints/rules/#when-should-i-expose-modifier-parameters for more information. [ComposeModifierMissing]
+        fun Something3(): Unit {
+            ~~~~~~~~~~
+        3 errors, 0 warnings
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun `errors when a Composable has a layout inside and it doesn't have a modifier`() {
     @Language("kotlin")
     val code =
