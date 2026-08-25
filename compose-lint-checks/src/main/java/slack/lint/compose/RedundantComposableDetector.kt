@@ -43,25 +43,27 @@ import org.jetbrains.uast.UQualifiedReferenceExpression
 import org.jetbrains.uast.USimpleNameReferenceExpression
 import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.visitor.AbstractUastVisitor
+import slack.lint.compose.util.ComposableCallKind
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.StringSetLintOption
+import slack.lint.compose.util.composableCallKind
 import slack.lint.compose.util.hasComposableFunctionType
-import slack.lint.compose.util.isComposableCall
 import slack.lint.compose.util.isComposableMethod
+import slack.lint.compose.util.isReadOnlyComposableMethod
 import slack.lint.compose.util.slotParameters
 import slack.lint.compose.util.sourceImplementation
 
 /**
  * Reports `@Composable` functions and property getters whose body doesn't need a restart group. If
  * the body doesn't use the composition at all, the `@Composable` annotation can be removed. If the
- * body only reads `CompositionLocal.current`, the declaration can be annotated with
- * `@ReadOnlyComposable`.
+ * body only calls functions or reads properties marked `@ReadOnlyComposable`, the declaration can
+ * use that annotation too.
  *
- * This detector only reports when the body and default argument values do not use composition.
- * Composable calls, non-read-only composable property reads, composable function values, and State
- * value access all count as composition usage. It also skips declarations whose annotation is part
- * of a contract, such as overrides, overridable members, interface members, and declarations with
- * composable slot parameters.
+ * This detector does not report when a default argument uses composition. Calls and property reads
+ * without `@ReadOnlyComposable`, composable function values, and State value access also prevent a
+ * read-only suggestion. It skips declarations whose annotation is part of a contract, such as
+ * overrides, overridable members, interface members, and declarations with composable slot
+ * parameters.
  */
 class RedundantComposableDetector
 @JvmOverloads
@@ -110,12 +112,12 @@ constructor(
     val READ_ONLY_ISSUE =
       Issue.create(
         id = "ComposeReadOnlyComposable",
-        briefDescription = "Composable only reads CompositionLocals",
+        briefDescription = "Composable can be @ReadOnlyComposable",
         explanation =
           issueText(
             """
-            This declaration only uses the composition to read `CompositionLocal` values, so it can
-            be annotated with `@ReadOnlyComposable` to avoid generating a group around its body.
+            All composable functions and properties used by this declaration are marked
+            `@ReadOnlyComposable`, so this declaration can be marked `@ReadOnlyComposable` too.
 
             See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information.
             """
@@ -332,11 +334,16 @@ constructor(
 
   private fun UCallExpression.compositionUsage(context: JavaContext): CompositionUsage {
     val method = resolve()
-    return when {
-      method.isCompositionLocalCurrent(context) -> CompositionUsage.READ_ONLY
-      isComposableCall || invokesComposableLambda() || isStateDelegateGetValue(context) ->
-        CompositionUsage.OTHER
-      else -> CompositionUsage.NONE
+    if (method.isCompositionLocalCurrent(context)) return CompositionUsage.READ_ONLY
+    return when (composableCallKind(method)) {
+      ComposableCallKind.READ_ONLY -> CompositionUsage.READ_ONLY
+      ComposableCallKind.NON_READ_ONLY -> CompositionUsage.OTHER
+      ComposableCallKind.NONE ->
+        if (invokesComposableLambda() || isStateDelegateGetValue(context)) {
+          CompositionUsage.OTHER
+        } else {
+          CompositionUsage.NONE
+        }
     }
   }
 
@@ -346,6 +353,7 @@ constructor(
     val method = resolve() as? PsiMethod
     return when {
       method.isCompositionLocalCurrent(context, this) -> CompositionUsage.READ_ONLY
+      method.isComposableMethod && method.isReadOnlyComposableMethod -> CompositionUsage.READ_ONLY
       method.isComposableMethod || isDelegatedStateRead(context) -> CompositionUsage.OTHER
       else -> resolvesToComposablePropertyUsage()
     }

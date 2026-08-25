@@ -209,12 +209,12 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/test.kt:7: Hint: This declaration only uses the composition to read CompositionLocal values, so it can be annotated with @ReadOnlyComposable to avoid generating a group around its body.
+        src/test.kt:7: Hint: All composable functions and properties used by this declaration are marked @ReadOnlyComposable, so this declaration can be marked @ReadOnlyComposable too.
 
         See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeReadOnlyComposable]
         @Composable
         ~~~~~~~~~~~
-        src/test.kt:13: Hint: This declaration only uses the composition to read CompositionLocal values, so it can be annotated with @ReadOnlyComposable to avoid generating a group around its body.
+        src/test.kt:13: Hint: All composable functions and properties used by this declaration are marked @ReadOnlyComposable, so this declaration can be marked @ReadOnlyComposable too.
 
         See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeReadOnlyComposable]
           @Composable get() = LocalThing.current
@@ -237,6 +237,71 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
         -  @Composable get() = LocalThing.current
         +  @Composable
         +  @ReadOnlyComposable get() = LocalThing.current
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
+  fun `informational when only read-only composable functions and properties are used`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.CompositionLocal
+      import androidx.compose.runtime.ReadOnlyComposable
+      import androidx.compose.runtime.compositionLocalOf
+
+      val LocalThing: CompositionLocal<Int> = compositionLocalOf { 0 }
+
+      @Composable
+      @ReadOnlyComposable
+      fun readOnlyValue(): Int = LocalThing.current
+
+      val readOnlyProperty: Int
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalThing.current
+
+      @Composable
+      fun delegatesToReadOnlyFunction() {
+        println(readOnlyValue())
+      }
+
+      @Composable
+      fun readsReadOnlyProperty() {
+        println(readOnlyProperty)
+      }
+      """
+        .trimIndent()
+
+    lint()
+      .files(stubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/test.kt:17: Hint: All composable functions and properties used by this declaration are marked @ReadOnlyComposable, so this declaration can be marked @ReadOnlyComposable too.
+
+        See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeReadOnlyComposable]
+        @Composable
+        ~~~~~~~~~~~
+        src/test.kt:22: Hint: All composable functions and properties used by this declaration are marked @ReadOnlyComposable, so this declaration can be marked @ReadOnlyComposable too.
+
+        See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeReadOnlyComposable]
+        @Composable
+        ~~~~~~~~~~~
+        0 errors, 0 warnings, 2 hints
+        """
+          .trimIndent()
+      )
+      .expectFixDiffs(
+        """
+        Autofix for src/test.kt line 17: Annotate with @ReadOnlyComposable:
+        @@ -17,0 +18 @@
+        +@ReadOnlyComposable
+        Autofix for src/test.kt line 22: Annotate with @ReadOnlyComposable:
+        @@ -22,0 +23 @@
+        +@ReadOnlyComposable
         """
           .trimIndent()
       )
@@ -270,7 +335,7 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/ProvidableCompositionLocal.kt:11: Hint: This declaration only uses the composition to read CompositionLocal values, so it can be annotated with @ReadOnlyComposable to avoid generating a group around its body.
+        src/ProvidableCompositionLocal.kt:11: Hint: All composable functions and properties used by this declaration are marked @ReadOnlyComposable, so this declaration can be marked @ReadOnlyComposable too.
 
         See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeReadOnlyComposable]
         @Composable
@@ -288,10 +353,15 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
       """
       import androidx.compose.runtime.Composable
       import androidx.compose.runtime.CompositionLocal
+      import androidx.compose.runtime.ReadOnlyComposable
       import androidx.compose.runtime.compositionLocalOf
       import androidx.compose.runtime.Text
 
       val LocalThing: CompositionLocal<Int> = compositionLocalOf { 0 }
+
+      @Composable
+      @ReadOnlyComposable
+      fun readOnlyValue(): Int = LocalThing.current
 
       @Composable
       fun callsComposable() {
@@ -300,7 +370,7 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
 
       @Composable
       fun readsCompositionLocalAndCallsComposable() {
-        println(LocalThing.current)
+        println(readOnlyValue())
         Text("hi")
       }
       """
@@ -412,6 +482,84 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
         .trimIndent()
 
     lint().files(stubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `informational when UAST cannot resolve a local read-only composable call`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.ReadOnlyComposable
+
+      @Composable
+      fun outer() {
+        @Suppress("ComposeRedundantComposable")
+        @Composable
+        @ReadOnlyComposable
+        fun local(): Int = 1
+
+        println(local())
+      }
+      """
+        .trimIndent()
+
+    lint()
+      .files(stubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/test.kt:4: Hint: All composable functions and properties used by this declaration are marked @ReadOnlyComposable, so this declaration can be marked @ReadOnlyComposable too.
+
+        See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeReadOnlyComposable]
+        @Composable
+        ~~~~~~~~~~~
+        0 errors, 0 warnings, 1 hint
+        """
+          .trimIndent()
+      )
+      .expectFixDiffs(
+        """
+        Autofix for src/test.kt line 4: Annotate with @ReadOnlyComposable:
+        @@ -4,0 +5 @@
+        +@ReadOnlyComposable
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
+  fun `ReadOnlyComposable without Composable does not count as composition usage`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.ReadOnlyComposable
+
+      @ReadOnlyComposable
+      fun ordinaryValue(): Int = 1
+
+      @Composable
+      fun callsOrdinaryValue() {
+        println(ordinaryValue())
+      }
+      """
+        .trimIndent()
+
+    lint()
+      .files(stubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/test.kt:7: Warning: This declaration is annotated with @Composable but doesn't call any other @Composable functions or read any @Composable properties (like a CompositionLocal's current), so it doesn't use the composition and the @Composable annotation can be removed.
+
+        See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeRedundantComposable]
+        @Composable
+        ~~~~~~~~~~~
+        0 errors, 1 warnings
+        """
+          .trimIndent()
+      )
   }
 
   @Test
@@ -856,7 +1004,7 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
       .run()
       .expect(
         """
-        src/test.kt:9: Hint: This declaration only uses the composition to read CompositionLocal values, so it can be annotated with @ReadOnlyComposable to avoid generating a group around its body.
+        src/test.kt:9: Hint: All composable functions and properties used by this declaration are marked @ReadOnlyComposable, so this declaration can be marked @ReadOnlyComposable too.
 
         See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeReadOnlyComposable]
         @Composable
