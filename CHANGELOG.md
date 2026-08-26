@@ -4,8 +4,19 @@ Changelog
 **Unreleased**
 --------------
 
+1.5.5
+-----
+
+_2026-08-25_
+
 - **Enhancement**: Extend `ComposeReadOnlyComposable` to suggest `@ReadOnlyComposable` when a composable only calls read-only composables.
 - **Fix**: Fix `ComposeRedundantComposable` false positives relating to composable lambdas.
+- Build against lint `32.3.2`.
+- Build against AGP lint plugin `9.3.2`.
+- Build against Gradle `9.7.1`.
+- Update KSP to `2.3.11`.
+
+Special thanks to [@JakeWharton](https://github.com/JakeWharton) for contributing to this release!
 
 1.5.4
 -----
