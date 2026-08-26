@@ -9,6 +9,8 @@ import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.uast.UElement
+import org.jetbrains.uast.ULambdaExpression
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.kotlin.isKotlin
 import slack.lint.compose.util.LintOption
@@ -20,7 +22,14 @@ abstract class ComposableFunctionDetector(options: List<Pair<LintOption, Issue>>
 
   constructor(vararg options: Pair<LintOption, Issue>) : this(options.toList())
 
-  final override fun getApplicableUastTypes() = listOf(UMethod::class.java)
+  protected open val includeComposableLambdas: Boolean get() = false
+
+  final override fun getApplicableUastTypes(): List<Class<out UElement>> = buildList {
+    add(UMethod::class.java)
+    if (includeComposableLambdas) {
+      add(ULambdaExpression::class.java)
+    }
+  }
 
   final override fun createUastHandler(context: JavaContext): UElementHandler? {
     if (!isKotlin(context.uastFile?.lang)) return null
@@ -38,10 +47,18 @@ abstract class ComposableFunctionDetector(options: List<Pair<LintOption, Issue>>
           }
         }
       }
+
+      override fun visitLambdaExpression(node: ULambdaExpression) {
+        if (node.isComposable) {
+          visitComposable(context, node)
+        }
+      }
     }
   }
 
   open fun visitComposable(context: JavaContext, method: UMethod) {}
+
+  open fun visitComposable(context: JavaContext, lambda: ULambdaExpression) {}
 
   open fun visitComposable(context: JavaContext, method: UMethod, property: KtPropertyAccessor) {}
 
