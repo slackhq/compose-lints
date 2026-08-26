@@ -34,6 +34,7 @@ class ComposeLintsIssueRegistry : IssueRegistry() {
       M2ApiDetector.ISSUE,
       MultipleContentEmittersDetector.ISSUE,
       MutableParametersDetector.ISSUE,
+      NonRestartableComposableDetector.ISSUE,
       ParameterOrderDetector.ISSUE,
       PreviewNamingDetector.ISSUE,
       PreviewPublicDetector.ISSUE,
