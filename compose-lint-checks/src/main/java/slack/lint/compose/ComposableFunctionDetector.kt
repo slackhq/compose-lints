@@ -22,7 +22,7 @@ abstract class ComposableFunctionDetector(options: List<Pair<LintOption, Issue>>
 
   constructor(vararg options: Pair<LintOption, Issue>) : this(options.toList())
 
-  protected open val includeComposableLambdas: Boolean = false
+  protected open val includeComposableLambdas: Boolean get() = false
 
   final override fun getApplicableUastTypes(): List<Class<out UElement>> = buildList {
     add(UMethod::class.java)

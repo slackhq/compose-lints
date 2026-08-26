@@ -78,7 +78,7 @@ constructor(
   private val ignoredAnnotations: StringSetLintOption = StringSetLintOption(IGNORE_ANNOTATED)
 ) : ComposableFunctionDetector(ignoredAnnotations to ISSUE), SourceCodeScanner {
 
-  override val includeComposableLambdas: Boolean = true
+  override val includeComposableLambdas: Boolean get() = true
 
   companion object {
     private const val COMPOSABLE = "androidx.compose.runtime.Composable"
