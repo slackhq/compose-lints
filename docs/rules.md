@@ -136,28 +136,6 @@ fun greetingLength(): Int = currentGreeting().length
 
 Related rules: [`ComposeRedundantComposable` and `ComposeReadOnlyComposable`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/RedundantComposableDetector.kt)
 
-### Avoid unnecessary restart groups
-
-!!! note
-    `@NonRestartableComposable` removes the wrapper's restart and skip boundary.
-
-A small composable that only forwards its parameters to one other composable may not benefit from its own restart and skip boundary. Marking the wrapper as non-restartable avoids generating its parameter checks and restart code.
-
-```kotlin
-@Composable
-@NonRestartableComposable
-fun OutlinedAction(
-    onClick: () -> Unit,
-    content: @Composable () -> Unit,
-) = Action(onClick = onClick, content = content)
-```
-
-`ComposeNonRestartableComposable` reports these pass-through functions and provides a quickfix that adds `@NonRestartableComposable`. The check only reports concrete, `Unit`-returning functions whose entire body is one composable call with forwarded parameters or literal values. It can also report a chain of pass-through functions when the immediate callee is already non-restartable.
-
-If a default parameter reads state, Compose may need to recompose a parent instead. The rule ignores functions that calculate arguments, read state, create lambdas, or do other work in the body. It does not inspect default parameter expressions, so check them before applying the quickfix.
-
-Related rule: [`ComposeNonRestartableComposable`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/NonRestartableComposableDetector.kt)
-
 ### Do not emit content and return a result
 
 Composable functions should either emit layout content, or return a value, but not both.

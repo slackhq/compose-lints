@@ -4,8 +4,6 @@ Changelog
 **Unreleased**
 --------------
 
-- **New**: Add `ComposeNonRestartableComposable` to suggest `@NonRestartableComposable` for composables that only forward to one other composable.
-
 1.5.5
 -----
 
