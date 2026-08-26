@@ -108,6 +108,18 @@ fun greeting() = println("hello")
 
 Removing the redundant annotation drops the unneeded composer plumbing and makes intent clearer, and this check ships a quickfix that removes it for you.
 
+If every composable function or property used by a declaration is marked `@ReadOnlyComposable`, the declaration can use that annotation too. `ComposeReadOnlyComposable` reports these declarations and provides a quickfix.
+
+```kotlin
+@Composable
+@ReadOnlyComposable
+fun currentGreeting(): String = LocalGreeting.current
+
+// This can also be @ReadOnlyComposable.
+@Composable
+fun greetingLength(): Int = currentGreeting().length
+```
+
 !!! note "Library authors"
     A trivially-bodied public composable can be intentionally `@Composable` as part of your API contract; removing it would be a source/binary-incompatible change. Suppress or disable this rule for such declarations.
 
@@ -122,7 +134,7 @@ Removing the redundant annotation drops the unneeded composer plumbing and makes
     </issue>
     ```
 
-Related rule: [`ComposeRedundantComposable`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/RedundantComposableDetector.kt)
+Related rules: [`ComposeRedundantComposable` and `ComposeReadOnlyComposable`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/RedundantComposableDetector.kt)
 
 ### Do not emit content and return a result
 

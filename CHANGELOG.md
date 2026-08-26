@@ -4,6 +4,8 @@ Changelog
 **Unreleased**
 --------------
 
+- **Enhancement**: Extend `ComposeReadOnlyComposable` to suggest `@ReadOnlyComposable` when a composable only calls read-only composables.
+
 1.5.4
 -----
 
