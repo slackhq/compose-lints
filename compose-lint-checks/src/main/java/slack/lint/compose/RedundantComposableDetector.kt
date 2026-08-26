@@ -27,21 +27,27 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtAnnotatedExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isTopLevelKtOrJavaMember
+import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.ULambdaExpression
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UQualifiedReferenceExpression
 import org.jetbrains.uast.USimpleNameReferenceExpression
 import org.jetbrains.uast.getContainingUClass
+import org.jetbrains.uast.toUElementOfType
 import org.jetbrains.uast.visitor.AbstractUastVisitor
 import slack.lint.compose.util.Priorities
 import slack.lint.compose.util.StringSetLintOption
@@ -50,11 +56,12 @@ import slack.lint.compose.util.isComposableCall
 import slack.lint.compose.util.isComposableMethod
 import slack.lint.compose.util.slotParameters
 import slack.lint.compose.util.sourceImplementation
+import slack.lint.compose.util.unwrapParenthesis
 
 /**
- * Reports `@Composable` functions and property getters whose body doesn't need a restart group. If
- * the body doesn't use the composition at all, the `@Composable` annotation can be removed. If the
- * body only reads `CompositionLocal.current`, the declaration can be annotated with
+ * Reports `@Composable` functions, property getters, and lambdas whose body doesn't need a restart
+ * group. If the body doesn't use the composition at all, the `@Composable` annotation can be
+ * removed. If a function or property getter only reads `CompositionLocal.current`, it can use
  * `@ReadOnlyComposable`.
  *
  * This detector only reports when the body and default argument values do not use composition.
@@ -68,6 +75,8 @@ class RedundantComposableDetector
 constructor(
   private val ignoredAnnotations: StringSetLintOption = StringSetLintOption(IGNORE_ANNOTATED)
 ) : ComposableFunctionDetector(ignoredAnnotations to ISSUE), SourceCodeScanner {
+
+  override val includeComposableLambdas: Boolean = true
 
   companion object {
     private const val COMPOSABLE = "androidx.compose.runtime.Composable"
@@ -177,6 +186,21 @@ constructor(
         }
       CompositionUsage.OTHER -> return
     }
+  }
+
+  override fun visitComposable(context: JavaContext, lambda: ULambdaExpression) {
+    if (lambda.sourcePsi !is KtLambdaExpression) return
+    val annotation = lambda.findAnnotation(COMPOSABLE) ?: return
+    if (lambda.body.compositionUsage(context) != CompositionUsage.NONE) return
+    if (ignoredAnnotations.value.any { lambda.findAnnotation(it) != null }) return
+
+    context.report(
+      ISSUE,
+      annotation,
+      context.getLocation(annotation),
+      ISSUE.getExplanation(TextFormat.TEXT),
+      buildRemoveFix(context, annotation),
+    )
   }
 
   /** Whether this declaration is explicitly excluded from the redundant-composable issue. */
@@ -372,7 +396,22 @@ constructor(
 
   private fun UCallExpression.invokesComposableLambda(): Boolean {
     val callee = (sourcePsi as? KtCallExpression)?.calleeExpression ?: return false
-    return callee.hasComposableFunctionType()
+    return callee.hasComposableFunctionType() || callee.resolvesToInferredComposableLambda()
+  }
+
+  private fun KtExpression.resolvesToInferredComposableLambda(): Boolean {
+    val property =
+      referenceExpression()?.references?.firstOrNull()?.resolve() as? KtProperty ?: return false
+
+    if (property.typeReference != null) return false
+
+    val initializer =
+      property.initializer?.unwrapParenthesis() as? KtAnnotatedExpression ?: return false
+
+    return initializer.baseExpression is KtLambdaExpression &&
+      initializer.annotationEntries.any {
+        it.toUElementOfType<UAnnotation>()?.qualifiedName == COMPOSABLE
+      }
   }
 
   private enum class CompositionUsage {

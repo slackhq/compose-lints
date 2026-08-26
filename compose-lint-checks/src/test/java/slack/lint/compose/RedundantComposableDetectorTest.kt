@@ -185,6 +185,75 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
+  fun `issue 615 reports a redundant composable lambda`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      val Lambda = @Composable { }
+      """
+        .trimIndent()
+
+    lint()
+      .files(stubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/test.kt:3: Warning: This declaration is annotated with @Composable but doesn't call any other @Composable functions or read any @Composable properties (like a CompositionLocal's current), so it doesn't use the composition and the @Composable annotation can be removed.
+
+        See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeRedundantComposable]
+        val Lambda = @Composable { }
+                     ~~~~~~~~~~~
+        0 errors, 1 warnings
+        """
+          .trimIndent()
+      )
+      .expectFixDiffs(
+        """
+        Autofix for src/test.kt line 3: Remove redundant @Composable:
+        @@ -3 +3 @@
+        -val Lambda = @Composable { }
+        +val Lambda = { }
+        """
+          .trimIndent()
+      )
+  }
+
+  // https://github.com/slackhq/compose-lints/issues/614
+  @Test
+  fun `composable lambda invocation uses composition`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      val Lambda = @Composable { }
+
+      @Composable
+      fun Test() {
+        Lambda()
+      }
+      """
+        .trimIndent()
+
+    lint()
+      .files(stubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/test.kt:3: Warning: This declaration is annotated with @Composable but doesn't call any other @Composable functions or read any @Composable properties (like a CompositionLocal's current), so it doesn't use the composition and the @Composable annotation can be removed.
+
+        See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeRedundantComposable]
+        val Lambda = @Composable { }
+                     ~~~~~~~~~~~
+        0 errors, 1 warnings
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun `informational when only CompositionLocals are read`() {
     @Language("kotlin")
     val code =
