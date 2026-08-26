@@ -16,18 +16,18 @@ import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.toUElementOfType
 
-private const val COMPOSABLE = "androidx.compose.runtime.Composable"
-private val COMPOSABLE_CLASS_ID = ClassId.topLevel(FqName(COMPOSABLE))
+internal const val COMPOSABLE_FQ_NAME = "androidx.compose.runtime.Composable"
+private val COMPOSABLE_CLASS_ID = ClassId.topLevel(FqName(COMPOSABLE_FQ_NAME))
 private const val READ_ONLY_COMPOSABLE = "androidx.compose.runtime.ReadOnlyComposable"
 private val READ_ONLY_COMPOSABLE_CLASS_ID = ClassId.topLevel(FqName(READ_ONLY_COMPOSABLE))
 
 val UAnnotated.isComposable: Boolean
-  get() = findAnnotation(COMPOSABLE) != null
+  get() = findAnnotation(COMPOSABLE_FQ_NAME) != null
 
 val PsiMethod?.isComposableMethod: Boolean
   get() =
-    this?.hasAnnotation(COMPOSABLE) == true ||
-      this?.toUElementOfType<UMethod>()?.findAnnotation(COMPOSABLE) != null
+    this?.hasAnnotation(COMPOSABLE_FQ_NAME) == true ||
+      this?.toUElementOfType<UMethod>()?.findAnnotation(COMPOSABLE_FQ_NAME) != null
 
 val PsiMethod?.isReadOnlyComposableMethod: Boolean
   get() =

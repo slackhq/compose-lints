@@ -47,9 +47,9 @@ internal fun PsiElement?.unwrapParenthesis(): PsiElement? {
 }
 
 @PublishedApi
-internal fun KtExpression.unwrapParenthesis(): KtExpression? {
+internal tailrec fun KtExpression.unwrapParenthesis(): KtExpression? {
   return when (this) {
-    is KtParenthesizedExpression -> expression
+    is KtParenthesizedExpression -> expression?.unwrapParenthesis()
     else -> this
   }
 }
