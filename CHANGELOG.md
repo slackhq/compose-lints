@@ -5,6 +5,7 @@ Changelog
 --------------
 
 - **Enhancement**: Extend `ComposeReadOnlyComposable` to suggest `@ReadOnlyComposable` when a composable only calls read-only composables.
+- **Fix**: Fix `ComposeRedundantComposable` false positives relating to composable lambdas.
 
 1.5.4
 -----
