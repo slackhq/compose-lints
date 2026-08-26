@@ -4,6 +4,8 @@ Changelog
 **Unreleased**
 --------------
 
+- **Fix**: Fix `ComposeReadOnlyComposable` false negatives when read-only composables are used in default argument expressions.
+
 1.5.5
 -----
 

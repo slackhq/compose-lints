@@ -642,31 +642,70 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
     lint().files(stubs, kotlin(code)).run().expectClean()
   }
 
+  // https://github.com/slackhq/compose-lints/issues/621
   @Test
-  fun `no errors when composition is only used in a default argument value`() {
+  fun `read-only composable property in default argument`() {
     @Language("kotlin")
     val code =
       """
       import androidx.compose.runtime.Composable
-      import androidx.compose.runtime.CompositionLocal
       import androidx.compose.runtime.ReadOnlyComposable
-      import androidx.compose.runtime.compositionLocalOf
 
-      val LocalThing: CompositionLocal<Int> = compositionLocalOf { 0 }
+      class Color {
+        fun copy(alpha: Float): Color = this
+      }
 
-      // A @Composable function, used below as a default argument value.
-      @Composable
-      @ReadOnlyComposable
-      fun provideValue(): Int = LocalThing.current
+      class ColorScheme(val surface: Color)
 
-      // The bodies use no composition, but each default value invokes the composition (a @Composable
-      // function call / a @Composable property read), so the @Composable annotation is required:
-      // removing it would be a compile error. The rule only inspects the body and so must not flag these.
-      @Composable
-      fun usesComposableFunctionDefault(value: Int = provideValue()): Int = value
+      object MaterialTheme {
+        val colorScheme: ColorScheme
+          @Suppress("ComposeRedundantComposable")
+          @Composable @ReadOnlyComposable get() = TODO()
+      }
 
       @Composable
-      fun usesComposablePropertyDefault(value: Int = LocalThing.current): Int = value
+      fun fadeHighlightColor(
+        backgroundColor: Color = MaterialTheme.colorScheme.surface,
+        alpha: Float = 0.3f,
+      ): Color = backgroundColor.copy(alpha = alpha)
+      """
+        .trimIndent()
+    lint()
+      .files(stubs, kotlin(code))
+      .run()
+      .expect(
+        """
+        src/Color.kt:16: Hint: All composable functions and properties used by this declaration are marked @ReadOnlyComposable, so this declaration can be marked @ReadOnlyComposable too.
+
+        See https://slackhq.github.io/compose-lints/rules/#remove-unnecessary-composable-annotations for more information. [ComposeReadOnlyComposable]
+        @Composable
+        ~~~~~~~~~~~
+        0 errors, 0 warnings, 1 hint
+        """
+          .trimIndent()
+      )
+      .expectFixDiffs(
+        """
+        Autofix for src/Color.kt line 16: Annotate with @ReadOnlyComposable:
+        @@ -16,0 +17 @@
+        +@ReadOnlyComposable
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
+  fun `no errors when non-read-only composition is only used in a default argument value`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+
+      @Composable
+      external fun provideValue(): Int
+
+      @Composable
+      fun usesComposableDefault(value: Int = provideValue()): Int = value
       """
         .trimIndent()
     lint().files(stubs, kotlin(code)).run().expectClean()
