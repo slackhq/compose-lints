@@ -223,7 +223,7 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
 
   // https://github.com/slackhq/compose-lints/issues/614
   @Test
-  fun `composable lambda invocation uses composition`() {
+  fun `no errors when invoking an inferred composable lambda`() {
     @Language("kotlin")
     val code =
       """
