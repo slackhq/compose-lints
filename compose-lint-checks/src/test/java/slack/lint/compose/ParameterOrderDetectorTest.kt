@@ -139,4 +139,84 @@ class ParameterOrderDetectorTest : BaseComposeLintTest() {
           .trimIndent()
       )
   }
+
+  @Test
+  fun `extension receiver is excluded from parameter-order fix`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+
+      interface LazyGridItemScope
+      interface HorizontalGridDragDropState
+      interface FiniteAnimationSpec<T>
+
+      @Composable
+      fun LazyGridItemScope.HorizontalGridDraggableItem(
+          modifier: Modifier = Modifier,
+          index: Int,
+          dragDropState: HorizontalGridDragDropState,
+          fadeInSpec: FiniteAnimationSpec<Float>? = null,
+          fadeOutSpec: FiniteAnimationSpec<Float>? = null,
+          dragShadowContent: @Composable () -> Unit = {},
+          content: @Composable (isDragging: Boolean) -> Unit
+      ) { }
+      """
+        .trimIndent()
+
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expectFixDiffs(
+        """
+        Fix for src/LazyGridItemScope.kt line 9: Replace with (index: Int, dragDropState: HorizontalGridDragDropState, modifier: Modifier = Modifier, fadeInSpec: FiniteAnimationSpec<Float>? = null, fadeOutSpec: FiniteAnimationSpec<Float>? = null, dragShadowContent: @Composable () -> Unit = {}, content: @Composable (isDragging: Boolean) -> Unit):
+        @@ -9,9 +9 @@
+        -fun LazyGridItemScope.HorizontalGridDraggableItem(
+        -    modifier: Modifier = Modifier,
+        -    index: Int,
+        -    dragDropState: HorizontalGridDragDropState,
+        -    fadeInSpec: FiniteAnimationSpec<Float>? = null,
+        -    fadeOutSpec: FiniteAnimationSpec<Float>? = null,
+        -    dragShadowContent: @Composable () -> Unit = {},
+        -    content: @Composable (isDragging: Boolean) -> Unit
+        -) { }
+        +fun LazyGridItemScope.HorizontalGridDraggableItem(index: Int, dragDropState: HorizontalGridDragDropState, modifier: Modifier = Modifier, fadeInSpec: FiniteAnimationSpec<Float>? = null, fadeOutSpec: FiniteAnimationSpec<Float>? = null, dragShadowContent: @Composable () -> Unit = {}, content: @Composable (isDragging: Boolean) -> Unit) { }
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
+  fun `fix preserves a multiline parameter list trailing comma`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+
+      @Composable
+      fun MyComposable(
+          modifier: Modifier = Modifier,
+          text: String,
+      ) { }
+      """
+        .trimIndent()
+
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expectFixDiffs(
+        """
+        Fix for src/test.kt line 5: Replace with (text: String, modifier: Modifier = Modifier,):
+        @@ -5,4 +5 @@
+        -fun MyComposable(
+        -    modifier: Modifier = Modifier,
+        -    text: String,
+        -) { }
+        +fun MyComposable(text: String, modifier: Modifier = Modifier,) { }
+        """
+          .trimIndent()
+      )
+  }
 }

@@ -62,21 +62,23 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
     // 3. params with defaults
     // 4. optional: function that might have no default
 
-    // Let's try to build the ideal ordering first, and compare against that.
-    val currentOrder = method.uastParameters
+    // Let's try to build the ideal ordering first, and compare against that. UAST includes an
+    // extension receiver as a parameter, so only consider the Kotlin function's declared value
+    // parameters.
+    val currentOrder = method.uastParameters.takeLast(function.valueParameters.size)
 
     // We look in the original params without defaults and see if the last one is a function.
     val hasTrailingFunction = function.hasTrailingFunction(context.evaluator)
     val trailingLambda =
       if (hasTrailingFunction) {
-        listOf(method.uastParameters.last())
+        listOf(currentOrder.last())
       } else {
         emptyList()
       }
 
     // We extract the params without with and without defaults, and keep the order between them
     val (withDefaults, withoutDefaults) =
-      method.uastParameters
+      currentOrder
         .runIf(hasTrailingFunction) { dropLast(1) }
         .partition { (it.sourcePsi as? KtParameter)?.hasDefaultValue() == true }
 
@@ -95,6 +97,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
     // If it's not the same as the current order, we show the rule violation.
     if (currentOrder != properOrder) {
       val errorLocation = context.getLocation(function.valueParameterList)
+      val postfix = if (function.valueParameterList?.trailingComma != null) ",)" else ")"
       context.report(
         ISSUE,
         function,
@@ -103,7 +106,7 @@ class ParameterOrderDetector : ComposableFunctionDetector(), SourceCodeScanner {
         fix()
           .replace()
           .range(errorLocation)
-          .with(properOrder.joinToString(prefix = "(", postfix = ")") { getText(it) })
+          .with(properOrder.joinToString(prefix = "(", postfix = postfix) { getText(it) })
           .reformat(true)
           .build(),
       )

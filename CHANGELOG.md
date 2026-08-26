@@ -4,6 +4,9 @@ Changelog
 **Unreleased**
 --------------
 
+- **Fix**: Exclude extension receivers from `ComposeParameterOrder` quick fixes.
+- **Fix**: Preserve trailing commas in `ComposeParameterOrder` quick fixes.
+
 1.5.5
 -----
 
