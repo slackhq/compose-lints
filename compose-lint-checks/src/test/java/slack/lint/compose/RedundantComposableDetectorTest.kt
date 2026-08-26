@@ -184,8 +184,9 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
       )
   }
 
+  // https://github.com/slackhq/compose-lints/issues/615
   @Test
-  fun `issue 615 reports a redundant composable lambda`() {
+  fun `reports a redundant composable lambda`() {
     @Language("kotlin")
     val code =
       """
