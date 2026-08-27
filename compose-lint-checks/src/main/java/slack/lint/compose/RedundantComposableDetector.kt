@@ -418,6 +418,11 @@ constructor(
       }
   }
 
+  /**
+   * Entries are ordered from "no composition usage" to "usage that prevents a read-only
+   * suggestion". [maxOf] relies on this order when combining usage from the body and default
+   * arguments.
+   */
   private enum class CompositionUsage {
     NONE,
     READ_ONLY,
