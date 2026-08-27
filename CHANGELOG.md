@@ -4,6 +4,7 @@ Changelog
 **Unreleased**
 --------------
 
+- **New**: Add `ComposeNonRestartableComposable` to suggest `@NonRestartableComposable` for composables that only forward to one other composable.
 - **Fix**: Fix `ComposeReadOnlyComposable` false negatives when read-only composables are used in default argument expressions.
 
 1.5.5

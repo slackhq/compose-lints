@@ -22,16 +22,16 @@ class ModifierComposedDetector : Detector(), SourceCodeScanner {
     val ISSUE =
       Issue.create(
         id = "ComposeModifierComposed",
-        briefDescription = "Don't use Modifier.composed {}",
+        briefDescription = "Don't use `Modifier.composed {}`",
         explanation =
           """
-          Modifier.composed { ... } is no longer recommended due to performance issues.
+          `Modifier.composed { ... }` is no longer recommended due to performance issues.
 
-          You should use the Modifier.Node API instead, as it was designed from the ground up to be far more performant than composed modifiers.
+          You should use the `Modifier.Node` API instead, as it was designed from the ground up to be far more performant than composed modifiers.
 
           See https://slackhq.github.io/compose-lints/rules/#migrate-to-modifiernode for more information.
         """,
-        category = Category.CORRECTNESS,
+        category = Category.PERFORMANCE,
         priority = Priorities.NORMAL,
         severity = Severity.ERROR,
         implementation = sourceImplementation<ModifierComposedDetector>(),
