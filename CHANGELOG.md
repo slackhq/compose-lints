@@ -14,6 +14,7 @@ _2026-08-27_
 - **Fix**: Preserve trailing commas in `ComposeParameterOrder` quick fixes.
 - **Fix**: Fix `ComposeReadOnlyComposable` false negatives when read-only composables are used in default argument expressions.
 - **Change**: Reclassify `ComposeModifierComposed` as a `PERFORMANCE` issue
+- Note this requires AGP/lint 9.3+.
 
 Special thanks to [@SimonMarquis](https://github.com/SimonMarquis) for contributing to this release!
 
