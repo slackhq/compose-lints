@@ -17,9 +17,7 @@ import com.intellij.psi.PsiTypes
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.components.resolveToCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.singleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -383,9 +381,9 @@ constructor(
     val reference = sourcePsi as? KtElement ?: return CompositionUsage.NONE
     return analyze(reference) {
       val access =
-        reference.resolveToCall()?.singleVariableAccessCall() as? KaSimpleVariableAccessCall
+        reference.resolveToCall()?.singleVariableAccessCall()
           ?: return@analyze CompositionUsage.NONE
-      if (access.simpleAccess !is KaSimpleVariableAccess.Read) {
+      if (access.kind !is KaVariableAccessCall.Kind.Read) {
         return@analyze CompositionUsage.NONE
       }
       val getter =
