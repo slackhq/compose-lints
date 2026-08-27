@@ -4,6 +4,11 @@ Changelog
 **Unreleased**
 --------------
 
+1.6.0
+-----
+
+_2026-08-27_
+
 - **New**: Add `ComposeNonRestartableComposable` to suggest `@NonRestartableComposable` for composables that only forward to one other composable.
 - **Fix**: Exclude extension receivers from `ComposeParameterOrder` quick fixes.
 - **Fix**: Preserve trailing commas in `ComposeParameterOrder` quick fixes.
