@@ -140,6 +140,7 @@ class ParameterOrderDetectorTest : BaseComposeLintTest() {
       )
   }
 
+  // https://github.com/slackhq/compose-lints/issues/620
   @Test
   fun `extension receiver is excluded from parameter-order fix`() {
     @Language("kotlin")
@@ -182,6 +183,41 @@ class ParameterOrderDetectorTest : BaseComposeLintTest() {
         -    content: @Composable (isDragging: Boolean) -> Unit
         -) { }
         +fun LazyGridItemScope.HorizontalGridDraggableItem(index: Int, dragDropState: HorizontalGridDragDropState, modifier: Modifier = Modifier, fadeInSpec: FiniteAnimationSpec<Float>? = null, fadeOutSpec: FiniteAnimationSpec<Float>? = null, dragShadowContent: @Composable () -> Unit = {}, content: @Composable (isDragging: Boolean) -> Unit) { }
+        """
+          .trimIndent()
+      )
+  }
+
+  // https://github.com/slackhq/compose-lints/issues/620
+  @Test
+  fun `context parameter is excluded from parameter-order fix`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.Modifier
+
+      @Composable
+      context(scope: String)
+      fun MyComposable(
+          modifier: Modifier = Modifier,
+          text: String,
+      ) { }
+      """
+        .trimIndent()
+
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expectFixDiffs(
+        """
+        Fix for src/test.kt line 6: Replace with (text: String, modifier: Modifier = Modifier,):
+        @@ -6,4 +6 @@
+        -fun MyComposable(
+        -    modifier: Modifier = Modifier,
+        -    text: String,
+        -) { }
+        +fun MyComposable(text: String, modifier: Modifier = Modifier,) { }
         """
           .trimIndent()
       )
