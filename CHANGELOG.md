@@ -15,7 +15,7 @@ _2026-08-27_
 - **Fix**: Fix `ComposeReadOnlyComposable` false negatives when read-only composables are used in default argument expressions.
 - **Change**: Reclassify `ComposeModifierComposed` as a `PERFORMANCE` issue
 
-- Special thanks to [@SimonMarquis](https://github.com/SimonMarquis) for contributing to this release!
+Special thanks to [@SimonMarquis](https://github.com/SimonMarquis) for contributing to this release!
 
 1.5.5
 -----
