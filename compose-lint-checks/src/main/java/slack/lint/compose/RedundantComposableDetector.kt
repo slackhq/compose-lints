@@ -17,9 +17,7 @@ import com.intellij.psi.PsiTypes
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.components.resolveToCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.singleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -61,16 +59,15 @@ import slack.lint.compose.util.sourceImplementation
 import slack.lint.compose.util.unwrapParenthesis
 
 /**
- * Reports `@Composable` functions, property getters, and lambdas getters whose body doesn't need a
- * restart group. If the body doesn't use the composition at all, the `@Composable` annotation can
- * be removed. If a function or property getter body only calls functions or reads properties marked
+ * Reports `@Composable` functions, property getters, and lambdas that don't need a restart group.
+ * If a declaration doesn't use the composition at all, the `@Composable` annotation can be removed.
+ * If its body and default argument values only call functions or read properties marked
  * `@ReadOnlyComposable`, the declaration can use that annotation too.
  *
- * This detector does not report when a default argument uses composition. Calls and property reads
- * without `@ReadOnlyComposable`, composable function values, and State value access also prevent a
- * read-only suggestion. It skips declarations whose annotation is part of a contract, such as
- * overrides, overridable members, interface members, and declarations with composable slot
- * parameters.
+ * Calls and property reads without `@ReadOnlyComposable`, composable function values, and State
+ * value access prevent a read-only suggestion. It skips declarations whose annotation is part of a
+ * contract, such as overrides, overridable members, interface members, and declarations with
+ * composable slot parameters.
  */
 class RedundantComposableDetector
 @JvmOverloads
@@ -78,7 +75,8 @@ constructor(
   private val ignoredAnnotations: StringSetLintOption = StringSetLintOption(IGNORE_ANNOTATED)
 ) : ComposableFunctionDetector(ignoredAnnotations to ISSUE), SourceCodeScanner {
 
-  override val includeComposableLambdas: Boolean get() = true
+  override val includeComposableLambdas: Boolean
+    get() = true
 
   companion object {
     private const val COMPOSABLE = "androidx.compose.runtime.Composable"
@@ -151,21 +149,17 @@ constructor(
     // composition. Even when they don't, skipping them avoids false positives.
     if (method.slotParameters().isNotEmpty()) return
 
-    val bodyUsage = body.compositionUsage(context)
-
-    // A default value evaluated in the composable's context can also require the annotation.
-    if (
-      method.uastParameters.any {
-        (it.uastInitializer?.compositionUsage(context) ?: CompositionUsage.NONE) !=
-          CompositionUsage.NONE
+    val usage =
+      method.uastParameters.fold(body.compositionUsage(context)) { result, parameter ->
+        maxOf(
+          result,
+          parameter.uastInitializer?.compositionUsage(context) ?: CompositionUsage.NONE,
+        )
       }
-    ) {
-      return
-    }
 
     val annotation = method.uAnnotations.find { it.qualifiedName == COMPOSABLE }
     val location = annotation?.let(context::getLocation) ?: context.getNameLocation(method)
-    when (bodyUsage) {
+    when (usage) {
       CompositionUsage.NONE ->
         if (!method.hasIgnoredAnnotation()) {
           context.report(
@@ -387,9 +381,9 @@ constructor(
     val reference = sourcePsi as? KtElement ?: return CompositionUsage.NONE
     return analyze(reference) {
       val access =
-        reference.resolveToCall()?.singleVariableAccessCall() as? KaSimpleVariableAccessCall
+        reference.resolveToCall()?.singleVariableAccessCall()
           ?: return@analyze CompositionUsage.NONE
-      if (access.simpleAccess !is KaSimpleVariableAccess.Read) {
+      if (access.kind !is KaVariableAccessCall.Kind.Read) {
         return@analyze CompositionUsage.NONE
       }
       val getter =
@@ -422,6 +416,11 @@ constructor(
       }
   }
 
+  /**
+   * Entries are ordered from "no composition usage" to "usage that prevents a read-only
+   * suggestion". [maxOf] relies on this order when combining usage from the body and default
+   * arguments.
+   */
   private enum class CompositionUsage {
     NONE,
     READ_ONLY,
