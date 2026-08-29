@@ -3,6 +3,7 @@
 package slack.lint.compose
 
 import com.android.tools.lint.checks.infrastructure.TestFiles.binaryStub
+import com.android.tools.lint.checks.infrastructure.TestLintTask
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
@@ -10,20 +11,60 @@ import org.junit.Test
 
 class NonRestartableComposableDetectorTest : BaseComposeLintTest() {
 
-  private val compiledRuntime =
+  private val compiledStubs =
     binaryStub(
-      "libs/compiled-runtime.jar",
+      "libs/compiled-stubs.jar",
       kotlin(
           """
           package androidx.compose.runtime
 
+          @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.TYPE)
           @Retention(AnnotationRetention.BINARY)
-          @Target(AnnotationTarget.FUNCTION)
           annotation class Composable
 
+          @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
           @Retention(AnnotationRetention.SOURCE)
-          @Target(AnnotationTarget.FUNCTION)
           annotation class NonRestartableComposable
+
+          @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
+          @Retention(AnnotationRetention.SOURCE)
+          annotation class NonSkippableComposable
+
+          @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
+          @Retention(AnnotationRetention.BINARY)
+          annotation class ReadOnlyComposable
+
+          @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
+          @Retention(AnnotationRetention.SOURCE)
+          annotation class ExplicitGroupsComposable
+
+          interface State<out T> {
+            val value: T
+          }
+
+          @Composable
+          external fun Content(value: String, child: @Composable () -> Unit = {})
+
+          @Composable
+          external fun VarargContent(vararg values: String)
+
+          @Composable
+          external fun ValueContent(): String
+
+          @Composable
+          external fun DefaultValue(): String
+
+          @Composable
+          @ReadOnlyComposable
+          external fun ReadOnlyContent()
+
+          @Composable
+          @NonRestartableComposable
+          external fun NonRestartableContent()
+
+          @Composable
+          @NonSkippableComposable
+          external fun NonSkippableContent()
 
           class CompiledContent {
             @Composable
@@ -33,68 +74,23 @@ class NonRestartableComposableDetectorTest : BaseComposeLintTest() {
           """
         )
         .indented()
-        .to("src/androidx/compose/runtime/CompiledRuntime.kt"),
-    )
+        .to("src/androidx/compose/runtime/CompiledStubs.kt"),
+      kotlin(
+          """
+          package androidx.compose.ui.tooling.preview
 
-  private val stubs =
-    kotlin(
-      """
-      package androidx.compose.runtime
-
-      @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.TYPE)
-      @Retention(AnnotationRetention.BINARY)
-      annotation class Composable
-
-      @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
-      @Retention(AnnotationRetention.SOURCE)
-      annotation class NonRestartableComposable
-
-      @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
-      @Retention(AnnotationRetention.SOURCE)
-      annotation class NonSkippableComposable
-
-      @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
-      @Retention(AnnotationRetention.BINARY)
-      annotation class ReadOnlyComposable
-
-      @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
-      @Retention(AnnotationRetention.SOURCE)
-      annotation class ExplicitGroupsComposable
-
-      interface State<out T> {
-        val value: T
-      }
-
-      @Composable
-      external fun Content(value: String, child: @Composable () -> Unit = {})
-
-      @Composable
-      external fun VarargContent(vararg values: String)
-
-      @Composable
-      external fun ValueContent(): String
-
-      @Composable
-      external fun DefaultValue(): String
-
-      @Composable
-      @ReadOnlyComposable
-      external fun ReadOnlyContent()
-
-      @Composable
-      @NonRestartableComposable
-      external fun NonRestartableContent()
-
-      @Composable
-      @NonSkippableComposable
-      external fun NonSkippableContent()
-      """
-        .trimIndent()
+          annotation class Preview
+          """
+        )
+        .indented()
+        .to("src/androidx/compose/ui/tooling/preview/Preview.kt"),
     )
 
   override fun getDetector(): Detector = NonRestartableComposableDetector()
 
   override fun getIssues(): List<Issue> = listOf(NonRestartableComposableDetector.ISSUE)
+
+  override fun lint(): TestLintTask = super.lint().allowKotlinClassStubs(true)
 
   @Test
   fun `suggests non-restartable for a direct composable call`() {
@@ -110,7 +106,7 @@ class NonRestartableComposableDetectorTest : BaseComposeLintTest() {
         .trimIndent()
 
     lint()
-      .files(stubs, kotlin(code))
+      .files(compiledStubs, kotlin(code))
       .run()
       .expect(
         """
@@ -155,7 +151,7 @@ class NonRestartableComposableDetectorTest : BaseComposeLintTest() {
         .trimIndent()
 
     lint()
-      .files(stubs, kotlin(code))
+      .files(compiledStubs, kotlin(code))
       .run()
       .expect(
         """
@@ -188,7 +184,7 @@ class NonRestartableComposableDetectorTest : BaseComposeLintTest() {
         .trimIndent()
 
     lint()
-      .files(stubs, kotlin(code))
+      .files(compiledStubs, kotlin(code))
       .run()
       .expect(
         """
@@ -217,8 +213,7 @@ class NonRestartableComposableDetectorTest : BaseComposeLintTest() {
         .trimIndent()
 
     lint()
-      .files(compiledRuntime, kotlin(code))
-      .allowKotlinClassStubs(true)
+      .files(compiledStubs, kotlin(code))
       .run()
       .expect(
         """
@@ -284,7 +279,7 @@ class NonRestartableComposableDetectorTest : BaseComposeLintTest() {
       """
         .trimIndent()
 
-    lint().files(stubs, kotlin(code)).run().expectClean()
+    lint().files(compiledStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -353,7 +348,7 @@ class NonRestartableComposableDetectorTest : BaseComposeLintTest() {
       """
         .trimIndent()
 
-    lint().files(stubs, kotlin(code)).run().expectClean()
+    lint().files(compiledStubs, kotlin(code)).run().expectClean()
   }
 
   @Test
@@ -385,7 +380,7 @@ class NonRestartableComposableDetectorTest : BaseComposeLintTest() {
         .trimIndent()
 
     lint()
-      .files(stubs, kotlin(code))
+      .files(compiledStubs, kotlin(code))
       .run()
       .expect(
         """
@@ -429,6 +424,28 @@ class NonRestartableComposableDetectorTest : BaseComposeLintTest() {
       """
         .trimIndent()
 
-    lint().files(stubs, kotlin(code)).run().expectClean()
+    lint().files(compiledStubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `does not suggest non-restartable on previews`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.tooling.preview.Preview
+
+      @Composable
+      fun AnotherComposable() {}
+
+      @Preview
+      @Composable
+      fun IgnoredValueChild() {
+        AnotherComposable()
+      }
+      """
+        .trimIndent()
+
+    lint().files(compiledStubs, kotlin(code)).run().expectClean()
   }
 }
