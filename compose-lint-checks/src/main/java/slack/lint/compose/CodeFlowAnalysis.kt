@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
+import com.intellij.codeInsight.PsiEquivalenceUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -24,7 +25,10 @@ import org.jetbrains.uast.UThrowExpression
 import org.jetbrains.uast.kotlin.KotlinLocalFunctionULambdaExpression
 import org.jetbrains.uast.kotlin.KotlinUReturnExpression
 import org.jetbrains.uast.visitor.AbstractUastVisitor
+import slack.lint.compose.util.functionParameterCallTarget
 import slack.lint.compose.util.isComposableCall
+import slack.lint.compose.util.isPossiblyExecutedBy
+import slack.lint.compose.util.ownerCall
 
 /**
  * **Code flow analysis** that identifies execution paths within a method that read the `modifier`
@@ -61,8 +65,8 @@ import slack.lint.compose.util.isComposableCall
  *
  * Using the **code flow graph**, we analyze each execution path with a **depth-first search** to
  * identify paths containing two or more composable function calls that read the `modifier`
- * parameter ([CodeFlowGraph.findCallsWithMultipleModifierUses]). The caller then extracts
- * `modifier` references from these calls and reports them as errors.
+ * parameter ([CodeFlowGraph.findCallsOnPathsWithMultipleUses]). The caller then extracts `modifier`
+ * references from these calls and reports them as errors.
  *
  * ---
  *
@@ -153,14 +157,25 @@ import slack.lint.compose.util.isComposableCall
  *
  * @param modifierReferences all PSI references that resolve to the `modifier` parameter (including
  *   reassignments), used to decide which calls read the modifier.
+ * @param composableFunctionParameters composable function parameters whose calls should be included
+ *   in the graph.
  * @param computeNodeIds when true, [GraphNode]s are tagged with their source line so the resulting
  *   graph can be asserted in tests; this is purely cosmetic and skipped in production.
  */
 internal fun UMethod.buildCodeFlowGraph(
   modifierReferences: Set<PsiElement>,
+  composableFunctionParameters: Set<PsiElement> = emptySet(),
   computeNodeIds: Boolean = false,
 ): CodeFlowGraph {
-  val ast = toSimplifiedCfaAst(modifierReferences)
+  val ast = toSimplifiedCfaAst { uCall, ktCall ->
+    val functionParameter = ktCall.functionParameterCallTarget()
+    val isComposableSlotCall =
+      functionParameter != null &&
+        composableFunctionParameters.any {
+          PsiEquivalenceUtil.areElementsEquivalent(it, functionParameter)
+        }
+    (uCall.isComposableCall || isComposableSlotCall) && ktCall.isUsingModifiers(modifierReferences)
+  }
   return ast.toCodeFlowGraph(computeNodeIds)
 }
 
@@ -169,12 +184,8 @@ internal class CodeFlowGraph(
   val startNode: GraphNode,
   val adjacency: Map<GraphNode, Set<GraphNode>>,
 ) {
-  /**
-   * Detects modifier reuses in the graph using a depth-first search: any execution path that visits
-   * two or more composable calls reading the modifier parameter is a reuse, and every such call on
-   * those paths is returned.
-   */
-  fun findCallsWithMultipleModifierUses(): List<KtCallExpression> {
+  /** Returns the tracked calls on execution paths that contain at least two tracked calls. */
+  fun findCallsOnPathsWithMultipleUses(): List<KtCallExpression> {
     val currentPath = mutableListOf<GraphNode>()
     val result = mutableSetOf<GraphNode>()
     fun visit(currentNode: GraphNode) {
@@ -218,8 +229,10 @@ private class CfaBlock(val nodes: List<CfaNode>) : CfaNode {
 /** if/else or when statements. */
 private class CfaSwitch(val branches: List<CfaBlock>, val source: KtElement?) : CfaNode
 
-/** Converts UAST into a simplified AST. */
-private fun UMethod.toSimplifiedCfaAst(references: Set<PsiElement>): CfaBlock {
+/** Converts UAST into a simplified AST and keeps calls accepted by [shouldTrackCall]. */
+private fun UMethod.toSimplifiedCfaAst(
+  shouldTrackCall: (UCallExpression, KtCallExpression) -> Boolean
+): CfaBlock {
   val blockStack =
     object {
 
@@ -305,29 +318,31 @@ private fun UMethod.toSimplifiedCfaAst(references: Set<PsiElement>): CfaBlock {
         return true // we already visited all branches, stop visiting
       }
 
-      // Returns are inside blocks, we need to remember them,
-      // and link them with blocks after visit
+      // Record returns now and connect them after all blocks have been built.
       override fun afterVisitReturnExpression(node: UReturnExpression) {
         val jumpNode = CfaJump()
         blockStack.addNode(jumpNode)
         jumps += jumpNode to node
       }
 
-      // A throw terminates the current execution path. Model it as a jump with no target block,
-      // which resolves to the method exit (see CfaJump handling in toCodeFlowGraph). This mirrors
-      // a top-level return and prevents reachability false positives for early throws.
+      // Throws exit the current path.
       override fun afterVisitThrowExpression(node: UThrowExpression) {
         blockStack.addNode(CfaJump())
       }
 
-      // We are interested only in composable calls that use our modifier parameter
+      // Visit a lambda body only when its call can run it.
+      override fun visitLambdaExpression(node: ULambdaExpression): Boolean {
+        val lambda = node.sourcePsi as? KtLambdaExpression ?: return false
+        val ownerCall = lambda.ownerCall() ?: return true
+        return !lambda.isPossiblyExecutedBy(ownerCall)
+      }
+
+      // Track only calls selected by the detector.
       override fun visitCallExpression(node: UCallExpression): Boolean {
         val ktCallExpression = node.sourcePsi
-        if (ktCallExpression is KtCallExpression && ktCallExpression.isUsingModifiers(references)) {
-          if (node.isComposableCall) {
-            val callNode = CfaCall(ktCallExpression)
-            blockStack.addNode(callNode)
-          }
+        if (ktCallExpression is KtCallExpression && shouldTrackCall(node, ktCallExpression)) {
+          val callNode = CfaCall(ktCallExpression)
+          blockStack.addNode(callNode)
         }
         return false
       }
