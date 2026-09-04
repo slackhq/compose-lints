@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotatedExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtElement
@@ -47,8 +45,12 @@ import org.jetbrains.uast.USimpleNameReferenceExpression
 import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.toUElementOfType
 import org.jetbrains.uast.visitor.AbstractUastVisitor
+import slack.lint.compose.util.COMPOSABLE_CLASS_ID
+import slack.lint.compose.util.COMPOSABLE_FQ_NAME
 import slack.lint.compose.util.ComposableCallKind
 import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.READ_ONLY_COMPOSABLE_CLASS_ID
+import slack.lint.compose.util.READ_ONLY_COMPOSABLE_FQ_NAME
 import slack.lint.compose.util.StringSetLintOption
 import slack.lint.compose.util.composableCallKind
 import slack.lint.compose.util.hasComposableFunctionType
@@ -79,12 +81,8 @@ constructor(
     get() = true
 
   companion object {
-    private const val COMPOSABLE = "androidx.compose.runtime.Composable"
     private const val COMPOSITION_LOCAL = "androidx.compose.runtime.CompositionLocal"
-    private const val READ_ONLY_COMPOSABLE = "androidx.compose.runtime.ReadOnlyComposable"
     private const val STATE = "androidx.compose.runtime.State"
-    private val COMPOSABLE_CLASS_ID = ClassId.topLevel(FqName(COMPOSABLE))
-    private val READ_ONLY_COMPOSABLE_CLASS_ID = ClassId.topLevel(FqName(READ_ONLY_COMPOSABLE))
 
     internal val IGNORE_ANNOTATED =
       StringOption(
@@ -157,7 +155,7 @@ constructor(
         )
       }
 
-    val annotation = method.uAnnotations.find { it.qualifiedName == COMPOSABLE }
+    val annotation = method.uAnnotations.find { it.qualifiedName == COMPOSABLE_FQ_NAME }
     val location = annotation?.let(context::getLocation) ?: context.getNameLocation(method)
     when (usage) {
       CompositionUsage.NONE ->
@@ -171,7 +169,7 @@ constructor(
           )
         }
       CompositionUsage.READ_ONLY ->
-        if (!method.hasAnnotation(READ_ONLY_COMPOSABLE)) {
+        if (!method.hasAnnotation(READ_ONLY_COMPOSABLE_FQ_NAME)) {
           context.report(
             READ_ONLY_ISSUE,
             annotation ?: method,
@@ -186,7 +184,7 @@ constructor(
 
   override fun visitComposable(context: JavaContext, lambda: ULambdaExpression) {
     if (lambda.sourcePsi !is KtLambdaExpression) return
-    val annotation = lambda.findAnnotation(COMPOSABLE) ?: return
+    val annotation = lambda.findAnnotation(COMPOSABLE_FQ_NAME) ?: return
     if (lambda.body.compositionUsage(context) != CompositionUsage.NONE) return
     if (ignoredAnnotations.value.any { lambda.findAnnotation(it) != null }) return
 
@@ -249,7 +247,7 @@ constructor(
       .range(location)
       .shortenNames()
       .text(entry.text)
-      .with("${entry.text}\n${indentation}@$READ_ONLY_COMPOSABLE")
+      .with("${entry.text}\n${indentation}@$READ_ONLY_COMPOSABLE_FQ_NAME")
       .autoFix()
       .build()
   }
@@ -412,7 +410,7 @@ constructor(
 
     return initializer.baseExpression is KtLambdaExpression &&
       initializer.annotationEntries.any {
-        it.toUElementOfType<UAnnotation>()?.qualifiedName == COMPOSABLE
+        it.toUElementOfType<UAnnotation>()?.qualifiedName == COMPOSABLE_FQ_NAME
       }
   }
 
