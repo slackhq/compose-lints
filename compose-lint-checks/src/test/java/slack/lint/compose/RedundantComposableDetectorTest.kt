@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package slack.lint.compose
 
+import com.android.tools.lint.checks.infrastructure.TestFiles.binaryStub
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import org.intellij.lang.annotations.Language
@@ -516,6 +517,66 @@ class RedundantComposableDetectorTest : BaseComposeLintTest() {
     lint()
       .files(stubs, unitStubs, *issue574Stubs, kotlin(code).to("ProgressSlider.kt"))
       .isolated("src/ProgressSlider.kt")
+      .run()
+      .expectClean()
+  }
+
+  @Test
+  fun `no errors when dispatcher composable calls composables compiled in another module`() {
+    // Cross-module regression: caller dispatches to composables that live in compiled bytecode
+    // rather than source compiled alongside it in the same pass.
+    val compiledLibraryModule =
+      binaryStub(
+        "libs/compiled-library.jar",
+        listOf(
+          kotlin(
+              """
+              package com.example.library
+
+              import androidx.compose.runtime.Composable
+
+              @Composable
+              fun CalleeLoadingScreen() {}
+
+              @Composable
+              fun CalleeErrorScreen() {}
+              """
+            )
+            .indented()
+            .to("src/com/example/library/CalleeScreens.kt")
+        ),
+        listOf(stubs),
+      )
+
+    @Language("kotlin")
+    val code =
+      """
+      package com.example.app
+
+      import androidx.compose.runtime.Composable
+      import com.example.library.CalleeErrorScreen
+      import com.example.library.CalleeLoadingScreen
+
+      internal sealed interface ScreenState {
+        data object Content : ScreenState
+        data object Loading : ScreenState
+        data object Error : ScreenState
+      }
+
+      @Composable
+      internal fun CallerScreen(state: ScreenState) {
+        when (state) {
+          is ScreenState.Content -> Unit
+          ScreenState.Loading -> CalleeLoadingScreen()
+          ScreenState.Error -> CalleeErrorScreen()
+        }
+      }
+      """
+        .trimIndent()
+
+    lint()
+      .files(stubs, compiledLibraryModule, kotlin(code))
+      .allowKotlinClassStubs(true)
       .run()
       .expectClean()
   }
