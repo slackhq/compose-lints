@@ -22,6 +22,7 @@ import org.jetbrains.uast.toUElementOfType
 import slack.lint.compose.util.COMPOSABLE_FQ_NAME
 import slack.lint.compose.util.ComposableCallKind
 import slack.lint.compose.util.Priorities
+import slack.lint.compose.util.READ_ONLY_COMPOSABLE_FQ_NAME
 import slack.lint.compose.util.callsInlineFunction
 import slack.lint.compose.util.composableCallKind
 import slack.lint.compose.util.definedInInterface
@@ -122,7 +123,6 @@ class NonRestartableComposableDetector : ComposableFunctionDetector(), SourceCod
 private const val EXPLICIT_GROUPS_COMPOSABLE = "androidx.compose.runtime.ExplicitGroupsComposable"
 private const val NON_RESTARTABLE_COMPOSABLE = "androidx.compose.runtime.NonRestartableComposable"
 private const val NON_SKIPPABLE_COMPOSABLE = "androidx.compose.runtime.NonSkippableComposable"
-private const val READ_ONLY_COMPOSABLE = "androidx.compose.runtime.ReadOnlyComposable"
 
 private val NON_RESTARTABLE_MODIFIERS =
   listOf(
@@ -141,5 +141,5 @@ private val INELIGIBLE_ANNOTATIONS =
     EXPLICIT_GROUPS_COMPOSABLE,
     NON_RESTARTABLE_COMPOSABLE,
     NON_SKIPPABLE_COMPOSABLE,
-    READ_ONLY_COMPOSABLE,
+    READ_ONLY_COMPOSABLE_FQ_NAME,
   )

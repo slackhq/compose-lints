@@ -4,10 +4,21 @@
 package slack.lint.compose.util
 
 import com.android.tools.lint.client.api.JavaEvaluator
+import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.KtDeclarationWithReturnType
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UParameter
 import org.jetbrains.uast.toUElementOfType
+
+/** Returns the class ID of the fully expanded return type, or null for other return types. */
+internal fun KtDeclarationWithReturnType.expandedClassId(): ClassId? {
+  return analyze(this) {
+    (this@expandedClassId.returnType.fullyExpandedType as? KaClassType)?.classId
+  }
+}
 
 fun UParameter.isTypeMutable(evaluator: JavaEvaluator): Boolean {
   // Trivial check for Kotlin mutable collections. See its doc for details.
