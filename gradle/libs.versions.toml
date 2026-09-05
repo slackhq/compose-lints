@@ -2,13 +2,13 @@
 kotlin = "2.4.10"
 jdk = "26"
 jvmTarget = "17"
-lint = "32.3.2"
-lint-latest = "32.3.2"
+lint = "32.4.0"
+lint-latest = "32.4.0"
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.8" }
 dokka = { id = "org.jetbrains.dokka", version = "2.2.0" }
-lint = { id = "com.android.lint", version = "9.3.2" }
+lint = { id = "com.android.lint", version = "9.4.0" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version = "2.3.11" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.37.0" }

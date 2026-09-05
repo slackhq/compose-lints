@@ -30,6 +30,7 @@ import slack.lint.compose.util.directCall
 import slack.lint.compose.util.findChildrenByClass
 import slack.lint.compose.util.isForwardedReceiver
 import slack.lint.compose.util.isForwardedValue
+import slack.lint.compose.util.isPreview
 import slack.lint.compose.util.returnsUnitOrVoid
 import slack.lint.compose.util.singleBodyExpression
 import slack.lint.compose.util.sourceImplementation
@@ -64,6 +65,7 @@ class NonRestartableComposableDetector : ComposableFunctionDetector(), SourceCod
     if (namedFunction.isLocal() || namedFunction.definedInInterface) return
     if (NON_RESTARTABLE_MODIFIERS.any(namedFunction::hasModifier)) return
     if (INELIGIBLE_ANNOTATIONS.any(method::hasAnnotation)) return
+    if (method.isPreview) return
 
     val bodyExpression = namedFunction.singleBodyExpression() ?: return
     // A pass-through body has one call and no lambda body of its own. This also rejects calls used
