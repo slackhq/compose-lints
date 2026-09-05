@@ -4,6 +4,8 @@ Changelog
 **Unreleased**
 --------------
 
+- **Fix**: Don't suggest `@NonRestartableComposable` on `@Preview`-annotated composables.
+
 1.6.0
 -----
 

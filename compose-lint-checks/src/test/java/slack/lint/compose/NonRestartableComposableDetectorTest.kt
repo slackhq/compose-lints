@@ -92,6 +92,17 @@ class NonRestartableComposableDetectorTest : BaseComposeLintTest() {
         .trimIndent()
     )
 
+  private val previewStub =
+    kotlin(
+        """
+        package androidx.compose.ui.tooling.preview
+
+        annotation class Preview
+        """
+      )
+      .indented()
+      .to("src/androidx/compose/ui/tooling/preview/Preview.kt")
+
   override fun getDetector(): Detector = NonRestartableComposableDetector()
 
   override fun getIssues(): List<Issue> = listOf(NonRestartableComposableDetector.ISSUE)
@@ -430,5 +441,27 @@ class NonRestartableComposableDetectorTest : BaseComposeLintTest() {
         .trimIndent()
 
     lint().files(stubs, kotlin(code)).run().expectClean()
+  }
+
+  @Test
+  fun `does not suggest non-restartable on previews`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.ui.tooling.preview.Preview
+
+      @Composable
+      fun AnotherComposable() {}
+
+      @Preview
+      @Composable
+      fun IgnoredValueChild() {
+        AnotherComposable()
+      }
+      """
+        .trimIndent()
+
+    lint().files(stubs, previewStub, kotlin(code)).run().expectClean()
   }
 }
