@@ -250,12 +250,11 @@ Related rule: [`ComposeMultipleContentEmitters`](https://github.com/slackhq/comp
 
 Slot parameters provide a convenient and idiomatic way to accept arbitrary content for a component.
 
-Callers of a component that takes a slot parameter have natural expectations about the lifecycle of
-that slot.
-Specifically, the slot should either be composed (invoked) in exactly one place, or not invoked at
-all.
-Even if there are visual or structure changes inside the component, callers expect the internal
-state of the slot to be preserved.
+Invoke a slot at most once on each execution path. Calling it twice in sequence, from a loop, both inside and after a branch, or through multiple child composables can compose the same content more than once.
+
+Calls in mutually exclusive branches are allowed by this rule because only one branch runs. This applies to `content()`, `content.invoke()`, nullable `content?.invoke()`, and passing the slot to another `Unit`-returning composable.
+
+Callers of a component that takes a slot parameter have natural expectations about the lifecycle of that slot. Even if there are visual or structure changes inside the component, callers expect the internal state of the slot to be preserved. Switching between call sites can still reset that state, even when each execution path calls the slot only once.
 
 Components should either use custom layouts to meet this expectation or `movableContentOf`.
 
@@ -413,6 +412,32 @@ private fun InnerContent(modifier: Modifier = Modifier) {
     }
 }
 ```
+
+For a top-level `if` or `when`, pass the incoming modifier to every branch whose composable accepts one. If one branch omits it, that branch ignores the caller's modifier.
+
+```kotlin
+@Composable
+fun Content(state: State, modifier: Modifier = Modifier) {
+    when (state) {
+        State.Loading -> LoadingContent()
+        is State.Loaded -> LoadedContent(state.data, modifier)
+    }
+}
+```
+
+Pass the modifier in both branches:
+
+```kotlin
+@Composable
+fun Content(state: State, modifier: Modifier = Modifier) {
+    when (state) {
+        State.Loading -> LoadingContent(modifier)
+        is State.Loaded -> LoadedContent(state.data, modifier)
+    }
+}
+```
+
+Branches that call composables without a modifier parameter are allowed. The rule also checks modifier arguments passed to composable function parameters. It does not require the function parameter itself to be called in every branch.
 
 Related rule: [`ComposeModifierReused`](https://github.com/slackhq/compose-lints/blob/main/compose-lint-checks/src/main/java/slack/lint/compose/ModifierReusedDetector.kt)
 

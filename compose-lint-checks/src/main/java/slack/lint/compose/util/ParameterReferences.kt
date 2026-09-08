@@ -4,7 +4,12 @@ package slack.lint.compose.util
 
 import com.android.tools.lint.checks.DataFlowAnalyzer
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import org.jetbrains.kotlin.psi.KtValueArgumentName
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UMethod
@@ -36,4 +41,24 @@ internal fun findAllParameterReferences(parameter: UParameter, method: UMethod):
     }
   )
   return references
+}
+
+/** Finds names in this function that resolve to [declarations], excluding named-argument labels. */
+internal fun KtNamedFunction.findReferencesTo(
+  declarations: Collection<PsiElement>
+): Set<KtNameReferenceExpression> {
+  return buildSet {
+    accept(
+      object : KtTreeVisitorVoid() {
+        override fun visitReferenceExpression(expression: KtReferenceExpression) {
+          super.visitReferenceExpression(expression)
+          if (expression !is KtNameReferenceExpression) return
+          if (expression.parent is KtValueArgumentName) return
+          if (expression.resolvesToAnyEquivalent(declarations)) {
+            add(expression)
+          }
+        }
+      }
+    )
+  }
 }

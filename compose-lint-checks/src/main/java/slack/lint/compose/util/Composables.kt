@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
@@ -184,8 +182,6 @@ val ModifierQualifiedNames by
     setOf("androidx.compose.ui.Modifier", "androidx.glance.GlanceModifier")
   }
 
-private val ComposableClassId = ClassId.topLevel(FqName("androidx.compose.runtime.Composable"))
-
 fun UParameter.isModifier(evaluator: JavaEvaluator): Boolean {
   (sourcePsi as? KtParameter)?.let {
     if (it.typeReference?.text in ModifierNames) {
@@ -241,7 +237,7 @@ fun KtExpression.hasComposableFunctionType(): Boolean {
 
 private fun KaSession.isComposableFunctionType(type: KaType): Boolean {
   val expandedType = type.fullyExpandedType
-  return expandedType is KaFunctionType && ComposableClassId in expandedType.annotations
+  return expandedType is KaFunctionType && COMPOSABLE_CLASS_ID in expandedType.annotations
 }
 
 val KtCallableDeclaration.isModifierReceiver: Boolean

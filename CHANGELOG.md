@@ -4,6 +4,8 @@ Changelog
 **Unreleased**
 --------------
 
+- **Enhancement**: Extend `ComposeModifierReused` to detect a modifier omitted from a top-level `if` or `when` branch. See [#466](https://github.com/slackhq/compose-lints/issues/466).
+- **Fix**: Make `SlotReused` check whether a slot can be used more than once on the same execution path, allowing calls in mutually exclusive branches and respecting early returns.
 - **Fix**: Don't suggest `@NonRestartableComposable` on `@Preview`-annotated composables.
 
 1.6.0
