@@ -12,9 +12,6 @@ plugins {
 }
 
 lint {
-  htmlReport = true
-  xmlReport = true
-  textReport = true
   absolutePaths = false
   checkTestSources = true
   baseline = file("lint-baseline.xml")

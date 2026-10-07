@@ -16,6 +16,8 @@ _2026-10-07_
 - Build against lint `32.4.1`.
 - Update KSP to `2.3.12`.
 
+Special thanks to [@dajiaohuang](https://github.com/dajiaohuang) for contributing to this release!
+
 1.6.0
 -----
 
