@@ -4,9 +4,17 @@ Changelog
 **Unreleased**
 --------------
 
+1.6.1
+-----
+
+_2026-10-07_
+
 - **Enhancement**: Extend `ComposeModifierReused` to detect a modifier omitted from a top-level `if` or `when` branch. See [#466](https://github.com/slackhq/compose-lints/issues/466).
 - **Fix**: Make `SlotReused` check whether a slot can be used more than once on the same execution path, allowing calls in mutually exclusive branches and respecting early returns.
 - **Fix**: Don't suggest `@NonRestartableComposable` on `@Preview`-annotated composables.
+- Build against Kotlin `2.4.20`.
+- Build against lint `32.4.1`.
+- Update KSP to `2.3.12`.
 
 1.6.0
 -----
