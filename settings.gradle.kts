@@ -9,7 +9,7 @@ pluginManagement {
     // Last because this proxies jcenter!
     gradlePluginPortal()
   }
-  plugins { id("com.gradle.develocity") version "4.5.0" }
+  plugins { id("com.gradle.develocity") version "4.6.0" }
 }
 
 dependencyResolutionManagement {
