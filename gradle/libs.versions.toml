@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.4.20"
+kotlin = "2.4.21"
 jdk = "26"
 jvmTarget = "17"
 lint = "32.4.1"
