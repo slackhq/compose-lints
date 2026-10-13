@@ -1,65 +1,94 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>slack.lint.compose</title>
-<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
-<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
 <link href="../../styles/style.css" rel="Stylesheet">
 <link href="../../styles/main.css" rel="Stylesheet">
 <link href="../../styles/prism.css" rel="Stylesheet">
 <link href="../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
 <link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
-<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../scripts/prism.js" async></script>
-<script type="text/javascript" src="../../ui-kit/ui-kit.min.js" async></script>
-<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer></script></head>
 <body>
-    <div class="root">
-<nav class="navigation" id="navigation-wrapper">
-    <div class="navigation--inner">
-        <div class="navigation-title">
-            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
-            <div class="library-name">
-<a class="library-name--link" href="../../index.html">
-                            compose-lints
-                    </a>            </div>
-            <div class="library-version">
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../index.html" tabindex="1">
+                    compose-lints
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":compose-lint-checks/main">jvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":compose-lint-checks/main" data-filter=":compose-lint-checks/main">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
             </div>
         </div>
-        <div class="filter-section" id="filter-section">
-                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":compose-lint-checks/main">jvm</button>
-        </div>
-    </div>
-    <div class="navigation-controls">
-        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
-        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
-    </div>
-</nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="sidebar--inner" id="sideMenu"></div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    compose-lints
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
 <div class="main-content" data-page-type="package" id="content" pageids="compose-lint-checks::slack.lint.compose////PointingToDeclaration//-1210816664">
   <div class="breadcrumbs"><a href="../index.html">compose-lint-checks</a><span class="delimiter">/</span><span class="current">slack.lint.compose</span></div>
   <div class="cover ">
@@ -69,9 +98,9 @@
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button></div>
     <div class="tabs-section-body">
       <div data-togglable="TYPE">
-        <h2 class="">Types</h2>
+        <h2 class="tableheader">Types</h2>
         <div class="table"><a data-name="-1912761156%2FClasslikes%2F-1210816664" anchor-label="ComposableFunctionDetector" id="-1912761156%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-composable-function-detector/index.html"><span>Composable</span><wbr><span>Function</span><wbr><span><span>Detector</span></span></a></div>
@@ -80,13 +109,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="-composable-function-detector/index.html">ComposableFunctionDetector</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">options<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/index.html">Pair</a><span class="token operator">&lt;</span><a href="../slack.lint.compose.util/-lint-option/index.html">LintOption</a><span class="token punctuation">, </span><span data-unresolved-link="com.android.tools.lint.detector.api/Issue///PointingToDeclaration/">Issue</span><span class="token operator">&gt;</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span> : <a href="../slack.lint.compose.util/-option-loading-detector/index.html">OptionLoadingDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="-composable-function-detector/index.html">ComposableFunctionDetector</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">options<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-pair/index.html">Pair</a><span class="token operator">&lt;</span><a href="../slack.lint.compose.util/-lint-option/index.html">LintOption</a><span class="token punctuation">, </span><span data-unresolved-link="com.android.tools.lint.detector.api/Issue///PointingToDeclaration/">Issue</span><span class="token operator">&gt;</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span> : <a href="../slack.lint.compose.util/-option-loading-detector/index.html">OptionLoadingDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="-781814700%2FClasslikes%2F-1210816664" anchor-label="ComposableFunctionNamingDetector" id="-781814700%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-composable-function-naming-detector/index.html"><span>Composable</span><wbr><span>Function</span><wbr><span>Naming</span><wbr><span><span>Detector</span></span></a></div>
@@ -95,13 +124,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-composable-function-naming-detector/index.html">ComposableFunctionNamingDetector</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">allowedNames<span class="token operator">: </span><a href="../slack.lint.compose.util/-string-set-lint-option/index.html">StringSetLintOption</a><span class="token operator"> = </span>StringSetLintOption(ALLOWED_COMPOSABLE_FUNCTION_NAMES)</span></span><span class="token punctuation">)</span> : <a href="-composable-function-detector/index.html">ComposableFunctionDetector</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-composable-function-naming-detector/index.html">ComposableFunctionNamingDetector</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">allowedNames<span class="token operator">: </span><a href="../slack.lint.compose.util/-string-set-lint-option/index.html">StringSetLintOption</a><span class="token operator"> = </span>StringSetLintOption(ALLOWED_COMPOSABLE_FUNCTION_NAMES)</span></span><span class="token punctuation">)</span> : <a href="-composable-function-detector/index.html">ComposableFunctionDetector</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="87708899%2FClasslikes%2F-1210816664" anchor-label="ComposeLintsIssueRegistry" id="87708899%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-compose-lints-issue-registry/index.html"><span>Compose</span><wbr><span>Lints</span><wbr><span>Issue</span><wbr><span><span>Registry</span></span></a></div>
@@ -116,7 +145,7 @@
             </div>
           </div>
 <a data-name="-1048472587%2FClasslikes%2F-1210816664" anchor-label="CompositionLocalUsageDetector" id="-1048472587%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-composition-local-usage-detector/index.html"><span>Composition</span><wbr><span>Local</span><wbr><span>Usage</span><wbr><span><span>Detector</span></span></a></div>
@@ -131,7 +160,7 @@
             </div>
           </div>
 <a data-name="671480442%2FClasslikes%2F-1210816664" anchor-label="ContentEmitterLintOption" id="671480442%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-content-emitter-lint-option/index.html"><span>Content</span><wbr><span>Emitter</span><wbr><span>Lint</span><wbr><span><span>Option</span></span></a></div>
@@ -146,7 +175,7 @@
             </div>
           </div>
 <a data-name="-298777322%2FClasslikes%2F-1210816664" anchor-label="ContentEmitterReturningValuesDetector" id="-298777322%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-content-emitter-returning-values-detector/index.html"><span>Content</span><wbr><span>Emitter</span><wbr><span>Returning</span><wbr><span>Values</span><wbr><span><span>Detector</span></span></a></div>
@@ -155,13 +184,43 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-content-emitter-returning-values-detector/index.html">ContentEmitterReturningValuesDetector</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">contentEmitterOption<span class="token operator">: </span><a href="-content-emitter-lint-option/index.html">ContentEmitterLintOption</a><span class="token operator"> = </span>ContentEmitterLintOption(CONTENT_EMITTER_OPTION)</span></span><span class="token punctuation">)</span> : <a href="../slack.lint.compose.util/-option-loading-detector/index.html">OptionLoadingDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-content-emitter-returning-values-detector/index.html">ContentEmitterReturningValuesDetector</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">contentEmitterOption<span class="token operator">: </span><a href="-content-emitter-lint-option/index.html">ContentEmitterLintOption</a><span class="token operator"> = </span>ContentEmitterLintOption(CONTENT_EMITTER_OPTION)</span></span><span class="token punctuation">)</span> : <a href="../slack.lint.compose.util/-option-loading-detector/index.html">OptionLoadingDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1767197205%2FClasslikes%2F-1210816664" anchor-label="GraphNode" id="-1767197205%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-graph-node/index.html"><span>Graph</span><wbr><span><span>Node</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1767197205%2FClasslikes%2F-1210816664"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-graph-node/index.html">GraphNode</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>call<span class="token operator">: </span><span data-unresolved-link="org.jetbrains.kotlin.psi/KtCallExpression///PointingToDeclaration/">KtCallExpression</span><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">isSwitch<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A <strong>code flow graph</strong> node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-669179890%2FClasslikes%2F-1210816664" anchor-label="ItemKeyHashCodeDetector" id="-669179890%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-item-key-hash-code-detector/index.html"><span>Item</span><wbr><span>Key</span><wbr><span>Hash</span><wbr><span>Code</span><wbr><span><span>Detector</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-669179890%2FClasslikes%2F-1210816664"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-item-key-hash-code-detector/index.html">ItemKeyHashCodeDetector</a> : <a href="-composable-function-detector/index.html">ComposableFunctionDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div><div class="brief "><p class="paragraph">Flags <code class="lang-kotlin">hashCode()</code> calls used in the <code class="lang-kotlin">key</code> of <code class="lang-kotlin">Lazy*</code>/<code class="lang-kotlin">Pager</code> composables (<code class="lang-kotlin">LazyColumn</code>, <code class="lang-kotlin">LazyVerticalGrid</code>, <code class="lang-kotlin">HorizontalPager</code>, <code class="lang-kotlin">items</code>, <code class="lang-kotlin">itemsIndexed</code>, <code class="lang-kotlin">item</code>, …).</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="1157440952%2FClasslikes%2F-1210816664" anchor-label="ModifierComposedDetector" id="1157440952%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-modifier-composed-detector/index.html"><span>Modifier</span><wbr><span>Composed</span><wbr><span><span>Detector</span></span></a></div>
@@ -176,7 +235,7 @@
             </div>
           </div>
 <a data-name="-316822266%2FClasslikes%2F-1210816664" anchor-label="ModifierMissingDetector" id="-316822266%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-modifier-missing-detector/index.html"><span>Modifier</span><wbr><span>Missing</span><wbr><span><span>Detector</span></span></a></div>
@@ -185,13 +244,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-modifier-missing-detector/index.html">ModifierMissingDetector</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">contentEmitterOption<span class="token operator">: </span><a href="-content-emitter-lint-option/index.html">ContentEmitterLintOption</a><span class="token operator"> = </span>ContentEmitterLintOption(CONTENT_EMITTER_OPTION)</span></span><span class="token punctuation">)</span> : <a href="-composable-function-detector/index.html">ComposableFunctionDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-modifier-missing-detector/index.html">ModifierMissingDetector</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">contentEmitterOption<span class="token operator">: </span><a href="-content-emitter-lint-option/index.html">ContentEmitterLintOption</a><span class="token operator"> = </span>ContentEmitterLintOption(CONTENT_EMITTER_OPTION)</span></span><span class="token punctuation">)</span> : <a href="-composable-function-detector/index.html">ComposableFunctionDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="244643290%2FClasslikes%2F-1210816664" anchor-label="ModifierReusedDetector" id="244643290%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-modifier-reused-detector/index.html"><span>Modifier</span><wbr><span>Reused</span><wbr><span><span>Detector</span></span></a></div>
@@ -200,13 +259,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-modifier-reused-detector/index.html">ModifierReusedDetector</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">contentEmitterOption<span class="token operator">: </span><a href="-content-emitter-lint-option/index.html">ContentEmitterLintOption</a><span class="token operator"> = </span>ContentEmitterLintOption(CONTENT_EMITTER_OPTION)</span></span><span class="token punctuation">)</span> : <a href="-composable-function-detector/index.html">ComposableFunctionDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-modifier-reused-detector/index.html">ModifierReusedDetector</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">contentEmitterOption<span class="token operator">: </span><a href="-content-emitter-lint-option/index.html">ContentEmitterLintOption</a><span class="token operator"> = </span>ContentEmitterLintOption(CONTENT_EMITTER_OPTION)</span></span><span class="token punctuation">)</span> : <a href="-composable-function-detector/index.html">ComposableFunctionDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div><div class="brief "><p class="paragraph">Reports modifier reuse and top-level branches that omit the modifier.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="-889039855%2FClasslikes%2F-1210816664" anchor-label="ModifierWithoutDefaultDetector" id="-889039855%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-modifier-without-default-detector/index.html"><span>Modifier</span><wbr><span>Without</span><wbr><span>Default</span><wbr><span><span>Detector</span></span></a></div>
@@ -221,7 +280,7 @@
             </div>
           </div>
 <a data-name="55846727%2FClasslikes%2F-1210816664" anchor-label="MultipleContentEmittersDetector" id="55846727%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-multiple-content-emitters-detector/index.html"><span>Multiple</span><wbr><span>Content</span><wbr><span>Emitters</span><wbr><span><span>Detector</span></span></a></div>
@@ -230,13 +289,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-multiple-content-emitters-detector/index.html">MultipleContentEmittersDetector</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">contentEmitterOption<span class="token operator">: </span><a href="-content-emitter-lint-option/index.html">ContentEmitterLintOption</a><span class="token operator"> = </span>ContentEmitterLintOption(CONTENT_EMITTER_OPTION)</span></span><span class="token punctuation">)</span> : <a href="../slack.lint.compose.util/-option-loading-detector/index.html">OptionLoadingDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-multiple-content-emitters-detector/index.html">MultipleContentEmittersDetector</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">contentEmitterOption<span class="token operator">: </span><a href="-content-emitter-lint-option/index.html">ContentEmitterLintOption</a><span class="token operator"> = </span>ContentEmitterLintOption(CONTENT_EMITTER_OPTION)</span></span><span class="token punctuation">)</span> : <a href="../slack.lint.compose.util/-option-loading-detector/index.html">OptionLoadingDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="1023146885%2FClasslikes%2F-1210816664" anchor-label="MutableParametersDetector" id="1023146885%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-mutable-parameters-detector/index.html"><span>Mutable</span><wbr><span>Parameters</span><wbr><span><span>Detector</span></span></a></div>
@@ -250,8 +309,23 @@
               </div>
             </div>
           </div>
+<a data-name="-1507205192%2FClasslikes%2F-1210816664" anchor-label="NonRestartableComposableDetector" id="-1507205192%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-non-restartable-composable-detector/index.html"><span>Non</span><wbr><span>Restartable</span><wbr><span>Composable</span><wbr><span><span>Detector</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1507205192%2FClasslikes%2F-1210816664"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-non-restartable-composable-detector/index.html">NonRestartableComposableDetector</a> : <a href="-composable-function-detector/index.html">ComposableFunctionDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-1341529444%2FClasslikes%2F-1210816664" anchor-label="ParameterOrderDetector" id="-1341529444%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-parameter-order-detector/index.html"><span>Parameter</span><wbr><span>Order</span><wbr><span><span>Detector</span></span></a></div>
@@ -266,7 +340,7 @@
             </div>
           </div>
 <a data-name="1775705029%2FClasslikes%2F-1210816664" anchor-label="PreviewNamingDetector" id="1775705029%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-preview-naming-detector/index.html"><span>Preview</span><wbr><span>Naming</span><wbr><span><span>Detector</span></span></a></div>
@@ -281,7 +355,7 @@
             </div>
           </div>
 <a data-name="605686276%2FClasslikes%2F-1210816664" anchor-label="PreviewPublicDetector" id="605686276%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-preview-public-detector/index.html"><span>Preview</span><wbr><span>Public</span><wbr><span><span>Detector</span></span></a></div>
@@ -295,23 +369,23 @@
               </div>
             </div>
           </div>
-<a data-name="-1582619972%2FClasslikes%2F-1210816664" anchor-label="RememberMissingDetector" id="-1582619972%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+<a data-name="-510459365%2FClasslikes%2F-1210816664" anchor-label="RedundantComposableDetector" id="-510459365%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-remember-missing-detector/index.html"><span>Remember</span><wbr><span>Missing</span><wbr><span><span>Detector</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1582619972%2FClasslikes%2F-1210816664"></span>
+                  <div><a href="-redundant-composable-detector/index.html"><span>Redundant</span><wbr><span>Composable</span><wbr><span><span>Detector</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-510459365%2FClasslikes%2F-1210816664"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-remember-missing-detector/index.html">RememberMissingDetector</a> : <a href="-composable-function-detector/index.html">ComposableFunctionDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-redundant-composable-detector/index.html">RedundantComposableDetector</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ignoredAnnotations<span class="token operator">: </span><a href="../slack.lint.compose.util/-string-set-lint-option/index.html">StringSetLintOption</a><span class="token operator"> = </span>StringSetLintOption(IGNORE_ANNOTATED)</span></span><span class="token punctuation">)</span> : <a href="-composable-function-detector/index.html">ComposableFunctionDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div><div class="brief "><p class="paragraph">Reports <code class="lang-kotlin">@Composable</code> functions, property getters, and lambdas that don't need a restart group. If a declaration doesn't use the composition at all, the <code class="lang-kotlin">@Composable</code> annotation can be removed. If its body and default argument values only call functions or read properties marked <code class="lang-kotlin">@ReadOnlyComposable</code>, the declaration can use that annotation too.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="-850699309%2FClasslikes%2F-1210816664" anchor-label="SlotReusedDetector" id="-850699309%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-slot-reused-detector/index.html"><span>Slot</span><wbr><span>Reused</span><wbr><span><span>Detector</span></span></a></div>
@@ -326,7 +400,7 @@
             </div>
           </div>
 <a data-name="-122344716%2FClasslikes%2F-1210816664" anchor-label="UnstableCollectionsDetector" id="-122344716%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-unstable-collections-detector/index.html"><span>Unstable</span><wbr><span>Collections</span><wbr><span><span>Detector</span></span></a></div>
@@ -341,7 +415,7 @@
             </div>
           </div>
 <a data-name="2030204126%2FClasslikes%2F-1210816664" anchor-label="UnstableReceiverDetector" id="2030204126%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-unstable-receiver-detector/index.html"><span>Unstable</span><wbr><span>Receiver</span><wbr><span><span>Detector</span></span></a></div>
@@ -356,7 +430,7 @@
             </div>
           </div>
 <a data-name="-128602316%2FClasslikes%2F-1210816664" anchor-label="ViewModelForwardingDetector" id="-128602316%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-view-model-forwarding-detector/index.html"><span>View</span><wbr><span>Model</span><wbr><span>Forwarding</span><wbr><span><span>Detector</span></span></a></div>
@@ -371,7 +445,7 @@
             </div>
           </div>
 <a data-name="1925683406%2FClasslikes%2F-1210816664" anchor-label="ViewModelInjectionDetector" id="1925683406%2FClasslikes%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-view-model-injection-detector/index.html"><span>View</span><wbr><span>Model</span><wbr><span>Injection</span><wbr><span><span>Detector</span></span></a></div>
@@ -380,7 +454,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-view-model-injection-detector/index.html">ViewModelInjectionDetector</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">userFactories<span class="token operator">: </span><a href="../slack.lint.compose.util/-string-set-lint-option/index.html">StringSetLintOption</a><span class="token operator"> = </span>StringSetLintOption(USER_FACTORIES)</span></span><span class="token punctuation">)</span> : <a href="-composable-function-detector/index.html">ComposableFunctionDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-view-model-injection-detector/index.html">ViewModelInjectionDetector</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">userFactories<span class="token operator">: </span><a href="../slack.lint.compose.util/-string-set-lint-option/index.html">StringSetLintOption</a><span class="token operator"> = </span>StringSetLintOption(USER_FACTORIES)</span></span><span class="token punctuation">)</span> : <a href="-composable-function-detector/index.html">ComposableFunctionDetector</a>, <span data-unresolved-link="com.android.tools.lint.detector.api/SourceCodeScanner///PointingToDeclaration/">SourceCodeScanner</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -391,17 +465,21 @@
   </div>
 </div>
     <div class="footer">
-        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
-        <span>© 2024 Copyright</span>
-        <span class="pull-right">
-            <span>Generated by </span>
-            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
-                <span>dokka</span>
-            </a>
-        </span>
-    </div>
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

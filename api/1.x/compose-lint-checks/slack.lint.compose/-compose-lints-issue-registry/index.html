@@ -1,65 +1,94 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>ComposeLintsIssueRegistry</title>
-<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
-<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
 <link href="../../../styles/style.css" rel="Stylesheet">
 <link href="../../../styles/main.css" rel="Stylesheet">
 <link href="../../../styles/prism.css" rel="Stylesheet">
 <link href="../../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
 <link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
-<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../../scripts/prism.js" async></script>
-<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" async></script>
-<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
 <body>
-    <div class="root">
-<nav class="navigation" id="navigation-wrapper">
-    <div class="navigation--inner">
-        <div class="navigation-title">
-            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
-            <div class="library-name">
-<a class="library-name--link" href="../../../index.html">
-                            compose-lints
-                    </a>            </div>
-            <div class="library-version">
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    compose-lints
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":compose-lint-checks/main">jvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":compose-lint-checks/main" data-filter=":compose-lint-checks/main">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
             </div>
         </div>
-        <div class="filter-section" id="filter-section">
-                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":compose-lint-checks/main">jvm</button>
-        </div>
-    </div>
-    <div class="navigation-controls">
-        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
-        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
-    </div>
-</nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="sidebar--inner" id="sideMenu"></div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    compose-lints
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
 <div class="main-content" data-page-type="classlike" id="content" pageids="compose-lint-checks::slack.lint.compose/ComposeLintsIssueRegistry///PointingToDeclaration//-1210816664">
   <div class="breadcrumbs"><a href="../../index.html">compose-lint-checks</a><span class="delimiter">/</span><a href="../index.html">slack.lint.compose</a><span class="delimiter">/</span><span class="current">ComposeLintsIssueRegistry</span></div>
   <div class="cover ">
@@ -70,9 +99,9 @@
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="CONSTRUCTOR">
-        <h2 class="">Constructors</h2>
+        <h2 class="tableheader">Constructors</h2>
         <div class="table"><a data-name="684195590%2FConstructors%2F-1210816664" anchor-label="ComposeLintsIssueRegistry" id="684195590%2FConstructors%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-compose-lints-issue-registry.html"><span>Compose</span><wbr><span>Lints</span><wbr><span>Issue</span><wbr><span><span>Registry</span></span></a></div>
@@ -89,9 +118,9 @@
         </div>
       </div>
       <div data-togglable="PROPERTY">
-        <h2 class="">Properties</h2>
+        <h2 class="tableheader">Properties</h2>
         <div class="table"><a data-name="-1522654140%2FProperties%2F-1210816664" anchor-label="api" id="-1522654140%2FProperties%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="api.html"><span><span>api</span></span></a></div>
@@ -100,28 +129,28 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="api.html">api</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="api.html">api</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1218343601%2FProperties%2F-1210816664" anchor-label="deletedIssues" id="-1218343601%2FProperties%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+<a data-name="386965259%2FProperties%2F-1210816664" anchor-label="deletedIssues" id="386965259%2FProperties%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="index.html#-1218343601%2FProperties%2F-1210816664"><span>deleted</span><wbr><span><span>Issues</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1218343601%2FProperties%2F-1210816664"></span>
+                  <div><a href="deleted-issues.html"><span>deleted</span><wbr><span><span>Issues</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="386965259%2FProperties%2F-1210816664"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#-1218343601%2FProperties%2F-1210816664">deletedIssues</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="deleted-issues.html">deletedIssues</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="-1632762558%2FProperties%2F-1210816664" anchor-label="issues" id="-1632762558%2FProperties%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="issues.html"><span><span>issues</span></span></a></div>
@@ -130,13 +159,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="issues.html">issues</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="com.android.tools.lint.detector.api/Issue///PointingToDeclaration/">Issue</span><span class="token operator">&gt;</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="issues.html">issues</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="com.android.tools.lint.detector.api/Issue///PointingToDeclaration/">Issue</span><span class="token operator">&gt;</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="995602602%2FProperties%2F-1210816664" anchor-label="isUpToDate" id="995602602%2FProperties%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#995602602%2FProperties%2F-1210816664"><span>is</span><wbr><span>Up</span><wbr><span>To</span><wbr><span><span>Date</span></span></a></div>
@@ -145,13 +174,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#995602602%2FProperties%2F-1210816664">isUpToDate</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#995602602%2FProperties%2F-1210816664">isUpToDate</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="457071522%2FProperties%2F-1210816664" anchor-label="maxApi" id="457071522%2FProperties%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#457071522%2FProperties%2F-1210816664"><span>max</span><wbr><span><span>Api</span></span></a></div>
@@ -160,13 +189,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#457071522%2FProperties%2F-1210816664">maxApi</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#457071522%2FProperties%2F-1210816664">maxApi</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="-1769212588%2FProperties%2F-1210816664" anchor-label="minApi" id="-1769212588%2FProperties%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="min-api.html"><span>min</span><wbr><span><span>Api</span></span></a></div>
@@ -175,13 +204,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="min-api.html">minApi</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="min-api.html">minApi</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="334442100%2FProperties%2F-1210816664" anchor-label="vendor" id="334442100%2FProperties%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="vendor.html"><span><span>vendor</span></span></a></div>
@@ -198,9 +227,9 @@
         </div>
       </div>
       <div data-togglable="FUNCTION">
-        <h2 class="">Functions</h2>
+        <h2 class="tableheader">Functions</h2>
         <div class="table"><a data-name="813363280%2FFunctions%2F-1210816664" anchor-label="getCategories" id="813363280%2FFunctions%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#813363280%2FFunctions%2F-1210816664"><span>get</span><wbr><span><span>Categories</span></span></a></div>
@@ -209,13 +238,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#813363280%2FFunctions%2F-1210816664"><span class="token function">getCategories</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="com.android.tools.lint.detector.api/Category///PointingToDeclaration/">Category</span><span class="token operator">&gt;</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#813363280%2FFunctions%2F-1210816664"><span class="token function">getCategories</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="com.android.tools.lint.detector.api/Category///PointingToDeclaration/">Category</span><span class="token operator">&gt;</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="-388062512%2FFunctions%2F-1210816664" anchor-label="getIdSpellingSuggestions" id="-388062512%2FFunctions%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#-388062512%2FFunctions%2F-1210816664"><span>get</span><wbr><span>Id</span><wbr><span>Spelling</span><wbr><span><span>Suggestions</span></span></a></div>
@@ -224,13 +253,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#-388062512%2FFunctions%2F-1210816664"><span class="token function">getIdSpellingSuggestions</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#-388062512%2FFunctions%2F-1210816664"><span class="token function">getIdSpellingSuggestions</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="-1606122833%2FFunctions%2F-1210816664" anchor-label="getIssue" id="-1606122833%2FFunctions%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#-1606122833%2FFunctions%2F-1210816664"><span>get</span><wbr><span><span>Issue</span></span></a></div>
@@ -239,13 +268,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#-1606122833%2FFunctions%2F-1210816664"><span class="token function">getIssue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.android.tools.lint.detector.api/Issue///PointingToDeclaration/">Issue</span><span class="token operator">?</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#-1606122833%2FFunctions%2F-1210816664"><span class="token function">getIssue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.android.tools.lint.detector.api/Issue///PointingToDeclaration/">Issue</span><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="411723455%2FFunctions%2F-1210816664" anchor-label="isCategoryName" id="411723455%2FFunctions%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#411723455%2FFunctions%2F-1210816664"><span>is</span><wbr><span>Category</span><wbr><span><span>Name</span></span></a></div>
@@ -254,13 +283,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#411723455%2FFunctions%2F-1210816664"><span class="token function">isCategoryName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#411723455%2FFunctions%2F-1210816664"><span class="token function">isCategoryName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="-1466583188%2FFunctions%2F-1210816664" anchor-label="isIssueId" id="-1466583188%2FFunctions%2F-1210816664" data-filterable-set=":compose-lint-checks/main"></a>
-          <div class="table-row" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
+          <div class="table-row table-row_content" data-filterable-current=":compose-lint-checks/main" data-filterable-set=":compose-lint-checks/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#-1466583188%2FFunctions%2F-1210816664"><span>is</span><wbr><span>Issue</span><wbr><span><span>Id</span></span></a></div>
@@ -269,7 +298,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#-1466583188%2FFunctions%2F-1210816664"><span class="token function">isIssueId</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":compose-lint-checks/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#-1466583188%2FFunctions%2F-1210816664"><span class="token function">isIssueId</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -280,17 +309,21 @@
   </div>
 </div>
     <div class="footer">
-        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
-        <span>© 2024 Copyright</span>
-        <span class="pull-right">
-            <span>Generated by </span>
-            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
-                <span>dokka</span>
-            </a>
-        </span>
-    </div>
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
