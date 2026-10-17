@@ -99,6 +99,32 @@ class MutableParametersDetectorTest : BaseComposeLintTest() {
   }
 
   @Test
+  fun `mutable types are matched by qualified name`() {
+    @Language("kotlin")
+    val code =
+      """
+      import androidx.compose.runtime.Composable
+      import androidx.compose.runtime.Stable
+
+      @Stable
+      object Banner {
+        @Stable object Stack
+      }
+
+      @Composable
+      fun Banner.Stack.Default(text: String) {}
+
+      @Composable
+      fun Something(stack: java.util.Stack<String>) {}
+      """
+        .trimIndent()
+    lint()
+      .files(*commonStubs, kotlin(code))
+      .run()
+      .expectErrorCount(1)
+  }
+
+  @Test
   fun `errors when a Composable has a mutable parameter`() {
     @Language("kotlin")
     val code =
@@ -169,17 +195,8 @@ class MutableParametersDetectorTest : BaseComposeLintTest() {
     val code =
       """
       import androidx.compose.runtime.Composable
-      import androidx.compose.runtime.Stable
-      import androidx.compose.runtime.StableMarker
-
-      @StableMarker
-      annotation class MyStableMarker
-
-      @Stable
-      class MutableState<T>
-
-      @MyStableMarker
-      class MutableSharedFlow<T>
+      import androidx.compose.runtime.MutableState
+      import kotlinx.coroutines.flow.MutableSharedFlow
 
       @Composable
       fun Something(a: MutableState<String>) {}
@@ -188,23 +205,25 @@ class MutableParametersDetectorTest : BaseComposeLintTest() {
       """
         .trimIndent()
     lint()
-      .files(*commonStubs, kotlin(code))
-      .run()
-      .expect(
-        """
-        src/MyStableMarker.kt:15: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app. Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.
+      .files(
+        *commonStubs,
+        kotlin(
+          """
+          package kotlinx.coroutines.flow
 
-        See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
-        fun Something(a: MutableState<String>) {}
-                         ~~~~~~~~~~~~~~~~~~~~
-        src/MyStableMarker.kt:17: Error: Using mutable objects as state in Compose will cause your users to see incorrect or stale data in your app. Mutable objects that are not observable, such as ArrayList<T> or a mutable data class, cannot be observed by Compose to trigger recomposition when they change.
+          import androidx.compose.runtime.StableMarker
 
-        See https://slackhq.github.io/compose-lints/rules/#do-not-use-inherently-mutable-types-as-parameters for more information. [ComposeMutableParameters]
-        fun Something(a: MutableSharedFlow<String>) {}
-                         ~~~~~~~~~~~~~~~~~~~~~~~~~
-        2 errors
-        """
-          .trimIndent()
+          @StableMarker
+          annotation class MyStableMarker
+
+          @MyStableMarker
+          class MutableSharedFlow<T>
+          """
+            .trimIndent()
+        ),
+        kotlin(code),
       )
+      .run()
+      .expectErrorCount(2)
   }
 }

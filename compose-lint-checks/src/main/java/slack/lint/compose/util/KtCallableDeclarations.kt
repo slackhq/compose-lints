@@ -33,7 +33,7 @@ fun UParameter.isTypeMutable(evaluator: JavaEvaluator): Boolean {
 
   val uParamClass = type.let(evaluator::getTypeClass)?.toUElementOfType<UClass>() ?: return false
 
-  return uParamClass.javaPsi.name in KnownMutableCommonTypesSimpleNames
+  return uParamClass.qualifiedName in KnownMutableCommonTypes
 }
 
 /** Lint can't read "Mutable*" Kotlin collections that are compiler intrinsics. */
@@ -46,67 +46,70 @@ val KnownMutableKotlinCollections =
     )
     .map(::Regex)
 
-val KnownMutableCommonCollectionTypesSimpleNames =
-  setOf(
-    // Set
-    "MutableSet",
-    "MutableScatterSet",
-    "ArraySet",
-    "HashSet",
-    "LinkedHashSet",
-    "TreeSet",
-    "CopyOnWriteArraySet",
-    "ConcurrentSkipListSet",
-    // List
-    "MutableList",
-    "MutableObjectList",
-    "ArrayList",
-    "LinkedList",
-    "Vector",
-    "Stack",
-    "CopyOnWriteArrayList",
-    // Array
-    "SparseArray",
-    "SparseArrayCompat",
-    "LongSparseArray",
-    "SparseBooleanArray",
-    "SparseIntArray",
-    // Map
-    "MutableMap",
-    "MutableScatterMap",
-    "MutableIntObjectMap",
-    "MutableObjectIntMap",
-    "MutableLongObjectMap",
-    "MutableObjectLongMap",
-    "HashMap",
-    "LinkedHashMap",
-    "TreeMap",
-    "Hashtable",
-    "ConcurrentHashMap",
-    "ConcurrentSkipListMap",
-    "IdentityHashMap",
-    "WeakHashMap",
-    // Queue
-    "ArrayDeque",
-    "PriorityQueue",
-  )
-
-val KnownMutableCommonTypesSimpleNames =
-  KnownMutableCommonCollectionTypesSimpleNames +
-    setOf(
-      // Compose
-      "MutableState",
-      // Flow
-      "MutableStateFlow",
-      "MutableSharedFlow",
-      // RxJava & RxRelay
-      "PublishSubject",
-      "BehaviorSubject",
-      "ReplaySubject",
-      "PublishRelay",
-      "BehaviorRelay",
-      "ReplayRelay",
+val KnownMutableCommonTypes =
+  sequenceOf(
+      // java.util collections
+      "java.util" to
+        setOf(
+          // Set
+          "HashSet",
+          "LinkedHashSet",
+          "TreeSet",
+          // List
+          "ArrayList",
+          "LinkedList",
+          "Vector",
+          "Stack",
+          // Map
+          "HashMap",
+          "LinkedHashMap",
+          "TreeMap",
+          "Hashtable",
+          "IdentityHashMap",
+          "WeakHashMap",
+          // Queue
+          "ArrayDeque",
+          "PriorityQueue",
+        ),
+      "java.util.concurrent" to
+        setOf(
+          "CopyOnWriteArraySet",
+          "ConcurrentSkipListSet",
+          "CopyOnWriteArrayList",
+          "ConcurrentHashMap",
+          "ConcurrentSkipListMap",
+        ),
+      "android.util" to
+        setOf(
+          "ArraySet",
+          "SparseArray",
+          "LongSparseArray",
+          "SparseBooleanArray",
+          "SparseIntArray",
+        ),
+      "androidx.collection" to
+        setOf(
+          "ArraySet",
+          "MutableScatterSet",
+          "MutableObjectList",
+          "SparseArrayCompat",
+          "MutableScatterMap",
+          "MutableIntObjectMap",
+          "MutableObjectIntMap",
+          "MutableLongObjectMap",
+          "MutableObjectLongMap",
+          "LongSparseArray",
+        ),
+      "androidx.compose.runtime" to setOf("MutableState"),
+      "kotlinx.coroutines.flow" to setOf("MutableStateFlow", "MutableSharedFlow"),
+      "io.reactivex.subjects" to setOf("PublishSubject", "BehaviorSubject", "ReplaySubject"),
+      "io.reactivex.rxjava3.subjects" to
+        setOf("PublishSubject", "BehaviorSubject", "ReplaySubject"),
+      "com.jakewharton.rxrelay2" to setOf("PublishRelay", "BehaviorRelay", "ReplayRelay"),
+      "com.jakewharton.rxrelay3" to setOf("PublishRelay", "BehaviorRelay", "ReplayRelay"),
     )
+    .flatMap { (packageName, simpleNames) -> simpleNames.map { "$packageName.$it" } }
+    .toSet()
 
 fun UParameter.isTypeUnstableCollection(evaluator: JavaEvaluator): Boolean {
   val uParamClass = type.let(evaluator::getTypeClass)?.toUElementOfType<UClass>() ?: return false
