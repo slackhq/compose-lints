@@ -33,8 +33,7 @@ fun UParameter.isTypeMutable(evaluator: JavaEvaluator): Boolean {
 
   val uParamClass = type.let(evaluator::getTypeClass)?.toUElementOfType<UClass>() ?: return false
 
-  return uParamClass.javaPsi.name in KnownMutableCommonTypesSimpleNames &&
-    evaluator.getPackage(uParamClass.javaPsi)?.qualifiedName in KnownMutableCommonTypesPackages
+  return uParamClass.qualifiedName in KnownMutableCommonTypes
 }
 
 /** Lint can't read "Mutable*" Kotlin collections that are compiler intrinsics. */
@@ -47,84 +46,80 @@ val KnownMutableKotlinCollections =
     )
     .map(::Regex)
 
-val KnownMutableCommonCollectionTypesSimpleNames =
+val KnownMutableCommonCollectionTypes =
   setOf(
     // Set
-    "MutableSet",
-    "MutableScatterSet",
-    "ArraySet",
-    "HashSet",
-    "LinkedHashSet",
-    "TreeSet",
-    "CopyOnWriteArraySet",
-    "ConcurrentSkipListSet",
+    "androidx.collection.MutableScatterSet",
+    "android.util.ArraySet",
+    "androidx.collection.ArraySet",
+    "java.util.HashSet",
+    "java.util.LinkedHashSet",
+    "java.util.TreeSet",
+    "java.util.concurrent.CopyOnWriteArraySet",
+    "java.util.concurrent.ConcurrentSkipListSet",
     // List
-    "MutableList",
-    "MutableObjectList",
-    "ArrayList",
-    "LinkedList",
-    "Vector",
-    "Stack",
-    "CopyOnWriteArrayList",
+    "androidx.collection.MutableObjectList",
+    "java.util.ArrayList",
+    "java.util.LinkedList",
+    "java.util.Vector",
+    "java.util.Stack",
+    "java.util.concurrent.CopyOnWriteArrayList",
     // Array
-    "SparseArray",
-    "SparseArrayCompat",
-    "LongSparseArray",
-    "SparseBooleanArray",
-    "SparseIntArray",
+    "android.util.SparseArray",
+    "androidx.collection.SparseArrayCompat",
+    "android.util.LongSparseArray",
+    "androidx.collection.LongSparseArray",
+    "android.util.SparseBooleanArray",
+    "android.util.SparseIntArray",
     // Map
-    "MutableMap",
-    "MutableScatterMap",
-    "MutableIntObjectMap",
-    "MutableObjectIntMap",
-    "MutableLongObjectMap",
-    "MutableObjectLongMap",
-    "HashMap",
-    "LinkedHashMap",
-    "TreeMap",
-    "Hashtable",
-    "ConcurrentHashMap",
-    "ConcurrentSkipListMap",
-    "IdentityHashMap",
-    "WeakHashMap",
+    "androidx.collection.MutableScatterMap",
+    "androidx.collection.MutableIntObjectMap",
+    "androidx.collection.MutableObjectIntMap",
+    "androidx.collection.MutableLongObjectMap",
+    "androidx.collection.MutableObjectLongMap",
+    "java.util.HashMap",
+    "java.util.LinkedHashMap",
+    "java.util.TreeMap",
+    "java.util.Hashtable",
+    "java.util.concurrent.ConcurrentHashMap",
+    "java.util.concurrent.ConcurrentSkipListMap",
+    "java.util.IdentityHashMap",
+    "java.util.WeakHashMap",
     // Queue
-    "ArrayDeque",
-    "PriorityQueue",
+    "java.util.ArrayDeque",
+    "kotlin.collections.ArrayDeque",
+    "java.util.PriorityQueue",
   )
 
-val KnownMutableCommonTypesSimpleNames =
-  KnownMutableCommonCollectionTypesSimpleNames +
+val KnownMutableCommonTypes =
+  KnownMutableCommonCollectionTypes +
     setOf(
       // Compose
-      "MutableState",
+      "androidx.compose.runtime.MutableState",
       // Flow
-      "MutableStateFlow",
-      "MutableSharedFlow",
-      // RxJava & RxRelay
-      "PublishSubject",
-      "BehaviorSubject",
-      "ReplaySubject",
-      "PublishRelay",
-      "BehaviorRelay",
-      "ReplayRelay",
+      "kotlinx.coroutines.flow.MutableStateFlow",
+      "kotlinx.coroutines.flow.MutableSharedFlow",
+      // RxJava
+      "rx.subjects.PublishSubject",
+      "rx.subjects.BehaviorSubject",
+      "rx.subjects.ReplaySubject",
+      "io.reactivex.subjects.PublishSubject",
+      "io.reactivex.subjects.BehaviorSubject",
+      "io.reactivex.subjects.ReplaySubject",
+      "io.reactivex.rxjava3.subjects.PublishSubject",
+      "io.reactivex.rxjava3.subjects.BehaviorSubject",
+      "io.reactivex.rxjava3.subjects.ReplaySubject",
+      // RxRelay
+      "com.jakewharton.rxrelay.PublishRelay",
+      "com.jakewharton.rxrelay.BehaviorRelay",
+      "com.jakewharton.rxrelay.ReplayRelay",
+      "com.jakewharton.rxrelay2.PublishRelay",
+      "com.jakewharton.rxrelay2.BehaviorRelay",
+      "com.jakewharton.rxrelay2.ReplayRelay",
+      "com.jakewharton.rxrelay3.PublishRelay",
+      "com.jakewharton.rxrelay3.BehaviorRelay",
+      "com.jakewharton.rxrelay3.ReplayRelay",
     )
-
-val KnownMutableCommonTypesPackages =
-  setOf(
-    "java.util",
-    "java.util.concurrent",
-    "kotlin.collections",
-    "android.util",
-    "androidx.collection",
-    "androidx.compose.runtime",
-    "kotlinx.coroutines.flow",
-    "rx.subjects",
-    "io.reactivex.subjects",
-    "io.reactivex.rxjava3.subjects",
-    "com.jakewharton.rxrelay",
-    "com.jakewharton.rxrelay2",
-    "com.jakewharton.rxrelay3",
-  )
 
 fun UParameter.isTypeUnstableCollection(evaluator: JavaEvaluator): Boolean {
   val uParamClass = type.let(evaluator::getTypeClass)?.toUElementOfType<UClass>() ?: return false
