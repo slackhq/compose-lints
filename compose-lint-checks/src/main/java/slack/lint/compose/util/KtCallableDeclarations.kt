@@ -33,7 +33,8 @@ fun UParameter.isTypeMutable(evaluator: JavaEvaluator): Boolean {
 
   val uParamClass = type.let(evaluator::getTypeClass)?.toUElementOfType<UClass>() ?: return false
 
-  return uParamClass.javaPsi.name in KnownMutableCommonTypesSimpleNames
+  return uParamClass.javaPsi.name in KnownMutableCommonTypesSimpleNames &&
+    evaluator.getPackage(uParamClass.javaPsi)?.qualifiedName in KnownMutableCommonTypesPackages
 }
 
 /** Lint can't read "Mutable*" Kotlin collections that are compiler intrinsics. */
@@ -107,6 +108,23 @@ val KnownMutableCommonTypesSimpleNames =
       "BehaviorRelay",
       "ReplayRelay",
     )
+
+val KnownMutableCommonTypesPackages =
+  setOf(
+    "java.util",
+    "java.util.concurrent",
+    "kotlin.collections",
+    "android.util",
+    "androidx.collection",
+    "androidx.compose.runtime",
+    "kotlinx.coroutines.flow",
+    "rx.subjects",
+    "io.reactivex.subjects",
+    "io.reactivex.rxjava3.subjects",
+    "com.jakewharton.rxrelay",
+    "com.jakewharton.rxrelay2",
+    "com.jakewharton.rxrelay3",
+  )
 
 fun UParameter.isTypeUnstableCollection(evaluator: JavaEvaluator): Boolean {
   val uParamClass = type.let(evaluator::getTypeClass)?.toUElementOfType<UClass>() ?: return false
