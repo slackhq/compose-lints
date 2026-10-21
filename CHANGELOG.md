@@ -4,7 +4,7 @@ Changelog
 **Unreleased**
 --------------
 
-- **Fix**: Don't report `ComposeMutableParameters` on types that only share a simple name with a known mutable type. See [#652](https://github.com/slackhq/compose-lints/issues/652).
+- **Fix**: Match known mutable types in `ComposeMutableParameters` by qualified name instead of simple name.
 
 1.6.1
 -----
