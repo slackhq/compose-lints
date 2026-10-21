@@ -105,6 +105,7 @@ class MutableParametersDetectorTest : BaseComposeLintTest() {
       """
       import androidx.compose.runtime.Composable
       import androidx.compose.runtime.Stable
+      import rx.subjects.PublishSubject
 
       @Stable
       object Banner {
@@ -116,12 +117,25 @@ class MutableParametersDetectorTest : BaseComposeLintTest() {
 
       @Composable
       fun Something(stack: java.util.Stack<String>) {}
+      @Composable
+      fun Something(subject: PublishSubject<String>) {}
       """
         .trimIndent()
     lint()
-      .files(*commonStubs, kotlin(code))
+      .files(
+        *commonStubs,
+        kotlin(
+          """
+          package rx.subjects
+
+          class PublishSubject<T>
+          """
+            .trimIndent()
+        ),
+        kotlin(code),
+      )
       .run()
-      .expectErrorCount(1)
+      .expectErrorCount(2)
   }
 
   @Test

@@ -105,6 +105,7 @@ val KnownMutableCommonTypes =
       "io.reactivex.subjects" to setOf("PublishSubject", "BehaviorSubject", "ReplaySubject"),
       "io.reactivex.rxjava3.subjects" to
         setOf("PublishSubject", "BehaviorSubject", "ReplaySubject"),
+      "rx.subjects" to setOf("PublishSubject", "BehaviorSubject", "ReplaySubject"),
       "com.jakewharton.rxrelay2" to setOf("PublishRelay", "BehaviorRelay", "ReplayRelay"),
       "com.jakewharton.rxrelay3" to setOf("PublishRelay", "BehaviorRelay", "ReplayRelay"),
     )
