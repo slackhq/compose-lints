@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.4.21"
-jdk = "26"
+jdk = "25"
 jvmTarget = "17"
 lint = "32.4.1"
 lint-latest = "32.4.1"
