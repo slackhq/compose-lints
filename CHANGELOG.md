@@ -4,6 +4,8 @@ Changelog
 **Unreleased**
 --------------
 
+- **Fix**: Match known mutable types in `ComposeMutableParameters` by qualified name instead of simple name.
+
 1.6.1
 -----
 
