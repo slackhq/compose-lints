@@ -2,7 +2,7 @@
 kotlin = "2.4.21"
 jdk = "27"
 jvmTarget = "17"
-lint = "32.4.1"
+lint = "32.5.0"
 lint-latest = "32.4.1"
 
 [plugins]
